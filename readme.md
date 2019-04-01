@@ -262,12 +262,6 @@ vcpkg install \
 Check out and install additional ports.
 
 ```sh
-git clone git@github.com:qis/bcrypt vcpkg/ports/bcrypt
-git clone git@github.com:qis/compat vcpkg/ports/compat
-git clone git@github.com:qis/ice vcpkg/ports/ice
-git clone git@github.com:xnetsystems/pdf vcpkg/ports/pdf
-git clone git@github.com:qis/sql vcpkg/ports/sql
-
 git clone git@github.com:xnetsystems/bcrypt vcpkg/ports/bcrypt
 git clone git@github.com:xnetsystems/compat vcpkg/ports/compat
 git clone git@github.com:xnetsystems/ice vcpkg/ports/ice
@@ -276,7 +270,6 @@ git clone git@github.com:xnetsystems/sql vcpkg/ports/sql
 
 git clone git:libraries/http vcpkg/ports/http
 
-vcpkg remove bcrypt compat ice pdf sql http
 vcpkg install bcrypt compat ice pdf sql http
 ```
 -->
