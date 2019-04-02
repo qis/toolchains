@@ -16,6 +16,10 @@ cd C:/Workspace
 git clone git@github.com:Microsoft/vcpkg
 cmake -E remove_directory vcpkg/scripts/toolchains
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
+curl https://raw.githubusercontent.com/qis/vcpkg-date/master/fix-string-view.patch ^
+  -o vcpkg/ports/date/fix-string-view.patch
+curl https://raw.githubusercontent.com/qis/vcpkg-date/master/portfile.cmake ^
+  -o vcpkg/ports/date/portfile.cmake
 ```
 
 Build Vcpkg.
@@ -38,6 +42,10 @@ cd /opt
 git clone git@github.com:Microsoft/vcpkg
 cmake -E remove_directory vcpkg/scripts/toolchains
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
+curl https://raw.githubusercontent.com/qis/vcpkg-date/master/fix-string-view.patch \
+  -o vcpkg/ports/date/fix-string-view.patch
+curl https://raw.githubusercontent.com/qis/vcpkg-date/master/portfile.cmake \
+  -o vcpkg/ports/date/portfile.cmake
 ```
 
 Build Vcpkg.
