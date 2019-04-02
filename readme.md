@@ -232,9 +232,14 @@ vcpkg install angle freetype harfbuzz[ucdn] podofo
 
 <!--
 ### Windows
-Install ports in one command.
-
 ```cmd
+git clone git@github.com:xnetsystems/bcrypt vcpkg/ports/bcrypt && ^
+git clone git@github.com:xnetsystems/compat vcpkg/ports/compat && ^
+git clone git@github.com:xnetsystems/ice vcpkg/ports/ice && ^
+git clone git@github.com:xnetsystems/pdf vcpkg/ports/pdf && ^
+git clone git@github.com:xnetsystems/sql vcpkg/ports/sql && ^
+git clone git:libraries/http vcpkg/ports/http
+
 vcpkg install ^
   benchmark gtest ^
   openssl ^
@@ -242,35 +247,26 @@ vcpkg install ^
   cpr curl[core,openssl] date fmt nlohmann-json ragel utf8proc ^
   giflib libjpeg-turbo libpng tiff ^
   angle freetype harfbuzz[ucdn] podofo ^
+  bcrypt compat ice pdf sql http
 ```
 
 ### Linux
-Install ports in one command.
-
 ```sh
+git clone git@github.com:xnetsystems/bcrypt vcpkg/ports/bcrypt && \
+git clone git@github.com:xnetsystems/compat vcpkg/ports/compat && \
+git clone git@github.com:xnetsystems/ice vcpkg/ports/ice && \
+git clone git@github.com:xnetsystems/pdf vcpkg/ports/pdf && \
+git clone git@github.com:xnetsystems/sql vcpkg/ports/sql && \
+git clone git:libraries/http vcpkg/ports/http
+
 vcpkg install \
   benchmark gtest \
   openssl \
   bzip2 liblzma libzip[bzip2,openssl] zlib \
   cpr curl[core,openssl] date fmt nlohmann-json ragel utf8proc \
   giflib libjpeg-turbo libpng tiff \
-  angle freetype harfbuzz[ucdn] podofo
-```
--->
-
-<!--
-Check out and install additional ports.
-
-```sh
-git clone git@github.com:xnetsystems/bcrypt vcpkg/ports/bcrypt
-git clone git@github.com:xnetsystems/compat vcpkg/ports/compat
-git clone git@github.com:xnetsystems/ice vcpkg/ports/ice
-git clone git@github.com:xnetsystems/pdf vcpkg/ports/pdf
-git clone git@github.com:xnetsystems/sql vcpkg/ports/sql
-
-git clone git:libraries/http vcpkg/ports/http
-
-vcpkg install bcrypt compat ice pdf sql http
+  angle freetype harfbuzz[ucdn] podofo \
+  bcrypt compat ice pdf sql http
 ```
 -->
 
