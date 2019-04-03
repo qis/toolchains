@@ -710,5 +710,5 @@ the [vcpkg-test](https://github.com/qis/vcpkg-test) project.
 
 ```sh
 git clone git@github.com:qis/vcpkg-test
-cd toolchains-test && make ports test
+cd vcpkg-test && make ports test
 ```
