@@ -56,7 +56,7 @@ rm -rf vcpkg/toolsrc/build.rel
 ```
 
 <details>
-<summary>Instal acustom LLVM toolchain.</summary>
+<summary>Instal a custom LLVM toolchain.</summary>
 
 ```sh
 # Set environment variables.
