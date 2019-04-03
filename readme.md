@@ -241,6 +241,7 @@ vcpkg install angle freetype harfbuzz[ucdn] podofo
 <!--
 ### Windows
 ```cmd
+git clone git@github.com:xnetsystems/backward vcpkg/ports/backward && ^
 git clone git@github.com:xnetsystems/bcrypt vcpkg/ports/bcrypt && ^
 git clone git@github.com:xnetsystems/compat vcpkg/ports/compat && ^
 git clone git@github.com:xnetsystems/ice vcpkg/ports/ice && ^
@@ -260,6 +261,7 @@ vcpkg install ^
 
 ### Linux
 ```sh
+git clone git@github.com:xnetsystems/backward vcpkg/ports/backward && \
 git clone git@github.com:xnetsystems/bcrypt vcpkg/ports/bcrypt && \
 git clone git@github.com:xnetsystems/compat vcpkg/ports/compat && \
 git clone git@github.com:xnetsystems/ice vcpkg/ports/ice && \
@@ -274,7 +276,7 @@ vcpkg install \
   cpr curl[core,openssl] date fmt nlohmann-json ragel utf8proc \
   giflib libjpeg-turbo libpng tiff \
   angle freetype harfbuzz[ucdn] podofo \
-  bcrypt compat ice pdf sql http
+  backward bcrypt compat ice pdf sql http
 ```
 -->
 
@@ -600,17 +602,16 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 ```cmake
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   find_package(X11 REQUIRED)
-  target_link_libraries(${PROJECT_NAME} PUBLIC X11::X11 dl)
+  if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14.0")
+    target_link_libraries(${PROJECT_NAME} PUBLIC X11::X11 dl)
+  else()
+    target_include_directories(${PROJECT_NAME} PUBLIC ${X11_INCLUDE_DIR})
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${X11_LIBRARIES} dl)
+  endif()
 endif()
 
-find_path(ANGLE_INCLUDE_DIR angle_gl.h)
-find_library(ANGLE_EGL_LIBRARY NAMES EGL libEGL)
-find_library(ANGLE_GLESv2_LIBRARY NAMES GLESv2 libGLESv2)
-if(NOT ANGLE_INCLUDE_DIR OR NOT ANGLE_EGL_LIBRARY OR NOT ANGLE_GLESv2_LIBRARY)
-  message(FATAL_ERROR "Could not find library: angle")
-endif()
-target_include_directories(${PROJECT_NAME} PUBLIC ${ANGLE_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${ANGLE_EGL_LIBRARY} ${ANGLE_GLESv2_LIBRARY})
+find_package(unofficial-angle CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC unofficial::angle::libEGL unofficial::angle::libGLESv2)
 ```
 
 </details>
