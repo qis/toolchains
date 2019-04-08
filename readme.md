@@ -1,23 +1,20 @@
 # Toolchains
 Custom [vcpkg](https://github.com/Microsoft/vcpkg) toolchains.
 
+```sh
+cd C:/Workspace || cd /opt
+git clone git@github.com:Microsoft/vcpkg
+cmake -E remove_directory vcpkg/scripts/toolchains
+git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
+curl https://raw.githubusercontent.com/qis/vcpkg-date/master/fix-date.patch -o vcpkg/ports/date/fix-date.patch
+```
+
 ## Windows
 Set up environment variables.
 
 ```cmd
 set PATH=%PATH%;C:\Workspace\vcpkg
 set VCPKG_DEFAULT_TRIPLET=x64-windows
-```
-
-Check out Vcpkg and replace the default toolchain files.
-
-```cmd
-cd C:/Workspace
-git clone git@github.com:Microsoft/vcpkg
-cmake -E remove_directory vcpkg/scripts/toolchains
-git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
-curl https://raw.githubusercontent.com/qis/vcpkg-date/master/fix-date.patch ^
-  -o vcpkg/ports/date/fix-date.patch
 ```
 
 Build Vcpkg.
@@ -31,17 +28,6 @@ Set up environment variables.
 
 ```sh
 export PATH="${PATH}:/opt/vcpkg"
-```
-
-Check out Vcpkg and replace the default toolchain files.
-
-```sh
-cd /opt
-git clone git@github.com:Microsoft/vcpkg
-cmake -E remove_directory vcpkg/scripts/toolchains
-git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
-curl https://raw.githubusercontent.com/qis/vcpkg-date/master/fix-date.patch \
-  -o vcpkg/ports/date/fix-date.patch
 ```
 
 Build Vcpkg.
