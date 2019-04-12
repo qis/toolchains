@@ -6,6 +6,7 @@ cd C:/Workspace || cd /opt
 git clone git@github.com:Microsoft/vcpkg
 cmake -E remove_directory vcpkg/scripts/toolchains
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
+curl https://raw.githubusercontent.com/qis/vcpkg-date/master/portfile.cmake -o vcpkg/ports/date/portfile.cmake
 curl https://raw.githubusercontent.com/qis/vcpkg-date/master/fix-date.patch -o vcpkg/ports/date/fix-date.patch
 ```
 
