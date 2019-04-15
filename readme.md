@@ -11,6 +11,12 @@ curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/date/portfile.cm
 curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/giflib/portfile.cmake -o vcpkg/ports/giflib/portfile.cmake
 ```
 
+Alternatively, create a symlink to the windows vcpkg directory in WSL.
+
+```sh
+ln -s /mnt/c/Workspace/vcpkg /opt/vcpkg
+```
+
 ## Windows
 Set up environment variables.
 
