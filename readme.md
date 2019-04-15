@@ -11,7 +11,8 @@ curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/date/portfile.cm
 curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/giflib/portfile.cmake -o vcpkg/ports/giflib/portfile.cmake
 ```
 
-Alternatively, create a symlink to the windows vcpkg directory in WSL.
+Alternatively, create a symlink to the windows vcpkg directory in WSL.<br/>
+**NOTE**: Do not execute `vcpkg` on Windows and in WSL at the same time.
 
 ```sh
 ln -s /mnt/c/Workspace/vcpkg /opt/vcpkg
