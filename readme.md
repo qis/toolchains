@@ -178,12 +178,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC BZip2::BZip2)
 
 ```cmake
 find_package(LibLZMA REQUIRED)
-if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14.0")
-  target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
-else()
-  target_include_directories(${PROJECT_NAME} PUBLIC ${LIBLZMA_INCLUDE_DIRS})
-  target_link_libraries(${PROJECT_NAME} PUBLIC ${LIBLZMA_LIBRARIES})
-endif()
+target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
 ```
 
 </details>
@@ -349,12 +344,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${UTF8PROC_LIBRARY})
 
 ```cmake
 find_package(GIF REQUIRED)
-if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14.0")
-  target_link_libraries(${PROJECT_NAME} PUBLIC GIF::GIF)
-else()
-  target_include_directories(${PROJECT_NAME} PUBLIC ${GIF_INCLUDE_DIR})
-  target_link_libraries(${PROJECT_NAME} PUBLIC ${GIF_LIBRARIES})
-endif()
+target_link_libraries(${PROJECT_NAME} PUBLIC GIF::GIF)
 ```
 
 </details>
@@ -403,12 +393,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 
 ```cmake
 find_package(LibLZMA REQUIRED)
-if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14.0")
-  target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
-else()
-  target_include_directories(${PROJECT_NAME} PUBLIC ${LIBLZMA_INCLUDE_DIRS})
-  target_link_libraries(${PROJECT_NAME} PUBLIC ${LIBLZMA_LIBRARIES})
-endif()
+target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
 
 find_package(JPEG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC JPEG::JPEG)
@@ -428,12 +413,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 ```cmake
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   find_package(X11 REQUIRED)
-  if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14.0")
-    target_link_libraries(${PROJECT_NAME} PUBLIC X11::X11 dl)
-  else()
-    target_include_directories(${PROJECT_NAME} PUBLIC ${X11_INCLUDE_DIR})
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${X11_LIBRARIES} dl)
-  endif()
+  target_link_libraries(${PROJECT_NAME} PUBLIC X11::X11 dl)
 endif()
 
 find_package(unofficial-angle CONFIG REQUIRED)
@@ -498,12 +478,7 @@ find_package(BZip2 REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC BZip2::BZip2)
 
 find_package(LibLZMA REQUIRED)
-if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.14.0")
-  target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
-else()
-  target_include_directories(${PROJECT_NAME} PUBLIC ${LIBLZMA_INCLUDE_DIRS})
-  target_link_libraries(${PROJECT_NAME} PUBLIC ${LIBLZMA_LIBRARIES})
-endif()
+target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
 
 find_package(Freetype REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC Freetype::Freetype)
