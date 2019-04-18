@@ -26,7 +26,7 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
   set(CMAKE_C_COMPILER "clang" CACHE STRING "")
   set(CMAKE_CXX_COMPILER "clang++" CACHE STRING "")
 
-  set(CLANG_COMPILE_OPTIONS "-pthread -march=broadwell -mavx2 -mfpmath=sse -fasm -fPIC -D_DEFAULT_SOURCE=1" CACHE STRING "")
+  set(CLANG_COMPILE_OPTIONS "-pthread -mavx2 -mfpmath=sse -fasm -fPIC -D_DEFAULT_SOURCE=1" CACHE STRING "")
   set(CLANG_COMPILE_OPTIONS "${CLANG_COMPILE_OPTIONS} -fdiagnostics-absolute-paths -fcolor-diagnostics" CACHE STRING "")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${VCPKG_C_FLAGS} ${CLANG_COMPILE_OPTIONS}" CACHE STRING "")
