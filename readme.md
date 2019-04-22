@@ -338,12 +338,12 @@ target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src/main.hpp)
 
 ```cmake
 find_path(UTF8PROC_INCLUDE_DIR utf8proc.h)
-find_library(UTF8PROC_LIBRARY NAMES utf8proc)
-if(NOT UTF8PROC_INCLUDE_DIR OR NOT UTF8PROC_LIBRARY)
-  message(FATAL_ERROR "Could not find library: utf8proc")
-endif()
+find_library(UTF8PROC_LIBRARY_DEBUG NAMES utf8proc PATH_SUFFIXES debug/lib)
+get_filename_component(UTF8PROC_LIBRARY_RELEASE_NAME ${UTF8PROC_LIBRARY_DEBUG} NAME)
+get_filename_component(UTF8PROC_LIBRARY_RELEASE_PATH ${UTF8PROC_LIBRARY_DEBUG}/../../../lib REALPATH)
+set(UTF8PROC_LIBRARY_RELEASE "${UTF8PROC_LIBRARY_RELEASE_PATH}/${UTF8PROC_LIBRARY_RELEASE_NAME}")
 target_include_directories(${PROJECT_NAME} PUBLIC ${UTF8PROC_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${UTF8PROC_LIBRARY})
+target_link_libraries(${PROJECT_NAME} PUBLIC debug ${UTF8PROC_LIBRARY_DEBUG} optimized ${UTF8PROC_LIBRARY_RELEASE})
 ```
 
 </details>
