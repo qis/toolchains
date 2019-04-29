@@ -7,8 +7,6 @@ git clone git@github.com:Microsoft/vcpkg
 cmake -E remove_directory vcpkg/scripts/toolchains
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
 curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/date/CMakeLists.txt -o vcpkg/ports/date/CMakeLists.txt
-curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/date/fix-date.patch -o vcpkg/ports/date/fix-date.patch
-curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/date/portfile.cmake -o vcpkg/ports/date/portfile.cmake
 curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/giflib/portfile.cmake -o vcpkg/ports/giflib/portfile.cmake
 ```
 
@@ -33,11 +31,19 @@ Build Vcpkg.
 bootstrap-vcpkg -disableMetrics -win64
 ```
 
+Add compiler flags to the triplet file if necessary.
+
+```cmake
+set(VCPKG_C_FLAGS "/arch:AVX2 /favor:INTEL64")
+set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64 /EHs-c- /GR- /D_HAS_EXCEPTIONS=0")
+```
+
 ## Linux
 Set up environment variables.
 
 ```sh
 export PATH="${PATH}:/opt/vcpkg"
+export VCPKG_DEFAULT_TRIPLET="x64-linux"
 ```
 
 Build Vcpkg.
@@ -45,6 +51,13 @@ Build Vcpkg.
 ```sh
 CC=gcc CXX=g++ bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries
 rm -rf vcpkg/toolsrc/build.rel
+```
+
+Add compiler flags to the triplet file if necessary.
+
+```cmake
+set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
+set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2 -fno-exceptions -fno-rtti")
 ```
 
 [Instal a custom LLVM toolchain.](llvm/linux.md)
