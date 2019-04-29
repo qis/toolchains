@@ -179,8 +179,29 @@ if(WIN32)
   target_link_libraries(${PROJECT_NAME} PUBLIC ws2_32)
 endif()
 
-find_package(OpenSSL REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC OpenSSL::Crypto OpenSSL::SSL)
+#find_package(OpenSSL REQUIRED)
+#target_link_libraries(${PROJECT_NAME} PUBLIC OpenSSL::Crypto OpenSSL::SSL)
+
+find_path(OPENSSL_INCLUDE_DIR openssl/crypto.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(OPENSSL_CRYPTO_LIBRARY_DEBUG NAMES crypto libeay32
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(OPENSSL_CRYPTO_LIBRARY_RELEASE NAMES crypto libeay32
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+find_library(OPENSSL_SSL_LIBRARY_DEBUG NAMES ssl ssleay32
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(OPENSSL_SSL_LIBRARY_RELEASE NAMES ssl ssleay32
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT OPENSSL_INCLUDE_DIR OR
+   NOT OPENSSL_CRYPTO_LIBRARY_DEBUG OR NOT OPENSSL_CRYPTO_LIBRARY_RELEASE OR
+   NOT OPENSSL_SSL_LIBRARY_DEBUG OR NOT OPENSSL_SSL_LIBRARY_RELEASE)
+  message(FATAL_ERROR "Could not find library: openssl")
+endif()
+target_include_directories(${PROJECT_NAME} PUBLIC ${OPENSSL_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC
+  debug ${OPENSSL_CRYPTO_LIBRARY_DEBUG} debug ${OPENSSL_SSL_LIBRARY_DEBUG}
+  optimized ${OPENSSL_CRYPTO_LIBRARY_RELEASE} optimized ${OPENSSL_SSL_LIBRARY_RELEASE}
+  general $<$<PLATFORM_ID:Linux>:dl>)
 ```
 
 </details>
@@ -199,8 +220,20 @@ target_link_libraries(${PROJECT_NAME} PUBLIC BZip2::BZip2)
 <summary>liblzma</summary>
 
 ```cmake
-find_package(LibLZMA REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
+#find_package(LibLZMA REQUIRED)
+#target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
+
+find_path(LZMA_INCLUDE_DIR lzma.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(LZMA_LIBRARY_DEBUG NAMES lzma
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(LZMA_LIBRARY_RELEASE NAMES lzma
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT LZMA_INCLUDE_DIR OR NOT LZMA_LIBRARY_DEBUG OR NOT LZMA_LIBRARY_RELEASE)
+  message(FATAL_ERROR "Could not find library: liblzma")
+endif()
+target_include_directories(${PROJECT_NAME} PUBLIC ${LZMA_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC debug ${LZMA_LIBRARY_DEBUG} optimized ${LZMA_LIBRARY_RELEASE})
 ```
 
 </details>
@@ -209,26 +242,41 @@ target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
 <summary>libzip[bzip2,openssl]</summary>
 
 ```cmake
-if(WIN32)
-  target_link_libraries(${PROJECT_NAME} PUBLIC ws2_32)
-endif()
-
 find_package(BZip2 REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC BZip2::BZip2)
 
-find_package(OpenSSL REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC OpenSSL::Crypto)
+#find_package(OpenSSL REQUIRED)
+#target_link_libraries(${PROJECT_NAME} PUBLIC OpenSSL::Crypto)
 
-find_path(ZIP_INCLUDE_DIR zip.h)
-find_library(ZIP_LIBRARY NAMES zip)
-if(NOT ZIP_INCLUDE_DIR OR NOT ZIP_LIBRARY)
-  message(FATAL_ERROR "Could not find library: zip")
+find_path(OPENSSL_INCLUDE_DIR openssl/crypto.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(OPENSSL_CRYPTO_LIBRARY_DEBUG NAMES crypto libeay32
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(OPENSSL_CRYPTO_LIBRARY_RELEASE NAMES crypto libeay32
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT OPENSSL_INCLUDE_DIR OR NOT OPENSSL_CRYPTO_LIBRARY_DEBUG OR NOT OPENSSL_CRYPTO_LIBRARY_RELEASE)
+  message(FATAL_ERROR "Could not find library: openssl")
+endif()
+target_include_directories(${PROJECT_NAME} PUBLIC ${OPENSSL_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC
+  debug ${OPENSSL_CRYPTO_LIBRARY_DEBUG}
+  optimized ${OPENSSL_CRYPTO_LIBRARY_RELEASE}
+  general $<$<PLATFORM_ID:Linux>:dl>)
+
+find_path(ZIP_INCLUDE_DIR zip.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(ZIP_LIBRARY_DEBUG NAMES zip
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(ZIP_LIBRARY_RELEASE NAMES zip
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT ZIP_INCLUDE_DIR OR NOT ZIP_LIBRARY_DEBUG OR NOT ZIP_LIBRARY_RELEASE)
+  message(FATAL_ERROR "Could not find library: libzip")
 endif()
 target_include_directories(${PROJECT_NAME} PUBLIC ${ZIP_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${ZIP_LIBRARY})
+target_link_libraries(${PROJECT_NAME} PUBLIC debug ${ZIP_LIBRARY_DEBUG} optimized ${ZIP_LIBRARY_RELEASE})
 
 find_package(ZLIB REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB
+target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 ```
 
 </details>
@@ -251,19 +299,56 @@ if(WIN32)
   target_link_libraries(${PROJECT_NAME} PUBLIC ws2_32)
 endif()
 
-find_package(OpenSSL REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC OpenSSL::SSL OpenSSL::Crypto)
+#find_package(OpenSSL REQUIRED)
+#target_link_libraries(${PROJECT_NAME} PUBLIC OpenSSL::SSL OpenSSL::Crypto)
 
-find_path(CPR_INCLUDE_DIR cpr/cpr.h)
-find_library(CPR_LIBRARY NAMES cpr)
-if(NOT CPR_INCLUDE_DIR OR NOT CPR_LIBRARY)
+find_path(OPENSSL_INCLUDE_DIR openssl/crypto.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(OPENSSL_CRYPTO_LIBRARY_DEBUG NAMES crypto libeay32
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(OPENSSL_CRYPTO_LIBRARY_RELEASE NAMES crypto libeay32
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+find_library(OPENSSL_SSL_LIBRARY_DEBUG NAMES ssl ssleay32
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(OPENSSL_SSL_LIBRARY_RELEASE NAMES ssl ssleay32
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT OPENSSL_INCLUDE_DIR OR
+   NOT OPENSSL_CRYPTO_LIBRARY_DEBUG OR NOT OPENSSL_CRYPTO_LIBRARY_RELEASE OR
+   NOT OPENSSL_SSL_LIBRARY_DEBUG OR NOT OPENSSL_SSL_LIBRARY_RELEASE)
+  message(FATAL_ERROR "Could not find library: openssl")
+endif()
+target_include_directories(${PROJECT_NAME} PUBLIC ${OPENSSL_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC
+  debug ${OPENSSL_CRYPTO_LIBRARY_DEBUG} debug ${OPENSSL_SSL_LIBRARY_DEBUG}
+  optimized ${OPENSSL_CRYPTO_LIBRARY_RELEASE} optimized ${OPENSSL_SSL_LIBRARY_RELEASE}
+  general $<$<PLATFORM_ID:Linux>:dl>)
+
+#find_package(CURL REQUIRED)
+#target_link_libraries(${PROJECT_NAME} PUBLIC CURL::libcurl)
+
+find_path(CURL_INCLUDE_DIR curl/curl.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(CURL_LIBRARY_DEBUG NAMES curl curl-d libcurl libcurl-d
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(CURL_LIBRARY_RELEASE NAMES curl libcurl
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT CURL_INCLUDE_DIR OR NOT CURL_LIBRARY_DEBUG OR NOT CURL_LIBRARY_RELEASE)
+  message(FATAL_ERROR "Could not find library: curl")
+endif()
+target_include_directories(${PROJECT_NAME} PUBLIC ${CURL_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC debug ${CURL_LIBRARY_DEBUG} optimized ${CURL_LIBRARY_RELEASE})
+
+find_path(CPR_INCLUDE_DIR cpr/cpr.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(CPR_LIBRARY_DEBUG NAMES cpr
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(CPR_LIBRARY_RELEASE NAMES cpr
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT CPR_INCLUDE_DIR OR NOT CPR_LIBRARY_DEBUG OR NOT CPR_LIBRARY_RELEASE)
   message(FATAL_ERROR "Could not find library: cpr")
 endif()
 target_include_directories(${PROJECT_NAME} PUBLIC ${CPR_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${CPR_LIBRARY})
-
-find_package(CURL REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC CURL::libcurl)
+target_link_libraries(${PROJECT_NAME} PUBLIC debug ${CPR_LIBRARY_DEBUG} optimized ${CPR_LIBRARY_RELEASE})
 
 find_package(ZLIB REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
@@ -275,15 +360,44 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 <summary>curl[core,openssl]</summary>
 
 ```cmake
-if(WIN32)
-  target_link_libraries(${PROJECT_NAME} PUBLIC ws2_32)
+#find_package(OpenSSL REQUIRED)
+#target_link_libraries(${PROJECT_NAME} PUBLIC OpenSSL::SSL OpenSSL::Crypto)
+
+find_path(OPENSSL_INCLUDE_DIR openssl/ssl.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(OPENSSL_CRYPTO_LIBRARY_DEBUG NAMES crypto libeay32
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(OPENSSL_CRYPTO_LIBRARY_RELEASE NAMES crypto libeay32
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+find_library(OPENSSL_SSL_LIBRARY_DEBUG NAMES ssl ssleay32
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(OPENSSL_SSL_LIBRARY_RELEASE NAMES ssl ssleay32
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT OPENSSL_INCLUDE_DIR OR
+   NOT OPENSSL_CRYPTO_LIBRARY_DEBUG OR NOT OPENSSL_CRYPTO_LIBRARY_RELEASE OR
+   NOT OPENSSL_SSL_LIBRARY_DEBUG OR NOT OPENSSL_SSL_LIBRARY_RELEASE)
+  message(FATAL_ERROR "Could not find library: openssl")
 endif()
+target_include_directories(${PROJECT_NAME} PUBLIC ${OPENSSL_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC
+  debug ${OPENSSL_CRYPTO_LIBRARY_DEBUG} debug ${OPENSSL_SSL_LIBRARY_DEBUG}
+  optimized ${OPENSSL_CRYPTO_LIBRARY_RELEASE} optimized ${OPENSSL_SSL_LIBRARY_RELEASE}
+  general $<$<PLATFORM_ID:Linux>:dl>)
 
-find_package(OpenSSL REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC OpenSSL::SSL OpenSSL::Crypto)
+#find_package(CURL REQUIRED)
+#target_link_libraries(${PROJECT_NAME} PUBLIC CURL::libcurl)
 
-find_package(CURL REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC CURL::libcurl)
+find_path(CURL_INCLUDE_DIR curl/curl.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(CURL_LIBRARY_DEBUG NAMES curl curl-d libcurl libcurl-d
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(CURL_LIBRARY_RELEASE NAMES curl libcurl
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT CURL_INCLUDE_DIR OR NOT CURL_LIBRARY_DEBUG OR NOT CURL_LIBRARY_RELEASE)
+  message(FATAL_ERROR "Could not find library: curl")
+endif()
+target_include_directories(${PROJECT_NAME} PUBLIC ${CURL_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC debug ${CURL_LIBRARY_DEBUG} optimized ${CURL_LIBRARY_RELEASE})
 
 find_package(ZLIB REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
@@ -350,11 +464,15 @@ target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src/main.hpp)
 <summary>utf8proc</summary>
 
 ```cmake
-find_path(UTF8PROC_INCLUDE_DIR utf8proc.h)
-find_library(UTF8PROC_LIBRARY_DEBUG NAMES utf8proc PATH_SUFFIXES debug/lib)
-get_filename_component(UTF8PROC_LIBRARY_RELEASE_NAME ${UTF8PROC_LIBRARY_DEBUG} NAME)
-get_filename_component(UTF8PROC_LIBRARY_RELEASE_PATH ${UTF8PROC_LIBRARY_DEBUG}/../../../lib REALPATH)
-set(UTF8PROC_LIBRARY_RELEASE "${UTF8PROC_LIBRARY_RELEASE_PATH}/${UTF8PROC_LIBRARY_RELEASE_NAME}")
+find_path(UTF8PROC_INCLUDE_DIR utf8proc.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(UTF8PROC_LIBRARY_DEBUG NAMES utf8proc
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(UTF8PROC_LIBRARY_RELEASE NAMES utf8proc
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT UTF8PROC_INCLUDE_DIR OR NOT UTF8PROC_LIBRARY_DEBUG OR NOT UTF8PROC_LIBRARY_RELEASE)
+  message(FATAL_ERROR "Could not find library: utf8proc")
+endif()
 target_include_directories(${PROJECT_NAME} PUBLIC ${UTF8PROC_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PUBLIC debug ${UTF8PROC_LIBRARY_DEBUG} optimized ${UTF8PROC_LIBRARY_RELEASE})
 ```
@@ -365,8 +483,20 @@ target_link_libraries(${PROJECT_NAME} PUBLIC debug ${UTF8PROC_LIBRARY_DEBUG} opt
 <summary>giflib</summary>
 
 ```cmake
-find_package(GIF REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC GIF::GIF)
+#find_package(GIF REQUIRED)
+#target_link_libraries(${PROJECT_NAME} PUBLIC GIF::GIF)
+
+find_path(GIF_INCLUDE_DIR gif_lib.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(GIF_LIBRARY_DEBUG NAMES gif
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(GIF_LIBRARY_RELEASE NAMES gif
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT GIF_INCLUDE_DIR OR NOT GIF_LIBRARY_DEBUG OR NOT GIF_LIBRARY_RELEASE)
+  message(FATAL_ERROR "Could not find library: giflib")
+endif()
+target_include_directories(${PROJECT_NAME} PUBLIC ${GIF_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC debug ${GIF_LIBRARY_DEBUG} optimized ${GIF_LIBRARY_RELEASE})
 ```
 
 </details>
@@ -386,13 +516,17 @@ target_link_libraries(${PROJECT_NAME} PUBLIC JPEG::JPEG)
 Interface: `jpeg-turbo`
 
 ```cmake
-find_path(TURBOJPEG_INCLUDE_DIR turbojpeg.h)
-find_library(TURBOJPEG_LIBRARY NAMES turbojpeg turbojpegd NAMES_PER_DIR)
-if(NOT TURBOJPEG_INCLUDE_DIR OR NOT TURBOJPEG_LIBRARY)
+find_path(TURBOJPEG_INCLUDE_DIR turbojpeg.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(TURBOJPEG_LIBRARY_DEBUG NAMES turbojpeg turbojpegd
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(TURBOJPEG_LIBRARY_RELEASE NAMES turbojpeg
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT TURBOJPEG_INCLUDE_DIR OR NOT TURBOJPEG_LIBRARY_DEBUG OR NOT TURBOJPEG_LIBRARY_RELEASE)
   message(FATAL_ERROR "Could not find library: libjpeg-turbo")
 endif()
 target_include_directories(${PROJECT_NAME} PUBLIC ${TURBOJPEG_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${TURBOJPEG_LIBRARY})
+target_link_libraries(${PROJECT_NAME} PUBLIC debug ${TURBOJPEG_LIBRARY_DEBUG} optimized ${TURBOJPEG_LIBRARY_RELEASE})
 ```
 
 </details>
@@ -414,8 +548,20 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 <summary>tiff</summary>
 
 ```cmake
-find_package(LibLZMA REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
+#find_package(LibLZMA REQUIRED)
+#target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
+
+find_path(LZMA_INCLUDE_DIR lzma.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(LZMA_LIBRARY_DEBUG NAMES lzma
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(LZMA_LIBRARY_RELEASE NAMES lzma
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT LZMA_INCLUDE_DIR OR NOT LZMA_LIBRARY_DEBUG OR NOT LZMA_LIBRARY_RELEASE)
+  message(FATAL_ERROR "Could not find library: liblzma")
+endif()
+target_include_directories(${PROJECT_NAME} PUBLIC ${LZMA_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC debug ${LZMA_LIBRARY_DEBUG} optimized ${LZMA_LIBRARY_RELEASE})
 
 find_package(JPEG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC JPEG::JPEG)
@@ -489,18 +635,43 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 <summary>podofo</summary>
 
 ```cmake
-if(WIN32)
-  target_link_libraries(${PROJECT_NAME} PUBLIC ws2_32)
-else()
-  find_package(OpenSSL REQUIRED)
-  target_link_libraries(${PROJECT_NAME} PUBLIC OpenSSL::Crypto)
+if(NOT WIN32)
+  #find_package(OpenSSL REQUIRED)
+  #target_link_libraries(${PROJECT_NAME} PUBLIC OpenSSL::Crypto)
+
+  find_path(OPENSSL_INCLUDE_DIR openssl/crypto.h
+    PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+  find_library(OPENSSL_CRYPTO_LIBRARY_DEBUG NAMES crypto libeay32
+    PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+  find_library(OPENSSL_CRYPTO_LIBRARY_RELEASE NAMES crypto libeay32
+    PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+  if(NOT OPENSSL_INCLUDE_DIR OR NOT OPENSSL_CRYPTO_LIBRARY_DEBUG OR NOT OPENSSL_CRYPTO_LIBRARY_RELEASE)
+    message(FATAL_ERROR "Could not find library: openssl")
+  endif()
+  target_include_directories(${PROJECT_NAME} PUBLIC ${OPENSSL_INCLUDE_DIR})
+  target_link_libraries(${PROJECT_NAME} PUBLIC
+    debug ${OPENSSL_CRYPTO_LIBRARY_DEBUG}
+    optimized ${OPENSSL_CRYPTO_LIBRARY_RELEASE}
+    general $<$<PLATFORM_ID:Linux>:dl>)
 endif()
 
 find_package(BZip2 REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC BZip2::BZip2)
 
-find_package(LibLZMA REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
+#find_package(LibLZMA REQUIRED)
+#target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
+
+find_path(LZMA_INCLUDE_DIR lzma.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(LZMA_LIBRARY_DEBUG NAMES lzma
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(LZMA_LIBRARY_RELEASE NAMES lzma
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT LZMA_INCLUDE_DIR OR NOT LZMA_LIBRARY_DEBUG OR NOT LZMA_LIBRARY_RELEASE)
+  message(FATAL_ERROR "Could not find library: liblzma")
+endif()
+target_include_directories(${PROJECT_NAME} PUBLIC ${LZMA_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC debug ${LZMA_LIBRARY_DEBUG} optimized ${LZMA_LIBRARY_RELEASE})
 
 find_package(Freetype REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC Freetype::Freetype)
@@ -517,13 +688,17 @@ target_link_libraries(${PROJECT_NAME} PUBLIC TIFF::TIFF)
 find_package(ZLIB REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
 
-find_path(PODOFO_INCLUDE_DIR podofo/podofo.h)
-find_library(PODOFO_LIBRARY NAMES podofo)
-if(NOT PODOFO_INCLUDE_DIR OR NOT PODOFO_LIBRARY)
+find_path(PODOFO_INCLUDE_DIR podofo/podofo.h
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/include NO_DEFAULT_PATH)
+find_library(PODOFO_LIBRARY_DEBUG NAMES podofo
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/debug/lib NO_DEFAULT_PATH)
+find_library(PODOFO_LIBRARY_RELEASE NAMES podofo
+  PATHS ${_VCPKG_ROOT_DIR}/installed/${VCPKG_TARGET_TRIPLET}/lib NO_DEFAULT_PATH)
+if(NOT PODOFO_INCLUDE_DIR OR NOT PODOFO_LIBRARY_DEBUG OR NOT PODOFO_LIBRARY_RELEASE)
   message(FATAL_ERROR "Could not find library: podofo")
 endif()
 target_include_directories(${PROJECT_NAME} PUBLIC ${PODOFO_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${PODOFO_LIBRARY})
+target_link_libraries(${PROJECT_NAME} PUBLIC debug ${PODOFO_LIBRARY_DEBUG} optimized ${PODOFO_LIBRARY_RELEASE})
 ```
 
 </details>
