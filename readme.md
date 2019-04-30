@@ -31,12 +31,18 @@ Build Vcpkg.
 bootstrap-vcpkg -disableMetrics -win64
 ```
 
-Add compiler flags to the triplet file if necessary.
+<details>
+<summary>Alternative `x64-windows-native.cmake` triplet file.</summary>
 
 ```cmake
+set(VCPKG_TARGET_ARCHITECTURE x64)
+set(VCPKG_CRT_LINKAGE dynamic)
+set(VCPKG_LIBRARY_LINKAGE static)
 set(VCPKG_C_FLAGS "/arch:AVX2 /favor:INTEL64")
 set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64 /EHs-c- /GR- /D_HAS_EXCEPTIONS=0")
 ```
+
+</details>
 
 ## Linux
 Set up environment variables.
@@ -53,12 +59,19 @@ CC=gcc CXX=g++ bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries
 rm -rf vcpkg/toolsrc/build.rel
 ```
 
-Add compiler flags to the triplet file if necessary.
+<details>
+<summary>Alternative `x64-linux-native.cmake` triplet file.</summary>
 
 ```cmake
+set(VCPKG_TARGET_ARCHITECTURE x64)
+set(VCPKG_CRT_LINKAGE dynamic)
+set(VCPKG_LIBRARY_LINKAGE static)
 set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
 set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2 -fno-exceptions -fno-rtti")
+set(VCPKG_CMAKE_SYSTEM_NAME Linux)
 ```
+
+</details>
 
 [Instal a custom LLVM toolchain.](llvm/linux.md)
 
