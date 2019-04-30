@@ -89,7 +89,7 @@ vcpkg install openssl
 vcpkg install bzip2 liblzma libzip[bzip2,openssl] zlib
 
 # Utility
-vcpkg install cpr curl[core,openssl] date fmt nlohmann-json ragel utf8proc
+vcpkg install cpr curl[core,openssl] date fmt libssh2 nlohmann-json pugixml ragel utf8proc
 
 # Images
 vcpkg install giflib libjpeg-turbo libpng tiff
