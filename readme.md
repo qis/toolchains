@@ -32,7 +32,7 @@ bootstrap-vcpkg -disableMetrics -win64
 ```
 
 <details>
-<summary>Alternative `x64-windows-native.cmake` triplet file.</summary>
+<summary>Alternative <code>x64-windows-native.cmake</code> triplet file.</summary>
 
 ```cmake
 set(VCPKG_TARGET_ARCHITECTURE x64)
@@ -60,7 +60,7 @@ rm -rf vcpkg/toolsrc/build.rel
 ```
 
 <details>
-<summary>Alternative `x64-linux-native.cmake` triplet file.</summary>
+<summary>Alternative <code>x64-linux-native.cmake</code> triplet file.</summary>
 
 ```cmake
 set(VCPKG_TARGET_ARCHITECTURE x64)
