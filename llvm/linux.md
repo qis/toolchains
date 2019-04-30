@@ -1,7 +1,7 @@
 # LLVM
 How to instal a custom LLVM toolchain.
 
-NOTE: As of 2019-04-30 `libcxx` and `libcxxabi` are broken and has to be patched.
+As of 2019-04-30 `libcxx` and `libcxxabi` are broken and have to be patched.
 
 ```diff
 diff --git i/lib/CMakeLists.txt w/lib/CMakeLists.txt
