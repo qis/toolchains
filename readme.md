@@ -32,7 +32,8 @@ bootstrap-vcpkg -disableMetrics -win64
 ```
 
 <details>
-<summary>Alternative <code>x64-windows-native.cmake</code> triplet file.</summary>
+<summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file.</summary>
+Example for targeting specific CPUs and disabling exceptions and RTTI.
 
 ```cmake
 set(VCPKG_TARGET_ARCHITECTURE x64)
@@ -60,7 +61,8 @@ rm -rf vcpkg/toolsrc/build.rel
 ```
 
 <details>
-<summary>Alternative <code>x64-linux-native.cmake</code> triplet file.</summary>
+<summary>Modify the <code>triplets/x64-linux.cmake</code> triplet file.</summary>
+Example for targeting specific CPUs and disabling exceptions and RTTI.
 
 ```cmake
 set(VCPKG_TARGET_ARCHITECTURE x64)
