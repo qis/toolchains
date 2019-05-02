@@ -43,6 +43,9 @@ set(VCPKG_C_FLAGS "/arch:AVX2 /favor:INTEL64")
 set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64 /EHs-c- /GR- /D_HAS_EXCEPTIONS=0")
 ```
 
+Use [/d2FH4](https://devblogs.microsoft.com/cppblog/making-cpp-exception-handling-smaller-x64/)
+for faster exception handling.
+
 </details>
 
 ## Linux
