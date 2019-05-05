@@ -154,6 +154,9 @@ cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="/opt/llvm" \
 PATH="/opt/stage/bin:$PATH" \
 LD_LIBRARY_PATH="/opt/stage/lib:/opt/stage/lib/clang/9.0.0/lib/linux:$LD_LIBRARY_PATH" \
 cmake --build llvm/build --target install
+for i in libcxx libcxxabi compiler-rt libunwind lld; do
+  cp llvm/$i/LICENSE.TXT /opt/llvm/share/$i.license
+done
 
 # Install OpenMP.
 rm -rf llvm/build-openmp
@@ -170,9 +173,12 @@ cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="/opt/llvm" \
 PATH="/opt/llvm/bin:$PATH" \
 LD_LIBRARY_PATH="/opt/llvm/lib:/opt/llvm/lib/clang/9.0.0/lib/linux:$LD_LIBRARY_PATH" \
 cmake --build llvm/build-openmp --target install
+cp llvm/openmp/LICENSE.txt /opt/llvm/share/openmp.license
 
 # Install PSTL headers.
 cp -R llvm/pstl/include/pstl /opt/llvm/include/c++/v1/
+cp -R llvm/pstl/test/support/stdlib /opt/llvm/include/c++/v1/pstl/
+cp llvm/pstl/LICENSE.txt /opt/llvm/share/pstl.license
 
 # Install TBB.
 pushd tbb
@@ -184,13 +190,7 @@ make compiler=clang arch=intel64 stdver=c++17 cfg=release
 chmod 0644 build/*_release/lib*.so*
 cp -R build/*_release/lib*.so* /opt/llvm/lib/
 cp -R include/tbb /opt/llvm/include/c++/v1/
-tee /opt/llvm/include/c++/v1/execution <<'EOF'
-#pragma once
-#include "pstl/algorithm"
-#include "pstl/execution"
-#include "pstl/memory"
-#include "pstl/numeric"
-EOF
+cp LICENSE /opt/llvm/share/tbb.license
 popd
 
 # Create distribution.

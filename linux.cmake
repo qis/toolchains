@@ -42,4 +42,8 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
 
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${VCPKG_LINKER_FLAGS} -pthread" CACHE STRING "")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${VCPKG_LINKER_FLAGS} -pthread" CACHE STRING "")
+
+  add_definitions(-D_PSTL_PAR_BACKEND_TBB=1)
+  include_directories(BEFORE SYSTEM /opt/llvm/include/c++/v1/pstl/stdlib)
+  link_libraries(tbb tbbmalloc)
 endif()
