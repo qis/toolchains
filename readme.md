@@ -39,8 +39,18 @@ Example for targeting specific CPUs and disabling exceptions and RTTI.
 set(VCPKG_TARGET_ARCHITECTURE x64)
 set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
+
 set(VCPKG_C_FLAGS "/arch:AVX2 /favor:INTEL64")
 set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64 /EHs-c- /GR- /D_HAS_EXCEPTIONS=0")
+
+if(PORT STREQUAL "pugixml")
+  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DPUGIXML_NO_EXCEPTIONS=1")
+endif()
+
+if(PORT STREQUAL "ragel")
+  set(VCPKG_C_FLAGS "/arch:AVX2 /favor:INTEL64")
+  set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64")
+endif()
 ```
 
 Use [/d2FH4](https://devblogs.microsoft.com/cppblog/making-cpp-exception-handling-smaller-x64/)
@@ -71,9 +81,19 @@ Example for targeting specific CPUs and disabling exceptions and RTTI.
 set(VCPKG_TARGET_ARCHITECTURE x64)
 set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
+set(VCPKG_CMAKE_SYSTEM_NAME Linux)
+
 set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
 set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2 -fno-exceptions -fno-rtti")
-set(VCPKG_CMAKE_SYSTEM_NAME Linux)
+
+if(PORT STREQUAL "pugixml")
+  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DPUGIXML_NO_EXCEPTIONS=1")
+endif()
+
+if(PORT STREQUAL "ragel")
+  set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
+  set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2")
+endif()
 ```
 
 </details>
@@ -107,6 +127,7 @@ vcpkg install angle freetype harfbuzz[ucdn] podofo
 <!--
 ### Windows
 ```cmd
+rem General
 git clone git@github.com:xnetsystems/backward vcpkg/ports/backward && ^
 git clone git@github.com:xnetsystems/bcrypt vcpkg/ports/bcrypt && ^
 git clone git@github.com:xnetsystems/compat vcpkg/ports/compat && ^
@@ -123,10 +144,15 @@ vcpkg install ^
   giflib libjpeg-turbo libpng tiff ^
   angle freetype harfbuzz[ucdn] podofo ^
   bcrypt compat ice pdf sql http
+
+rem Minimal
+vcpkg install benchmark gtest bzip2 liblzma libzip[core,bzip2] zlib fmt pugixml ragel utf8proc ^
+  giflib libjpeg-turbo libpng tiff angle freetype harfbuzz[ucdn]
 ```
 
 ### Linux
 ```sh
+# General
 git clone git@github.com:xnetsystems/backward vcpkg/ports/backward && \
 git clone git@github.com:xnetsystems/bcrypt vcpkg/ports/bcrypt && \
 git clone git@github.com:xnetsystems/compat vcpkg/ports/compat && \
@@ -143,6 +169,10 @@ vcpkg install \
   giflib libjpeg-turbo libpng tiff \
   angle freetype harfbuzz[ucdn] podofo \
   backward bcrypt compat ice pdf sql http
+
+# Minimal
+vcpkg install benchmark gtest bzip2 liblzma libzip[core,bzip2] zlib fmt pugixml ragel utf8proc \
+  giflib libjpeg-turbo libpng tiff angle freetype harfbuzz[ucdn]
 ```
 -->
 
