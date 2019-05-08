@@ -43,13 +43,18 @@ set(VCPKG_LIBRARY_LINKAGE static)
 set(VCPKG_C_FLAGS "/arch:AVX2 /favor:INTEL64")
 set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64 /EHs-c- /GR- /D_HAS_EXCEPTIONS=0")
 
-if(PORT STREQUAL "pugixml")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DPUGIXML_NO_EXCEPTIONS=1")
-endif()
-
 if(PORT STREQUAL "ragel")
   set(VCPKG_C_FLAGS "/arch:AVX2 /favor:INTEL64")
   set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64")
+endif()
+
+if(PORT STREQUAL "harfbuzz")
+  set(VCPKG_C_FLAGS "${VCPKG_C_FLAGS} /DHB_NO_MT=1")
+  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DHB_NO_MT=1")
+endif()
+
+if(PORT STREQUAL "pugixml")
+  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DPUGIXML_NO_EXCEPTIONS=1")
 endif()
 ```
 
@@ -81,19 +86,25 @@ Example for targeting specific CPUs and disabling exceptions and RTTI.
 set(VCPKG_TARGET_ARCHITECTURE x64)
 set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
-set(VCPKG_CMAKE_SYSTEM_NAME Linux)
 
 set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
 set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2 -fno-exceptions -fno-rtti")
-
-if(PORT STREQUAL "pugixml")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DPUGIXML_NO_EXCEPTIONS=1")
-endif()
 
 if(PORT STREQUAL "ragel")
   set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
   set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2")
 endif()
+
+if(PORT STREQUAL "harfbuzz")
+  set(VCPKG_C_FLAGS "${VCPKG_C_FLAGS} -DHB_NO_MT=1")
+  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DHB_NO_MT=1")
+endif()
+
+if(PORT STREQUAL "pugixml")
+  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DPUGIXML_NO_EXCEPTIONS=1")
+endif()
+
+set(VCPKG_CMAKE_SYSTEM_NAME Linux)
 ```
 
 </details>
