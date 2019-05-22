@@ -7,7 +7,6 @@ git clone git@github.com:Microsoft/vcpkg
 cmake -E remove_directory vcpkg/scripts/toolchains
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
 curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/date/CMakeLists.txt -o vcpkg/ports/date/CMakeLists.txt
-curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/giflib/portfile.cmake -o vcpkg/ports/giflib/portfile.cmake
 ```
 
 Alternatively, create a symlink to the windows vcpkg directory in WSL.<br/>
