@@ -158,13 +158,13 @@ vcpkg install ^
   benchmark gtest ^
   openssl ^
   bzip2 liblzma libzip[bzip2,openssl] zlib ^
-  cpr curl[core,openssl] date fmt libssh2 nlohmann-json pugixml ragel utf8proc ^
+  cpr curl[core,openssl] date fmt libssh2 nlohmann-json pugixml ragel reproc tbb utf8proc ^
   giflib libjpeg-turbo libpng tiff ^
   angle freetype harfbuzz[ucdn] podofo ^
   bcrypt compat ice pdf sql http
 
 rem Minimal
-vcpkg install benchmark gtest bzip2 liblzma libzip[core,bzip2] zlib fmt pugixml ragel utf8proc ^
+vcpkg install benchmark gtest bzip2 liblzma libzip[core,bzip2] zlib fmt pugixml ragel tbb utf8proc ^
   giflib libjpeg-turbo libpng tiff angle freetype harfbuzz[ucdn]
 ```
 
@@ -183,7 +183,7 @@ vcpkg install \
   benchmark gtest \
   openssl \
   bzip2 liblzma libzip[bzip2,openssl] zlib \
-  cpr curl[core,openssl] date fmt libssh2 nlohmann-json pugixml ragel utf8proc \
+  cpr curl[core,openssl] date fmt libssh2 nlohmann-json pugixml ragel reproc utf8proc \
   giflib libjpeg-turbo libpng tiff \
   angle freetype harfbuzz[ucdn] podofo \
   backward bcrypt compat ice pdf sql http
