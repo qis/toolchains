@@ -47,6 +47,10 @@ if(PORT STREQUAL "ragel")
   set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64")
 endif()
 
+if(PORT STREQUAL "fmt")
+  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DFMT_EXCEPTIONS=0")
+endif()
+
 if(PORT STREQUAL "harfbuzz")
   set(VCPKG_C_FLAGS "${VCPKG_C_FLAGS} /DHB_NO_MT=1")
   set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DHB_NO_MT=1")
@@ -92,6 +96,10 @@ set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2 -fno-exceptions -fno-rtti")
 if(PORT STREQUAL "ragel")
   set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
   set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2")
+endif()
+
+if(PORT STREQUAL "fmt")
+  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DFMT_EXCEPTIONS=0")
 endif()
 
 if(PORT STREQUAL "harfbuzz")
