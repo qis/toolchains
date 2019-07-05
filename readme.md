@@ -90,8 +90,8 @@ set(VCPKG_TARGET_ARCHITECTURE x64)
 set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
 
-set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
-set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2 -fno-exceptions -fno-rtti")
+set(VCPKG_C_FLAGS "-march=broadwell -mavx2 -fno-unwind-tables -fno-asynchronous-unwind-tables")
+set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2 -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-exceptions -fno-rtti")
 
 if(PORT STREQUAL "ragel")
   set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
