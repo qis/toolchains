@@ -1,139 +1,164 @@
 # LLVM
-Set up a modern C++ toolchain on Ubuntu 18.04.
+Check out LLVM and TBB source code.
 
-## Toolchain
-Uninstall old toolchain.
+```cmd
+rem Enter workspace.
+cd C:\Workspace
 
-```sh
-sudo update-alternatives --remove-all cc
-sudo update-alternatives --remove-all c++
-sudo rm -f /etc/ld.so.conf.d/llvm.conf
-sudo rm -f /etc/ld.so.conf.d/tbb.conf
-sudo ldconfig
-rm -rf /opt/llvm
-```
+rem Check out LLVM source code.
+git clone --depth 1 https://github.com/llvm/llvm-project llvm
 
-Install new toolchain.
-
-```sh
-rm -rf /opt/llvm; mkdir /opt/llvm
-wget https://prereleases.llvm.org/9.0.0/rc1/clang+llvm-9.0.0-rc1-x86_64-linux-gnu-ubuntu-18.04.tar.xz
-tar xf clang+llvm-9.0.0-rc1-x86_64-linux-gnu-ubuntu-18.04.tar.xz -C /opt/llvm --strip-components 1
-sudo update-alternatives --install /usr/bin/cc cc /opt/llvm/bin/clang 100
-sudo update-alternatives --install /usr/bin/c++ c++ /opt/llvm/bin/clang++ 100
-
-sudo tee /etc/ld.so.conf.d/llvm.conf <<'EOF'
-/opt/llvm/lib
-/opt/llvm/lib/clang/9.0.0/lib/linux
-EOF
-
-sudo ldconfig
-```
-
-## TBB
-Check out source code.
-
-```sh
+rem Check out TBB source code.
 git clone -b tbb_2019 --depth 1 https://github.com/01org/tbb tbb
 ```
 
-Apply this patch if you want to remove the version number suffix from libraries.
-
-```diff
-diff --git i/build/Makefile.tbb w/build/Makefile.tbb
-index 63ee6eb..ea965cf 100644
---- i/build/Makefile.tbb
-+++ w/build/Makefile.tbb
-@@ -102,10 +102,6 @@ $(TBB.DLL): BUILDING_LIBRARY = $(TBB.DLL)
- $(TBB.DLL): $(TBB.OBJ) $(TBB.RES) tbbvars.sh $(TBB_NO_VERSION.DLL)
-        $(LIB_LINK_CMD) $(LIB_OUTPUT_KEY)$(TBB.DLL) $(TBB.OBJ) $(TBB.RES) $(LIB_LINK_LIBS) $(LIB_LINK_FLAGS)
- 
--ifneq (,$(TBB_NO_VERSION.DLL))
--$(TBB_NO_VERSION.DLL):
--       echo "INPUT ($(TBB.DLL))" > $(TBB_NO_VERSION.DLL)
--endif
- 
- #clean:
- #      $(RM) *.$(OBJ) *.$(DLL) *.res *.map *.ilk *.pdb *.exp *.manifest *.tmp *.d core core.*[0-9][0-9] *.ver
-diff --git i/build/Makefile.tbbmalloc w/build/Makefile.tbbmalloc
-index 421e95c..5037bfa 100644
---- i/build/Makefile.tbbmalloc
-+++ w/build/Makefile.tbbmalloc
-@@ -98,15 +98,6 @@ $(MALLOCPROXY.DLL): $(PROXY.OBJ) $(MALLOCPROXY_NO_VERSION.DLL) $(MALLOC.DLL) $(M
-        $(LIB_LINK_CMD) $(LIB_OUTPUT_KEY)$(MALLOCPROXY.DLL) $(PROXY.OBJ) $(MALLOC.RES) $(LIB_LINK_LIBS) $(LINK_MALLOC.LIB) $(PROXY_LINK_FLAGS)
- endif
- 
--ifneq (,$(MALLOC_NO_VERSION.DLL))
--$(MALLOC_NO_VERSION.DLL):
--       echo "INPUT ($(MALLOC.DLL))" > $(MALLOC_NO_VERSION.DLL)
--endif
--
--ifneq (,$(MALLOCPROXY_NO_VERSION.DLL))
--$(MALLOCPROXY_NO_VERSION.DLL):
--       echo "INPUT ($(MALLOCPROXY.DLL))" > $(MALLOCPROXY_NO_VERSION.DLL)
--endif
- 
- malloc: $(MALLOC.DLL) $(MALLOCPROXY.DLL)
-
-diff --git i/build/linux.inc w/build/linux.inc
-index 4d59aaa..e94f18d 100644
---- i/build/linux.inc
-+++ w/build/linux.inc
-@@ -111,20 +111,20 @@ endif
- TBB.LST = $(tbb_root)/src/tbb/$(def_prefix)-tbb-export.lst
- TBB.DEF = $(TBB.LST:.lst=.def)
- 
--TBB.DLL = $(TBB_NO_VERSION.DLL).$(SONAME_SUFFIX)
-+TBB.DLL = $(TBB_NO_VERSION.DLL)
- TBB.LIB = $(TBB.DLL)
- TBB_NO_VERSION.DLL=libtbb$(CPF_SUFFIX)$(DEBUG_SUFFIX).$(DLL)
- LINK_TBB.LIB = $(TBB_NO_VERSION.DLL)
- 
- MALLOC_NO_VERSION.DLL = libtbbmalloc$(DEBUG_SUFFIX).$(MALLOC_DLL)
- MALLOC.DEF = $(MALLOC_ROOT)/$(def_prefix)-tbbmalloc-export.def
--MALLOC.DLL = $(MALLOC_NO_VERSION.DLL).$(SONAME_SUFFIX)
-+MALLOC.DLL = $(MALLOC_NO_VERSION.DLL)
- MALLOC.LIB = $(MALLOC_NO_VERSION.DLL)
- LINK_MALLOC.LIB = $(MALLOC_NO_VERSION.DLL)
- 
- MALLOCPROXY_NO_VERSION.DLL = libtbbmalloc_proxy$(DEBUG_SUFFIX).$(DLL)
- MALLOCPROXY.DEF = $(MALLOC_ROOT)/$(def_prefix)-proxy-export.def
--MALLOCPROXY.DLL = $(MALLOCPROXY_NO_VERSION.DLL).$(SONAME_SUFFIX)
-+MALLOCPROXY.DLL = $(MALLOCPROXY_NO_VERSION.DLL)
- MALLOCPROXY.LIB = $(MALLOCPROXY_NO_VERSION.DLL)
- LINK_MALLOCPROXY.LIB = $(MALLOCPROXY.LIB)
- 
-```
-
-Install TBB.
+Install LLVM.
 
 ```sh
-pushd tbb
-rm -rf build/*_release
-AR="llvm-ar" RANLIB="llvm-ranlib" CC="clang" CXX="clang++" LDFLAGS="-fuse-ld=ld -Wl,-S" \
-make compiler=clang arch=intel64 stdver=c++17 cfg=release
-cp -R build/*_release/libtbb*.so* /opt/llvm/lib/
-cp -R include/tbb /opt/llvm/include/c++/v1/
-chmod 0644 /opt/llvm/lib/libtbb*.so*
-popd
-```
+# Install dependencies.
+sudo apt install build-essential binutils-dev libedit-dev libelf-dev libffi-dev nasm python
 
-## Parallel STL
-Install Parallel STL headers.
-
-```sh
-git clone --depth 1 https://git.llvm.org/git/pstl
-cp -R pstl/include/pstl /opt/llvm/include/c++/v1/
-cp -R pstl/test/support/stdlib /opt/llvm/include/c++/v1/pstl/
-
-tee /opt/llvm/include/c++/v1/pstl/stdlib/__pstl_config_site <<'EOF'
-#pragma once
-#define _PSTL_PAR_BACKEND_TBB 1
-EOF
-
-sudo tee /etc/ld.so.conf.d/ldd.conf <<'EOF'
-/opt/llvm/lib
-EOF
-
+# Unregister old toolchain.
+sudo update-alternatives --remove-all cc
+sudo update-alternatives --remove-all c++
+sudo rm -f /etc/ld.so.conf.d/llvm.conf
 sudo ldconfig
+
+# Uninstall old toolchain.
+rm -rf /opt/llvm
+
+# Enter workspace.
+cd /mnt/c/Workspace
+
+# Stage LLVM.
+rm -rf llvm-stage
+LDFLAGS="-Wl,-S" \
+cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_INSTALL_PREFIX="/opt/llvm" \
+  -DLLVM_ENABLE_PROJECTS="lld;clang;clang-tools-extra;compiler-rt;libunwind;libcxxabi;libcxx" \
+  -DLLVM_TARGETS_TO_BUILD="X86" \
+  -DLLVM_ENABLE_UNWIND_TABLES=OFF \
+  -DLLVM_ENABLE_WARNINGS=OFF \
+  -DLLVM_INCLUDE_BENCHMARKS=OFF \
+  -DLLVM_INCLUDE_EXAMPLES=OFF \
+  -DLLVM_INCLUDE_TESTS=OFF \
+  -DLLVM_INCLUDE_DOCS=OFF \
+  -DLLVM_INSTALL_TOOLCHAIN_ONLY=ON \
+  -DCLANG_DEFAULT_STD_C="c99" \
+  -DCLANG_DEFAULT_STD_CXX="cxx2a" \
+  -DCLANG_DEFAULT_CXX_STDLIB="libc++" \
+  -DCLANG_DEFAULT_UNWINDLIB="libunwind" \
+  -DCLANG_DEFAULT_RTLIB="compiler-rt" \
+  -DCLANG_DEFAULT_LINKER="lld" \
+  -DCOMPILER_RT_BUILD_LIBFUZZER=OFF \
+  -DCOMPILER_RT_BUILD_PROFILE=OFF \
+  -DCOMPILER_RT_BUILD_SANITIZERS=OFF \
+  -DCOMPILER_RT_BUILD_XRAY=OFF \
+  -DCOMPILER_RT_INCLUDE_TESTS=OFF \
+  -DLIBUNWIND_ENABLE_SHARED=ON \
+  -DLIBUNWIND_ENABLE_STATIC=OFF \
+  -DLIBUNWIND_USE_COMPILER_RT=ON \
+  -DLIBCXXABI_ENABLE_SHARED=ON \
+  -DLIBCXXABI_ENABLE_STATIC=OFF \
+  -DLIBCXXABI_USE_COMPILER_RT=ON \
+  -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
+  -DLIBCXX_ENABLE_SHARED=ON \
+  -DLIBCXX_ENABLE_STATIC=OFF \
+  -DLIBCXX_INCLUDE_BENCHMARKS=OFF \
+  -DLIBCXX_USE_COMPILER_RT=ON \
+  -B llvm-stage llvm/llvm
+cmake --build llvm-stage -t \
+  install-{clang,clang-format,clang-resource-headers,lld,llvm-{ar,nm,objcopy,objdump,ranlib,rc},LTO}-stripped \
+  install-{compiler-rt,compiler-rt-headers,unwind,cxxabi,cxx}-stripped tools/llvm-config/install/strip \
+  utils/FileCheck/install/strip
+
+# Register toolchain.
+sudo update-alternatives --install /usr/bin/cc cc /opt/llvm/bin/clang 100
+sudo update-alternatives --install /usr/bin/c++ c++ /opt/llvm/bin/clang++ 100
+sudo tee /etc/ld.so.conf.d/llvm.conf <<'EOF'
+/opt/llvm/lib
+/opt/llvm/lib/clang/10.0.0/lib/linux
+EOF
+sudo ldconfig
+
+# Add toolchain to path.
+export PATH="/opt/llvm/bin:$PATH"
+
+# Install TBB.
+pushd tbb
+rm -rf build/*_{debug,release}
+CC="clang -flto=thin" CXX="clang++ -flto=thin" AR="llvm-ar" RANLIB="llvm-ranlib" LDFLAGS="-Wl,-S -rtlib=compiler-rt" \
+make compiler=clang arch=intel64 stdver=c++2a stdlib=libc++ cfg=debug,release
+cp -R include/tbb /opt/llvm/include/
+cp -R build/*_release/libtbb*.so* /opt/llvm/lib/
+cp -R build/*_debug/libtbb*.so* /opt/llvm/lib/
+chmod 0644 /opt/llvm/lib/libtbb*.so*
+cmake -DINSTALL_DIR=/opt/llvm/lib/cmake/TBB -DSYSTEM_NAME=Linux \
+  -DTBB_VERSION_FILE=/opt/llvm/include/tbb/tbb_stddef.h \
+  -DINC_REL_PATH=../../../include/ \
+  -DLIB_REL_PATH=../.. \
+  -P cmake/tbb_config_installer.cmake
+popd
+
+# Install OpenMP.
+rm -rf llvm-openmp
+CC="clang" CXX="clang++" AR="llvm-ar" RANLIB="llvm-ranlib" CPPFLAGS="-flto=thin" LDFLAGS="-Wl,-S -rtlib=compiler-rt" \
+cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="/opt/llvm" \
+  -DOPENMP_LLVM_TOOLS_DIR=llvm-stage/bin \
+  -B llvm-openmp llvm/openmp
+cmake --build llvm-openmp -t install/strip
+
+# Reinstall LLVM.
+rm -rf llvm-build
+CC="clang" CXX="clang++" AR="llvm-ar" RANLIB="llvm-ranlib" CPPFLAGS="-flto=thin" LDFLAGS="-Wl,-S -rtlib=compiler-rt" \
+cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="/opt/llvm" \
+  -DLLVM_ENABLE_PROJECTS="lld;clang;clang-tools-extra;compiler-rt;libunwind;libcxxabi;libcxx;pstl" \
+  -DLLVM_TARGETS_TO_BUILD="X86" \
+  -DLLVM_ENABLE_UNWIND_TABLES=OFF \
+  -DLLVM_ENABLE_WARNINGS=OFF \
+  -DLLVM_INCLUDE_BENCHMARKS=OFF \
+  -DLLVM_INCLUDE_EXAMPLES=OFF \
+  -DLLVM_INCLUDE_TESTS=OFF \
+  -DLLVM_INCLUDE_DOCS=OFF \
+  -DLLVM_ENABLE_LTO=Thin \
+  -DLLVM_INSTALL_TOOLCHAIN_ONLY=ON \
+  -DCLANG_DEFAULT_STD_C="c99" \
+  -DCLANG_DEFAULT_STD_CXX="cxx2a" \
+  -DCLANG_DEFAULT_CXX_STDLIB="libc++" \
+  -DCLANG_DEFAULT_UNWINDLIB="libunwind" \
+  -DCLANG_DEFAULT_RTLIB="compiler-rt" \
+  -DCLANG_DEFAULT_LINKER="lld" \
+  -DCOMPILER_RT_BUILD_LIBFUZZER=OFF \
+  -DCOMPILER_RT_BUILD_PROFILE=OFF \
+  -DCOMPILER_RT_BUILD_SANITIZERS=OFF \
+  -DCOMPILER_RT_BUILD_XRAY=OFF \
+  -DCOMPILER_RT_INCLUDE_TESTS=OFF \
+  -DLIBUNWIND_ENABLE_SHARED=ON \
+  -DLIBUNWIND_ENABLE_STATIC=OFF \
+  -DLIBUNWIND_USE_COMPILER_RT=ON \
+  -DLIBCXXABI_ENABLE_SHARED=ON \
+  -DLIBCXXABI_ENABLE_STATIC=OFF \
+  -DLIBCXXABI_USE_COMPILER_RT=ON \
+  -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
+  -DLIBCXX_ENABLE_SHARED=ON \
+  -DLIBCXX_ENABLE_STATIC=OFF \
+  -DLIBCXX_ENABLE_PARALLEL_ALGORITHMS=ON \
+  -DLIBCXX_INCLUDE_BENCHMARKS=OFF \
+  -DLIBCXX_USE_COMPILER_RT=ON \
+  -DPSTL_PARALLEL_BACKEND="tbb" \
+  -B llvm-build llvm/llvm
+cmake --build llvm-build -t install-{unwind,cxxabi}-stripped \
+  install-cxx-headers projects/libcxx/install/strip install-pstl
+
+# Update registered toolchain.
+sudo ldconfig
+```
+
+Remove build directories and create archive.
+
+```sh
+# Remove build directories.
+rm -rf llvm-{stage,build,openmp} tbb/build/*_{debug,release}
+
+# Create archive.
+tar czf llvm-10.0.0-$(git --git-dir=llvm/.git rev-parse --short HEAD).tar.gz -C /opt llvm
 ```
