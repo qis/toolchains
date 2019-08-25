@@ -148,6 +148,7 @@ vcpkg install benchmark gtest openssl ^
   fmt nlohmann-json pugixml ragel reproc utf8proc ^
   giflib libjpeg-turbo libpng tiff ^
   freetype harfbuzz[ucdn]
+vcpkg install date
 ```
 
 ### Linux
@@ -173,6 +174,7 @@ vcpkg install benchmark gtest \
 vcpkg install benchmark gtest openssl \
   bzip2 liblzma libzip[bzip2,openssl] zlib \
   fmt nlohmann-json pugixml ragel reproc utf8proc boost
+vcpkg install date
 ```
 
 ## Usage
