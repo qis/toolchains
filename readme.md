@@ -90,26 +90,8 @@ set(VCPKG_TARGET_ARCHITECTURE x64)
 set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
 
-set(VCPKG_C_FLAGS "-march=broadwell -mavx2 -fno-unwind-tables -fno-asynchronous-unwind-tables")
-set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2 -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-exceptions -fno-rtti")
-
-if(PORT STREQUAL "ragel")
-  set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
-  set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2")
-endif()
-
-if(PORT STREQUAL "fmt")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DFMT_EXCEPTIONS=0")
-endif()
-
-if(PORT STREQUAL "harfbuzz")
-  set(VCPKG_C_FLAGS "${VCPKG_C_FLAGS} -DHB_NO_MT=1")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DHB_NO_MT=1")
-endif()
-
-if(PORT STREQUAL "pugixml")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DPUGIXML_NO_EXCEPTIONS=1")
-endif()
+set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
+set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2")
 
 set(VCPKG_CMAKE_SYSTEM_NAME Linux)
 ```
@@ -132,14 +114,16 @@ vcpkg install openssl
 vcpkg install bzip2 liblzma libzip[bzip2,openssl] zlib
 
 # Utility
-vcpkg install cpr curl[core,openssl] date fmt libssh2 nlohmann-json pugixml ragel utf8proc
+vcpkg install date fmt nlohmann-json pugixml ragel reproc utf8proc
 
-# Images
+# Boost (Linux)
+vcpkg install boost
+
+# Images (Windows)
 vcpkg install giflib libjpeg-turbo libpng tiff
 
-# Graphics
-# apt install libx11-dev mesa-common-dev
-vcpkg install angle freetype harfbuzz[ucdn] podofo
+# Graphics (Windows)
+vcpkg install freetype harfbuzz[ucdn]
 ```
 
 <!--
@@ -160,8 +144,11 @@ vcpkg install benchmark gtest ^
   bcrypt boost
 
 rem Minimal
-vcpkg install benchmark gtest bzip2 liblzma libzip[core,bzip2] zlib fmt pugixml ragel tbb utf8proc ^
-  giflib libjpeg-turbo libpng tiff angle freetype harfbuzz[ucdn]
+vcpkg install benchmark gtest openssl ^
+  bzip2 liblzma libzip[bzip2,openssl] zlib ^
+  date fmt nlohmann-json pugixml ragel reproc utf8proc ^
+  giflib libjpeg-turbo libpng tiff ^
+  freetype harfbuzz[ucdn]
 ```
 
 ### Linux
@@ -181,10 +168,10 @@ vcpkg install benchmark gtest \
   giflib libjpeg-turbo libpng tiff podofo backward bcrypt compat ice pdf sql http
 
 # Minimal
-vcpkg install benchmark gtest bzip2 liblzma libzip[core,bzip2] zlib fmt pugixml ragel utf8proc \
-  giflib libjpeg-turbo libpng tiff angle freetype harfbuzz[ucdn]
+vcpkg install benchmark gtest openssl \
+  bzip2 liblzma libzip[bzip2,openssl] zlib \
+  date fmt nlohmann-json pugixml ragel reproc utf8proc boost
 ```
--->
 
 ## Usage
 CMake 3.14.0 snippets for all libraries.
@@ -769,3 +756,4 @@ the [vcpkg-test](https://github.com/qis/vcpkg-test) project.
 git clone git@github.com:qis/vcpkg-test
 cd vcpkg-test && make ports test
 ```
+-->
