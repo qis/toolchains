@@ -6,7 +6,6 @@ cd C:/Workspace || cd /opt
 git clone git@github.com:Microsoft/vcpkg
 cmake -E remove_directory vcpkg/scripts/toolchains
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
-curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/date/CMakeLists.txt -o vcpkg/ports/date/CMakeLists.txt
 ```
 
 Alternatively, create a symlink to the windows vcpkg directory in WSL.<br/>
@@ -114,7 +113,7 @@ vcpkg install openssl
 vcpkg install bzip2 liblzma libzip[bzip2,openssl] zlib
 
 # Utility
-vcpkg install date fmt nlohmann-json pugixml ragel reproc utf8proc
+vcpkg install fmt nlohmann-json pugixml ragel reproc utf8proc
 
 # Boost (Linux)
 vcpkg install boost
@@ -140,19 +139,22 @@ git clone git:libraries/http vcpkg/ports/http
 
 vcpkg install benchmark gtest ^
   openssl bzip2 liblzma libzip[bzip2,openssl] zlib ^
-  cpr curl[core,openssl] date fmt libssh2 nlohmann-json pugixml ragel reproc tbb utf8proc ^
+  cpr curl[core,openssl] fmt libssh2 nlohmann-json pugixml ragel reproc tbb utf8proc ^
   bcrypt boost
 
 rem Minimal
 vcpkg install benchmark gtest openssl ^
   bzip2 liblzma libzip[bzip2,openssl] zlib ^
-  date fmt nlohmann-json pugixml ragel reproc utf8proc ^
+  fmt nlohmann-json pugixml ragel reproc utf8proc ^
   giflib libjpeg-turbo libpng tiff ^
   freetype harfbuzz[ucdn]
 ```
 
 ### Linux
 ```sh
+# Fix date.
+curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/date/CMakeLists.txt -o vcpkg/ports/date/CMakeLists.txt
+
 # General
 git clone git@github.com:xnetsystems/backward vcpkg/ports/backward && \
 git clone git@github.com:xnetsystems/bcrypt vcpkg/ports/bcrypt && \
@@ -164,13 +166,13 @@ git clone git:libraries/http vcpkg/ports/http
 
 vcpkg install benchmark gtest \
   openssl bzip2 liblzma libzip[bzip2,openssl] zlib \
-  cpr curl[core,openssl] date fmt nlohmann-json pugixml ragel reproc utf8proc \
+  cpr curl[core,openssl] fmt nlohmann-json pugixml ragel reproc utf8proc \
   giflib libjpeg-turbo libpng tiff podofo backward bcrypt compat ice pdf sql http
 
 # Minimal
 vcpkg install benchmark gtest openssl \
   bzip2 liblzma libzip[bzip2,openssl] zlib \
-  date fmt nlohmann-json pugixml ragel reproc utf8proc boost
+  fmt nlohmann-json pugixml ragel reproc utf8proc boost
 ```
 
 ## Usage
@@ -446,16 +448,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC debug ${CURL_LIBRARY_DEBUG} optimiz
 
 find_package(ZLIB REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC ZLIB::ZLIB)
-```
-
-</details>
-
-<details>
-<summary>date</summary>
-
-```cmake
-find_package(unofficial-date CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC unofficial::date::date unofficial::date::tz)
 ```
 
 </details>
