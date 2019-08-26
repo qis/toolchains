@@ -27,7 +27,7 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
   set(CMAKE_CXX_COMPILER "clang++" CACHE STRING "")
 
   set(CLANG_FLAGS "-fasm -fPIC -fdiagnostics-absolute-paths -fcolor-diagnostics")
-  set(CLANG_FLAGS "${CLANG_FLAGS} -D_DEFAULT_SOURCE=1 -I/opt/llvm/include")
+  set(CLANG_FLAGS "${CLANG_FLAGS} -D_DEFAULT_SOURCE=1")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${VCPKG_C_FLAGS} ${CLANG_FLAGS}" CACHE STRING "")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VCPKG_CXX_FLAGS} ${CLANG_FLAGS} -fcoroutines-ts" CACHE STRING "")
@@ -44,6 +44,5 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${VCPKG_LINKER_FLAGS} -pthread" CACHE STRING "")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${VCPKG_LINKER_FLAGS} -pthread" CACHE STRING "")
 
-  include_directories(/opt/llvm/include)
   link_libraries(tbb)
 endif()
