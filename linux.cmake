@@ -20,11 +20,11 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
   set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE STRING "")
   set(CMAKE_CXX_EXTENSIONS OFF CACHE STRING "")
 
-  set(CMAKE_AR "llvm-ar" CACHE STRING "")
-  set(CMAKE_RANLIB "llvm-ranlib" CACHE STRING "")
+  set(CMAKE_AR "/opt/llvm/bin/llvm-ar" CACHE STRING "")
+  set(CMAKE_RANLIB "/opt/llvm/bin/llvm-ranlib" CACHE STRING "")
 
-  set(CMAKE_C_COMPILER "clang" CACHE STRING "")
-  set(CMAKE_CXX_COMPILER "clang++" CACHE STRING "")
+  set(CMAKE_C_COMPILER "/opt/llvm/bin/clang" CACHE STRING "")
+  set(CMAKE_CXX_COMPILER "/opt/llvm/bin/clang++" CACHE STRING "")
 
   set(CLANG_FLAGS "-fasm -fPIC -fdiagnostics-absolute-paths -fcolor-diagnostics")
   set(CLANG_FLAGS "${CLANG_FLAGS} -D_DEFAULT_SOURCE=1")
