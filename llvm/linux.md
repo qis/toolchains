@@ -149,6 +149,9 @@ cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="/opt/llvm" \
 cmake --build llvm-build -t install-{unwind,cxxabi}-stripped \
   install-cxx-headers projects/libcxx/install/strip install-pstl
 
+# Move OpenMP and ParallelSTL headers to the default C++ include path.
+mv /opt/llvm/include/{pstl,tbb,__pstl*,omp*} /opt/llvm/include/c++/v1/
+
 # Update registered toolchain.
 sudo ldconfig
 ```
