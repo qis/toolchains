@@ -163,5 +163,5 @@ Remove build directories and create archive.
 rm -rf llvm-{stage,build,openmp} tbb/build/*_{debug,release}
 
 # Create archive.
-tar czf llvm-10.0.0-$(git --git-dir=llvm/.git rev-parse --short HEAD).tar.gz -C /opt llvm
+tar czf llvm-10.0.0-$(git --git-dir=llvm/.git rev-parse --short=7 HEAD).tar.gz -C /opt llvm
 ```
