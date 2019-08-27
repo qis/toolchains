@@ -145,7 +145,7 @@ vcpkg install benchmark gtest ^
 rem Minimal
 vcpkg install benchmark gtest openssl ^
   bzip2 liblzma libzip[bzip2,openssl] zlib ^
-  date fmt nlohmann-json pugixml ragel reproc utf8proc ^
+  date fmt nlohmann-json pugixml ragel reproc tbb utf8proc ^
   giflib libjpeg-turbo libpng tiff ^
   freetype harfbuzz[ucdn]
 ```
