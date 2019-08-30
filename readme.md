@@ -7,6 +7,12 @@ git clone git@github.com:Microsoft/vcpkg
 cmake -E remove_directory vcpkg/scripts/toolchains
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
 curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/date/CMakeLists.txt -o vcpkg/ports/date/CMakeLists.txt
+
+Download Strawberry Perl in WSL.
+
+```sh
+wget -P /mnt/c/Workspace/vcpkg/downloads \
+  "$(grep strawberryperl.com /mnt/c/Workspace/vcpkg/scripts/cmake/vcpkg_find_acquire_program.cmake | cut -d\" -f2)"
 ```
 
 ## Windows
