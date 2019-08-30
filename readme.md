@@ -12,7 +12,7 @@ curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/date/CMakeLists.
 Download Strawberry Perl in WSL.
 
 ```sh
-wget -P /mnt/c/Workspace/vcpkg/downloads \
+wget --continue --directory-prefix=/mnt/c/Workspace/vcpkg/downloads \
   "$(grep strawberryperl.com /mnt/c/Workspace/vcpkg/scripts/cmake/vcpkg_find_acquire_program.cmake | cut -d\" -f2)"
 ```
 
