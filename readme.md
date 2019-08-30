@@ -6,13 +6,7 @@ cd C:/Workspace || cd /opt
 git clone git@github.com:Microsoft/vcpkg
 cmake -E remove_directory vcpkg/scripts/toolchains
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
-```
-
-Alternatively, create a symlink to the windows vcpkg directory in WSL.<br/>
-**NOTE**: Do not execute `vcpkg` on Windows and in WSL at the same time.
-
-```sh
-ln -s /mnt/c/Workspace/vcpkg /opt/vcpkg
+curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/date/CMakeLists.txt -o vcpkg/ports/date/CMakeLists.txt
 ```
 
 ## Windows
@@ -27,6 +21,7 @@ Build Vcpkg.
 
 ```cmd
 bootstrap-vcpkg -disableMetrics -win64
+vcpkg integrate install
 ```
 
 <details>
@@ -60,9 +55,8 @@ if(PORT STREQUAL "pugixml")
 endif()
 ```
 
-Use [/d2FH4](https://devblogs.microsoft.com/cppblog/making-cpp-exception-handling-smaller-x64/)
+NOTE: Use [/d2FH4](https://devblogs.microsoft.com/cppblog/making-cpp-exception-handling-smaller-x64/)
 for faster exception handling.
-
 </details>
 
 ## Linux
@@ -94,7 +88,6 @@ set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2")
 
 set(VCPKG_CMAKE_SYSTEM_NAME Linux)
 ```
-
 </details>
 
 [Instal a custom LLVM toolchain.](llvm/linux.md)
@@ -113,22 +106,21 @@ vcpkg install openssl
 vcpkg install bzip2 liblzma libzip[bzip2,openssl] zlib
 
 # Utility
-vcpkg install fmt nlohmann-json pugixml ragel reproc utf8proc
+vcpkg install date fmt libssh2 nlohmann-json pugixml ragel reproc tbb utf8proc
 
-# Boost (Linux)
-vcpkg install boost
-
-# Images (Windows)
+# Images
 vcpkg install giflib libjpeg-turbo libpng tiff
 
-# Graphics (Windows)
+# Fonts
 vcpkg install freetype harfbuzz[ucdn]
+
+# Boost
+vcpkg install boost
 ```
 
 <!--
 ### Windows
 ```cmd
-rem General
 git clone git@github.com:xnetsystems/backward vcpkg/ports/backward && ^
 git clone git@github.com:xnetsystems/bcrypt vcpkg/ports/bcrypt && ^
 git clone git@github.com:xnetsystems/compat vcpkg/ports/compat && ^
@@ -139,23 +131,15 @@ git clone git:libraries/http vcpkg/ports/http
 
 vcpkg install benchmark gtest ^
   openssl bzip2 liblzma libzip[bzip2,openssl] zlib ^
-  cpr curl[core,openssl] fmt libssh2 nlohmann-json pugixml ragel reproc tbb utf8proc ^
-  bcrypt boost
-
-rem Minimal
-vcpkg install benchmark gtest openssl ^
-  bzip2 liblzma libzip[bzip2,openssl] zlib ^
-  date fmt nlohmann-json pugixml ragel reproc tbb utf8proc ^
+  date fmt libssh2 nlohmann-json pugixml ragel reproc tbb utf8proc ^
   giflib libjpeg-turbo libpng tiff ^
-  freetype harfbuzz[ucdn]
+  freetype harfbuzz[ucdn] ^
+  bcrypt ice pdf sql http ^
+  boost
 ```
 
 ### Linux
 ```sh
-# Fix date.
-curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/date/CMakeLists.txt -o vcpkg/ports/date/CMakeLists.txt
-
-# General
 git clone git@github.com:xnetsystems/backward vcpkg/ports/backward && \
 git clone git@github.com:xnetsystems/bcrypt vcpkg/ports/bcrypt && \
 git clone git@github.com:xnetsystems/compat vcpkg/ports/compat && \
@@ -166,13 +150,11 @@ git clone git:libraries/http vcpkg/ports/http
 
 vcpkg install benchmark gtest \
   openssl bzip2 liblzma libzip[bzip2,openssl] zlib \
-  cpr curl[core,openssl] fmt nlohmann-json pugixml ragel reproc utf8proc \
-  giflib libjpeg-turbo libpng tiff podofo backward bcrypt compat ice pdf sql http
-
-# Minimal
-vcpkg install benchmark gtest openssl \
-  bzip2 liblzma libzip[bzip2,openssl] zlib \
-  date fmt nlohmann-json pugixml ragel reproc utf8proc boost
+  date fmt libssh2 nlohmann-json pugixml ragel reproc tbb utf8proc \
+  giflib libjpeg-turbo libpng tiff \
+  freetype harfbuzz[ucdn] \
+  bcrypt ice pdf sql http \
+  boost
 ```
 
 ## Usage
