@@ -157,7 +157,7 @@ git clone git:libraries/http vcpkg/ports/http
 
 vcpkg install benchmark gtest \
   openssl bzip2 liblzma libzip[bzip2,openssl] zlib \
-  date fmt libssh2 nlohmann-json pugixml ragel reproc tbb utf8proc \
+  date fmt libssh2 nlohmann-json pugixml ragel reproc utf8proc \
   giflib libjpeg-turbo libpng tiff \
   freetype harfbuzz[ucdn] \
   bcrypt ice pdf sql http \
