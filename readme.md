@@ -1,12 +1,23 @@
 # Toolchains
 Custom [vcpkg](https://github.com/Microsoft/vcpkg) toolchains.
 
+<!--
 ```sh
 cd C:/Workspace || cd /opt
 git clone git@github.com:Microsoft/vcpkg
 cmake -E remove_directory vcpkg/scripts/toolchains
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
 curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/date/CMakeLists.txt -o vcpkg/ports/date/CMakeLists.txt
+```
+-->
+
+```sh
+cd C:/Workspace || cd /opt
+git clone -b dev/roschuma/boost git@github.com:ras0219-msft/vcpkg
+cmake -E remove_directory vcpkg/scripts/toolchains
+git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
+cmake -E remove_directory vcpkg/ports/date
+git clone git@github.com:qis/date-port vcpkg/ports/date
 ```
 
 Download Strawberry Perl in WSL.
@@ -15,6 +26,9 @@ Download Strawberry Perl in WSL.
 wget --continue --directory-prefix=/mnt/c/Workspace/vcpkg/downloads \
   "$(grep strawberryperl.com /mnt/c/Workspace/vcpkg/scripts/cmake/vcpkg_find_acquire_program.cmake | cut -d\" -f2)"
 ```
+
+You can create a symlink from `/mnt/c/Workspace/vcpkg` to `/opt/vcpkg` to improve compilation times, but you
+won't be able to use `vcpkg upgrade` or install ports in Windows and WSL at the same time.
 
 ## Windows
 Set up environment variables.
@@ -78,7 +92,7 @@ Build Vcpkg.
 
 ```sh
 CC=gcc CXX=g++ bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries
-rm -rf vcpkg/toolsrc/build.rel
+rm -rf /opt/vcpkg/toolsrc/build.rel
 ```
 
 <details>
