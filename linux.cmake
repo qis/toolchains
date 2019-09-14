@@ -28,7 +28,7 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
 
   set(LLVM_COMMON "-fasm -fPIC -fdiagnostics-absolute-paths -fcolor-diagnostics -D_DEFAULT_SOURCE=1")
   set(LLVM_COMMON_DEBUG "-g -O0 -DDEBUG")
-  set(LLVM_COMMON_RELEASE "-Oz -ffast-math -flto=thin -DNDEBUG")
+  set(LLVM_COMMON_RELEASE "-O3 -ffast-math -flto=thin -DNDEBUG")
 
   set(CMAKE_C_FLAGS "${LLVM_COMMON} ${VCPKG_C_FLAGS}" CACHE STRING "")
   set(CMAKE_CXX_FLAGS "${LLVM_COMMON} -fcoroutines-ts ${VCPKG_CXX_FLAGS}" CACHE STRING "")
