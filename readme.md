@@ -181,3 +181,11 @@ vcpkg install benchmark gtest \
 
 ## Usage
 See [vcpkg-test](https://github.com/qis/vcpkg-test) for usage examples.
+
+## Resources
+This repository demonstrates how to set up and use a custom build environment to build
+optimized applications and libraries.
+
+* [qis/toolchains](https://github.com/qis/toolchains) Custom vcpkg toolchains.
+* [qis/application](https://github.com/qis/application) CMake template for a C++ application.
+* [qis/library](https://github.com/qis/simple) CMake template for a C++ library.
