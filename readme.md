@@ -188,4 +188,5 @@ optimized applications and libraries.
 
 * [qis/toolchains](https://github.com/qis/toolchains) Custom vcpkg toolchains.
 * [qis/application](https://github.com/qis/application) CMake template for a C++ application.
-* [qis/library](https://github.com/qis/simple) CMake template for a C++ library.
+* [qis/library](https://github.com/qis/library) CMake template for a C++ library.
+* [qis/server](https://github.com/qis/server) CMake template for a C++ server.
