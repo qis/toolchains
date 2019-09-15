@@ -7,17 +7,14 @@ cd C:/Workspace || cd /opt
 git clone git@github.com:Microsoft/vcpkg
 cmake -E remove_directory vcpkg/scripts/toolchains
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
-curl https://raw.githubusercontent.com/qis/vcpkg-patches/master/date/CMakeLists.txt -o vcpkg/ports/date/CMakeLists.txt
 ```
 -->
 
 ```sh
 cd C:/Workspace || cd /opt
-git clone -b dev/roschuma/boost git@github.com:ras0219-msft/vcpkg
+git clone --depth 1 git@github.com:Microsoft/vcpkg
 cmake -E remove_directory vcpkg/scripts/toolchains
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
-cmake -E remove_directory vcpkg/ports/date
-git clone git@github.com:qis/date-port vcpkg/ports/date
 ```
 
 Download Strawberry Perl in WSL.
@@ -155,7 +152,7 @@ vcpkg install benchmark gtest ^
   date fmt libssh2 nlohmann-json pugixml ragel reproc tbb utf8proc ^
   giflib libjpeg-turbo libpng tiff ^
   freetype harfbuzz[ucdn] ^
-  cpr curl[openssl] bcrypt compat ice pdf sql http ^
+  bcrypt compat ice pdf sql http ^
   boost
 ```
 
@@ -174,7 +171,7 @@ vcpkg install benchmark gtest \
   date fmt libssh2 nlohmann-json pugixml ragel reproc utf8proc \
   giflib libjpeg-turbo libpng tiff \
   freetype harfbuzz[ucdn] \
-  cpr curl[openssl] backward bcrypt compat ice pdf sql http \
+  backward bcrypt compat ice pdf sql http \
   boost
 ```
 -->
