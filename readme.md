@@ -155,7 +155,7 @@ vcpkg install benchmark gtest ^
   date fmt libssh2 nlohmann-json pugixml ragel reproc tbb utf8proc ^
   giflib libjpeg-turbo libpng tiff ^
   freetype harfbuzz[ucdn] ^
-  bcrypt ice pdf sql http ^
+  cpr curl[openssl] bcrypt compat ice pdf sql http ^
   boost
 ```
 
@@ -174,7 +174,7 @@ vcpkg install benchmark gtest \
   date fmt libssh2 nlohmann-json pugixml ragel reproc utf8proc \
   giflib libjpeg-turbo libpng tiff \
   freetype harfbuzz[ucdn] \
-  bcrypt ice pdf sql http \
+  cpr curl[openssl] backward bcrypt compat ice pdf sql http \
   boost
 ```
 -->
