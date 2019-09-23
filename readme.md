@@ -124,7 +124,7 @@ vcpkg install openssl
 vcpkg install bzip2 liblzma libzip[bzip2,openssl] zlib
 
 # Utility
-vcpkg install date fmt libssh2 nlohmann-json pugixml ragel reproc tbb utf8proc
+vcpkg install date fmt libssh2 nlohmann-json pugixml ragel reproc spdlog tbb utf8proc
 
 # Images
 vcpkg install giflib libjpeg-turbo libpng tiff
@@ -149,7 +149,7 @@ git clone git:libraries/http vcpkg/ports/http
 
 vcpkg install benchmark gtest ^
   openssl bzip2 liblzma libzip[bzip2,openssl] zlib ^
-  date fmt libssh2 nlohmann-json pugixml ragel reproc tbb utf8proc ^
+  date fmt libssh2 nlohmann-json pugixml ragel reproc spdlog tbb utf8proc ^
   giflib libjpeg-turbo libpng tiff ^
   freetype harfbuzz[ucdn] ^
   bcrypt compat ice pdf sql http ^
@@ -168,7 +168,7 @@ git clone git:libraries/http vcpkg/ports/http
 
 vcpkg install benchmark gtest \
   openssl bzip2 liblzma libzip[bzip2,openssl] zlib \
-  date fmt libssh2 nlohmann-json pugixml ragel reproc utf8proc \
+  date fmt libssh2 nlohmann-json pugixml ragel reproc spdlog utf8proc \
   giflib libjpeg-turbo libpng tiff \
   freetype harfbuzz[ucdn] \
   backward bcrypt compat ice pdf sql http \
