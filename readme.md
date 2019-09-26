@@ -71,6 +71,10 @@ endif()
 if(PORT STREQUAL "pugixml")
   set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DPUGIXML_NO_EXCEPTIONS=1")
 endif()
+
+if(PORT STREQUAL "tbb")
+  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DTBB_USE_EXCEPTIONS=0")
+endif()
 ```
 
 NOTE: Use [/d2FH4](https://devblogs.microsoft.com/cppblog/making-cpp-exception-handling-smaller-x64/)
