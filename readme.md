@@ -174,6 +174,15 @@ vcpkg install benchmark gtest \
   backward bcrypt compat ice pdf sql http \
   boost
 ```
+
+### Vulkan
+```cmd
+vcpkg install benchmark gtest ^
+  fmt ragel reproc spdlog tbb utf8proc ^
+  giflib libjpeg-turbo libpng tiff ^
+  freetype harfbuzz[ucdn] ^
+  vulkan
+```
 -->
 
 ## Usage
