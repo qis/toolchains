@@ -185,7 +185,7 @@ vcpkg install benchmark gtest ^
   fmt ragel reproc spdlog tbb utf8proc ^
   giflib libjpeg-turbo libpng tiff ^
   freetype harfbuzz[ucdn] ^
-  volk
+  vulkan vulkan-memory-allocator volk
 ```
 -->
 
