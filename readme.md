@@ -105,8 +105,26 @@ set(VCPKG_TARGET_ARCHITECTURE x64)
 set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
 
-set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
-set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2")
+set(VCPKG_C_FLAGS "-march=broadwell -mavx2 -fno-exceptions -fno-rtti")
+set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2 -fno-exceptions -fno-rtti")
+
+if(PORT STREQUAL "ragel")
+  set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
+  set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2")
+endif()
+
+if(PORT STREQUAL "fmt")
+  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DFMT_EXCEPTIONS=0")
+endif()
+
+if(PORT STREQUAL "harfbuzz")
+  set(VCPKG_C_FLAGS "${VCPKG_C_FLAGS} -DHB_NO_MT=1")
+  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DHB_NO_MT=1")
+endif()
+
+if(PORT STREQUAL "pugixml")
+  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DPUGIXML_NO_EXCEPTIONS=1")
+endif()
 
 set(VCPKG_CMAKE_SYSTEM_NAME Linux)
 ```
@@ -186,6 +204,11 @@ vcpkg install benchmark gtest ^
   giflib libjpeg-turbo libpng tiff ^
   freetype harfbuzz[ucdn] ^
   vulkan vulkan-memory-allocator volk
+```
+
+### Server
+```sh
+vcpkg install benchmark gtest fmt ragel reproc spdlog utf8proc
 ```
 -->
 
