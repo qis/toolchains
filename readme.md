@@ -52,7 +52,7 @@ set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
 
 set(VCPKG_C_FLAGS "/arch:AVX2 /favor:INTEL64")
-set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64 /EHs-c- /GR- /D_HAS_EXCEPTIONS=0")
+set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64 /EHs-c- /GR- /D_HAS_EXCEPTIONS=0 -DTBB_USE_EXCEPTIONS=0")
 
 if(PORT STREQUAL "ragel")
   set(VCPKG_C_FLAGS "/arch:AVX2 /favor:INTEL64")
@@ -105,8 +105,8 @@ set(VCPKG_TARGET_ARCHITECTURE x64)
 set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
 
-set(VCPKG_C_FLAGS "-march=broadwell -mavx2 -fno-exceptions -fno-rtti")
-set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2 -fno-exceptions -fno-rtti")
+set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
+set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2 -fno-exceptions -fno-rtti -DTBB_USE_EXCEPTIONS=0")
 
 if(PORT STREQUAL "ragel")
   set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
