@@ -42,45 +42,6 @@ bootstrap-vcpkg -disableMetrics -win64
 vcpkg integrate install
 ```
 
-<details>
-<summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file.</summary>
-Example for targeting specific CPUs and disabling exceptions and RTTI.
-
-```cmake
-set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_CRT_LINKAGE dynamic)
-set(VCPKG_LIBRARY_LINKAGE static)
-
-set(VCPKG_C_FLAGS "/arch:AVX2 /favor:INTEL64")
-set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64 /EHs-c- /GR- /D_HAS_EXCEPTIONS=0 -DTBB_USE_EXCEPTIONS=0")
-
-if(PORT STREQUAL "ragel")
-  set(VCPKG_C_FLAGS "/arch:AVX2 /favor:INTEL64")
-  set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64")
-endif()
-
-if(PORT STREQUAL "fmt")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DFMT_EXCEPTIONS=0")
-endif()
-
-if(PORT STREQUAL "harfbuzz")
-  set(VCPKG_C_FLAGS "${VCPKG_C_FLAGS} /DHB_NO_MT=1")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DHB_NO_MT=1")
-endif()
-
-if(PORT STREQUAL "pugixml")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DPUGIXML_NO_EXCEPTIONS=1")
-endif()
-
-if(PORT STREQUAL "tbb")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DTBB_USE_EXCEPTIONS=0")
-endif()
-```
-
-NOTE: Use [/d2FH4](https://devblogs.microsoft.com/cppblog/making-cpp-exception-handling-smaller-x64/)
-for faster exception handling.
-</details>
-
 ## Linux
 Set up environment variables.
 
@@ -95,40 +56,6 @@ Build Vcpkg.
 CC=gcc CXX=g++ bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries
 rm -rf /opt/vcpkg/toolsrc/build.rel
 ```
-
-<details>
-<summary>Modify the <code>triplets/x64-linux.cmake</code> triplet file.</summary>
-Example for targeting specific CPUs and disabling exceptions and RTTI.
-
-```cmake
-set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_CRT_LINKAGE dynamic)
-set(VCPKG_LIBRARY_LINKAGE static)
-
-set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
-set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2 -fno-exceptions -fno-rtti -DTBB_USE_EXCEPTIONS=0")
-
-if(PORT STREQUAL "ragel")
-  set(VCPKG_C_FLAGS "-march=broadwell -mavx2")
-  set(VCPKG_CXX_FLAGS "-march=broadwell -mavx2")
-endif()
-
-if(PORT STREQUAL "fmt")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DFMT_EXCEPTIONS=0")
-endif()
-
-if(PORT STREQUAL "harfbuzz")
-  set(VCPKG_C_FLAGS "${VCPKG_C_FLAGS} -DHB_NO_MT=1")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DHB_NO_MT=1")
-endif()
-
-if(PORT STREQUAL "pugixml")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DPUGIXML_NO_EXCEPTIONS=1")
-endif()
-
-set(VCPKG_CMAKE_SYSTEM_NAME Linux)
-```
-</details>
 
 [Instal a custom LLVM toolchain.](llvm/linux.md)
 
@@ -168,6 +95,12 @@ git clone git@github.com:xnetsystems/ice vcpkg/ports/ice && ^
 git clone git@github.com:xnetsystems/pdf vcpkg/ports/pdf && ^
 git clone git@github.com:xnetsystems/sql vcpkg/ports/sql && ^
 git clone git:libraries/http vcpkg/ports/http
+
+set ports=
+for %i in (benchmark gtest fmt) do (
+  set ports=%ports% %i:x64-windows %i:x64-windows-static
+)
+vcpkg install %ports%
 
 vcpkg install benchmark gtest ^
   openssl bzip2 liblzma libzip[bzip2,openssl] zlib ^
