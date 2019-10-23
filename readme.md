@@ -22,8 +22,9 @@ won't be able to use `vcpkg upgrade` or install ports in Windows and WSL at the 
 Set up environment variables.
 
 ```cmd
-set PATH=%PATH%;C:\Workspace\vcpkg
+set VCPKG_ROOT=C:\Workspace\vcpkg
 set VCPKG_DEFAULT_TRIPLET=x64-windows
+set PATH=%PATH%;%VCPKG_ROOT%;%VCPKG_ROOT%\scripts\toolchains\windows
 ```
 
 Build Vcpkg.
@@ -37,8 +38,9 @@ vcpkg integrate install
 Set up environment variables.
 
 ```sh
-export PATH="${PATH}:/opt/vcpkg"
+export VCPKG_ROOT="/opt/vcpkg"
 export VCPKG_DEFAULT_TRIPLET="x64-linux"
+export PATH="${PATH}:${VCPKG_ROOT}"
 ```
 
 Build Vcpkg.
@@ -94,10 +96,6 @@ vcpkg install benchmark gtest ^
   freetype harfbuzz[ucdn] ^
   bcrypt compat ice pdf sql http ^
   boost
-
-set VCPKG_DEFAULT_TRIPLET=x64-windows-static
-
-rem Repeate vcpkg install command.
 ```
 
 ### Linux
@@ -119,10 +117,6 @@ vcpkg install benchmark gtest \
   boost
 ```
 -->
-
-## Make
-Add [make.exe](http://www.equation.com/servlet/equation.cmd?fa=make) and [make.cmd](windows/make.cmd)
-to the `%Path%` environment variable.
 
 ## Usage
 See [vcpkg-test](https://github.com/qis/vcpkg-test) for usage examples.

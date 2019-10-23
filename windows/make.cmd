@@ -19,6 +19,6 @@ set __VS_LOCATION=
 set __VS_EDITIONS=
 
 :call
-make.exe %*
+"%~dp0bin\make.exe" %*
 
 :exit
