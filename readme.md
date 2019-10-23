@@ -1,15 +1,6 @@
 # Toolchains
 Custom [vcpkg](https://github.com/Microsoft/vcpkg) toolchains.
 
-<!--
-```sh
-cd C:/Workspace || cd /opt
-git clone git@github.com:Microsoft/vcpkg
-cmake -E remove_directory vcpkg/scripts/toolchains
-git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
-```
--->
-
 ```sh
 cd C:/Workspace || cd /opt
 git clone --depth 1 git@github.com:Microsoft/vcpkg
@@ -57,7 +48,7 @@ CC=gcc CXX=g++ bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries
 rm -rf /opt/vcpkg/toolsrc/build.rel
 ```
 
-[Instal a custom LLVM toolchain.](llvm/linux.md)
+[Instal a custom LLVM toolchain.](linux/llvm.md)
 
 ## Ports
 Install ports.
@@ -96,12 +87,6 @@ git clone git@github.com:xnetsystems/pdf vcpkg/ports/pdf && ^
 git clone git@github.com:xnetsystems/sql vcpkg/ports/sql && ^
 git clone git:libraries/http vcpkg/ports/http
 
-set ports=
-for %i in (benchmark gtest fmt) do (
-  set ports=%ports% %i:x64-windows %i:x64-windows-static
-)
-vcpkg install %ports%
-
 vcpkg install benchmark gtest ^
   openssl bzip2 liblzma libzip[bzip2,openssl] zlib ^
   date fmt libssh2 nlohmann-json pugixml ragel reproc spdlog tbb utf8proc ^
@@ -109,6 +94,10 @@ vcpkg install benchmark gtest ^
   freetype harfbuzz[ucdn] ^
   bcrypt compat ice pdf sql http ^
   boost
+
+set VCPKG_DEFAULT_TRIPLET=x64-windows-static
+
+rem Repeate vcpkg install command.
 ```
 
 ### Linux
@@ -129,21 +118,11 @@ vcpkg install benchmark gtest \
   backward bcrypt compat ice pdf sql http \
   boost
 ```
-
-### Vulkan
-```cmd
-vcpkg install benchmark gtest ^
-  fmt ragel reproc spdlog tbb utf8proc ^
-  giflib libjpeg-turbo libpng tiff ^
-  freetype harfbuzz[ucdn] ^
-  vulkan vulkan-memory-allocator volk
-```
-
-### Server
-```sh
-vcpkg install benchmark gtest fmt ragel reproc spdlog utf8proc
-```
 -->
+
+## Make
+Add [make.exe](http://www.equation.com/servlet/equation.cmd?fa=make) and [make.cmd](windows/make.cmd)
+to the `%Path%` environment variable.
 
 ## Usage
 See [vcpkg-test](https://github.com/qis/vcpkg-test) for usage examples.

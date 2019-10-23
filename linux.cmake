@@ -38,8 +38,8 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
   string(APPEND CMAKE_SHARED_LINKER_FLAGS_DEBUG_INIT " -ltbb_debug")
   string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG_INIT " -ltbb_debug")
 
-  string(APPEND CMAKE_SHARED_LINKER_FLAGS_RELEASE_INIT " -O3 -Wl,-S -Wl,--thinlto-cache-dir=lto -ltbb")
-  string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASEINIT " -O3 -Wl,-S -Wl,--thinlto-cache-dir=lto -ltbb")
+  string(APPEND CMAKE_SHARED_LINKER_FLAGS_RELEASE_INIT " -Wl,-S -Wl,--thinlto-cache-dir=lto -ltbb")
+  string(APPEND CMAKE_EXE_LINKER_FLAGS_RELEASEINIT " -Wl,-S -Wl,--thinlto-cache-dir=lto -ltbb")
 
   if(VCPKG_CRT_LINKAGE STREQUAL "static")
     string(APPEND CMAKE_SHARED_LINKER_FLAGS_INIT " -pthread -static")
