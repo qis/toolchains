@@ -26,8 +26,16 @@ if(NOT _CMAKE_IN_TRY_COMPILE)
     message(FATAL_ERROR "Invalid setting for VCPKG_CRT_LINKAGE: \"${VCPKG_CRT_LINKAGE}\".")
   endif()
 
+  if(NOT VCPKG_CXX_FLAGS MATCHES "/EH")
+    set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /EHsc /d2FH4")
+  endif()
+
+  if(NOT VCPKG_CXX_FLAGS MATCHES "/GR")
+    set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /GR")
+  endif()
+
   set(CMAKE_C_FLAGS "/Zc:strictStrings /Zc:char8_t ${VCPKG_C_FLAGS} /utf-8" CACHE STRING "")
-  set(CMAKE_CXX_FLAGS "/Zc:strictStrings /Zc:char8_t /Zc:__cplusplus /EHsc /d2FH4 /GR /permissive- ${VCPKG_CXX_FLAGS} /utf-8" CACHE STRING "")
+  set(CMAKE_CXX_FLAGS "/Zc:strictStrings /Zc:char8_t /Zc:__cplusplus /permissive- ${VCPKG_CXX_FLAGS} /utf-8" CACHE STRING "")
 
   if(CMAKE_BINARY_DIR MATCHES "^${VCPKG_ROOT}")
     set(CMAKE_C_FLAGS_DEBUG "/Os /Oi /Ob2 /Gy /GS- /GF /Z7 ${VCPKG_C_FLAGS_DEBUG} ${VCPKG_CRT_LINK_FLAG_PREFIX}d" CACHE STRING "")
