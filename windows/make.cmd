@@ -1,5 +1,6 @@
 @echo off
 if "%__VS_VCVARS64%"=="1" goto :call
+if "%~1"=="" goto :vars
 for %%i in (%*) do (echo :format: :clean: | findstr /i ":%%i:" 1>nul 2>nul) || goto :vars
 goto :call
 
