@@ -106,7 +106,7 @@ vcpkg install openssl
 vcpkg install bzip2 liblzma libzip[bzip2,openssl] zlib zstd
 
 # Utility
-vcpkg install date fmt libssh2 nlohmann-json pugixml ragel reproc spdlog tbb utf8proc
+vcpkg install date fmt libssh2 nlohmann-json pugixml ragel spdlog utf8proc
 
 # Images
 vcpkg install giflib libjpeg-turbo libpng tiff
@@ -114,13 +114,15 @@ vcpkg install giflib libjpeg-turbo libpng tiff
 # Fonts
 vcpkg install freetype harfbuzz[ucdn]
 
+# Documents
+vcpkg install podofo
+
 # Boost
 vcpkg install boost
 ```
 
 <!--
-### Windows
-```cmd
+```
 git clone git@github.com:xnetsystems/backward vcpkg/ports/backward && ^
 git clone git@github.com:xnetsystems/bcrypt vcpkg/ports/bcrypt && ^
 git clone git@github.com:xnetsystems/compat vcpkg/ports/compat && ^
@@ -129,31 +131,16 @@ git clone git@github.com:xnetsystems/pdf vcpkg/ports/pdf && ^
 git clone git@github.com:xnetsystems/sql vcpkg/ports/sql && ^
 git clone git:libraries/http vcpkg/ports/http
 
-vcpkg install benchmark gtest ^
-  openssl bzip2 liblzma libzip[bzip2,openssl] zlib ^
-  date fmt libssh2 nlohmann-json pugixml ragel reproc spdlog tbb utf8proc ^
-  giflib libjpeg-turbo libpng tiff ^
-  freetype harfbuzz[ucdn] ^
+vcpkg install benchmark gtest openssl bzip2 liblzma libzip[bzip2,openssl] zlib zstd ^
+  date fmt libssh2 nlohmann-json pugixml ragel spdlog utf8proc ^
+  giflib libjpeg-turbo libpng tiff freetype harfbuzz[ucdn] ^
   bcrypt compat ice pdf sql http ^
   boost
-```
 
-### Linux
-```sh
-git clone git@github.com:xnetsystems/backward vcpkg/ports/backward && \
-git clone git@github.com:xnetsystems/bcrypt vcpkg/ports/bcrypt && \
-git clone git@github.com:xnetsystems/compat vcpkg/ports/compat && \
-git clone git@github.com:xnetsystems/ice vcpkg/ports/ice && \
-git clone git@github.com:xnetsystems/pdf vcpkg/ports/pdf && \
-git clone git@github.com:xnetsystems/sql vcpkg/ports/sql && \
-git clone git:libraries/http vcpkg/ports/http
-
-vcpkg install benchmark gtest \
-  openssl bzip2 liblzma libzip[bzip2,openssl] zlib \
-  date fmt libssh2 nlohmann-json pugixml ragel reproc spdlog utf8proc \
-  giflib libjpeg-turbo libpng tiff \
-  freetype harfbuzz[ucdn] \
-  backward bcrypt compat ice pdf sql http \
+vcpkg install benchmark gtest openssl bzip2 liblzma libzip[bzip2,openssl] zlib zstd \
+  date fmt libssh2 nlohmann-json pugixml ragel spdlog utf8proc \
+  giflib libjpeg-turbo libpng tiff freetype harfbuzz[ucdn] \
+  bcrypt compat ice pdf sql http \
   boost
 ```
 -->
