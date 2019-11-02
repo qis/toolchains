@@ -3,8 +3,8 @@ Custom [vcpkg](https://github.com/Microsoft/vcpkg) toolchains.
 
 ```sh
 cd C:/Workspace || cd /opt
-git clone --depth 1 git@github.com:Microsoft/vcpkg
-cmake -E remove_directory vcpkg/scripts/toolchains
+git clone --depth 1 --filter=blob:none git@github.com:Microsoft/vcpkg
+cmake -E rename vcpkg/scripts/toolchains vcpkg/scripts/toolchains.orig
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
 ```
 
@@ -37,7 +37,7 @@ vcpkg integrate install
 <details>
 <summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file.</summary>
 
-Example for targeting CPUs with AVX2 support and disabling exceptions and RTTI.
+Example for targeting CPUs with AVX2 support and favoring Intel.
 
 ```cmake
 set(VCPKG_TARGET_ARCHITECTURE x64)
@@ -45,27 +45,7 @@ set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
 
 set(VCPKG_C_FLAGS "/arch:AVX2 /favor:INTEL64")
-set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64 /EHs-c- /GR- /D_HAS_EXCEPTIONS=0")
-
-if(PORT STREQUAL "ragel")
-  set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64")
-endif()
-
-if(PORT STREQUAL "fmt")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DFMT_EXCEPTIONS=0")
-endif()
-
-if(PORT STREQUAL "harfbuzz")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DHB_NO_MT=1")
-endif()
-
-if(PORT STREQUAL "pugixml")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DPUGIXML_NO_EXCEPTIONS=1")
-endif()
-
-if(PORT STREQUAL "tbb")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /DTBB_USE_EXCEPTIONS=0")
-endif()
+set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64")
 ```
 
 </details>
@@ -86,41 +66,28 @@ CC=gcc CXX=g++ bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries
 rm -rf /opt/vcpkg/toolsrc/build.rel
 ```
 
+Build LLVM.
+
+```sh
+cd "${VCPKG_ROOT}/scripts/toolchains" && make
+```
+
 [Instal a custom LLVM toolchain.](linux/llvm.md)
 
 <details>
 <summary>Modify the <code>triplets/x64-linux.cmake</code> triplet file.</summary>
 
-Example for targeting CPUs with AVX2 support and disabling exceptions and RTTI.
+Example for targeting CPUs with AVX2 support.
 
 ```cmake
-set(VCPKG_CMAKE_SYSTEM_NAME Linux)
 set(VCPKG_TARGET_ARCHITECTURE x64)
 set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
 
 set(VCPKG_C_FLAGS "-mavx2")
-set(VCPKG_CXX_FLAGS "-mavx2 -fno-exceptions -fno-rtti")
+set(VCPKG_CXX_FLAGS "-mavx2")
 
-if(PORT STREQUAL "ragel")
-  set(VCPKG_CXX_FLAGS "-mavx2")
-endif()
-
-if(PORT STREQUAL "fmt")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DFMT_EXCEPTIONS=0")
-endif()
-
-if(PORT STREQUAL "harfbuzz")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DHB_NO_MT=1")
-endif()
-
-if(PORT STREQUAL "pugixml")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DPUGIXML_NO_EXCEPTIONS=1")
-endif()
-
-if(PORT STREQUAL "tbb")
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DTBB_USE_EXCEPTIONS=0")
-endif()
+set(VCPKG_CMAKE_SYSTEM_NAME Linux)
 ```
 
 </details>
@@ -136,7 +103,7 @@ vcpkg install benchmark gtest
 vcpkg install openssl
 
 # Compression
-vcpkg install bzip2 liblzma libzip[bzip2,openssl] zlib
+vcpkg install bzip2 liblzma libzip[bzip2,openssl] zlib zstd
 
 # Utility
 vcpkg install date fmt libssh2 nlohmann-json pugixml ragel reproc spdlog tbb utf8proc

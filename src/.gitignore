@@ -1,0 +1,9 @@
+/*
+.*
+!/.gitignore
+!/tbb.patch
+!/TBBConfig.cmake
+!/TBBConfigVersion.cmake
+!/test-filesystem.cpp
+!/test-pstl.cpp
+!/test-re.cpp

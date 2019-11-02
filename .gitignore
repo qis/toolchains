@@ -1,0 +1,8 @@
+/*
+.*
+!/src/
+!/.gitignore
+!/linux.cmake
+!/makefile
+!/readme.md
+!/windows.cmake
