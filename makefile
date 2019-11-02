@@ -13,7 +13,7 @@ src/llvm:
 build/llvm/CMakeCache.txt: src/llvm
 	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
 	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
-	  -DLLVM_ENABLE_PROJECTS="lld;lldb;polly;clang;compiler-rt;libunwind;libcxxabi;libcxx;openmp" \
+	  -DLLVM_ENABLE_PROJECTS="lld;lldb;polly;clang;clang-tools-extra;compiler-rt;libunwind;libcxxabi;libcxx;openmp" \
 	  -DLLVM_TARGETS_TO_BUILD="X86" \
 	  -DLLVM_ENABLE_BACKTRACES=OFF \
 	  -DLLVM_ENABLE_UNWIND_TABLES=OFF \
@@ -57,6 +57,7 @@ llvm/bin/clang: build/llvm/CMakeCache.txt
 	  install-lld-stripped \
 	  install-lldb-stripped \
 	  install-clang-stripped \
+	  install-clang-format-stripped \
 	  install-clang-resource-headers \
 	  install-llvm-ar-stripped \
 	  install-llvm-nm-stripped \

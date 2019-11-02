@@ -112,7 +112,7 @@ vcpkg install date fmt libssh2 nlohmann-json pugixml ragel spdlog utf8proc
 vcpkg install giflib libjpeg-turbo libpng tiff
 
 # Fonts
-vcpkg install freetype harfbuzz[ucdn]
+vcpkg install freetype
 
 # Documents
 vcpkg install podofo
@@ -133,15 +133,15 @@ git clone git:libraries/http vcpkg/ports/http
 
 vcpkg install benchmark gtest openssl bzip2 liblzma libzip[bzip2,openssl] zlib zstd ^
   date fmt libssh2 nlohmann-json pugixml ragel spdlog utf8proc ^
-  giflib libjpeg-turbo libpng tiff freetype harfbuzz[ucdn] ^
+  giflib libjpeg-turbo libpng tiff freetype podofo ^
   bcrypt compat ice pdf sql http ^
   boost
 
 vcpkg install benchmark gtest openssl bzip2 liblzma libzip[bzip2,openssl] zlib zstd \
   date fmt libssh2 nlohmann-json pugixml ragel spdlog utf8proc \
-  giflib libjpeg-turbo libpng tiff freetype harfbuzz[ucdn] \
+  giflib libjpeg-turbo libpng tiff freetype podofo \
   bcrypt compat ice pdf sql http \
-  boost
+  podofo boost
 ```
 -->
 

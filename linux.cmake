@@ -60,4 +60,6 @@ set(CMAKE_STATIC_LINKER_FLAGS_RELEASE "" CACHE STRING "")
 set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-Xlinker -plugin-opt=O3 -flto=full -Wl,-S" CACHE STRING "")
 set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-Xlinker -plugin-opt=O3 -flto=full -Wl,-S" CACHE STRING "")
 
+list(APPEND CMAKE_PROGRAM_PATH 0 "${CMAKE_CURRENT_LIST_DIR}/llvm/bin")
+
 add_definitions(-D_DEFAULT_SOURCE=1)  
