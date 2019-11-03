@@ -27,11 +27,11 @@ if(NOT VCPKG_CRT_LINKAGE)
 endif()
 
 set(LLVM_CPP_FLAGS "-fasm -fopenmp-simd -fomit-frame-pointer -fmerge-all-constants -fdiagnostics-absolute-paths -fPIC")
+set(LLVM_CXX_FLAGS "-fcoroutines-ts -isystem ${CMAKE_CURRENT_LIST_DIR}/llvm/include")
 set(LLVM_OPT_FLAGS "-fwhole-program-vtables -fvirtual-function-elimination")
-set(LLVM_CXX_FLAGS "-isystem ${CMAKE_CURRENT_LIST_DIR}/llvm/include")
 
 set(CMAKE_C_FLAGS "${LLVM_CPP_FLAGS} ${VCPKG_C_FLAGS}" CACHE STRING "")
-set(CMAKE_CXX_FLAGS "${LLVM_CPP_FLAGS} ${LLVM_CXX_FLAGS} ${VCPKG_CXX_FLAGS} -fcoroutines-ts" CACHE STRING "")
+set(CMAKE_CXX_FLAGS "${LLVM_CPP_FLAGS} ${LLVM_CXX_FLAGS} ${VCPKG_CXX_FLAGS}" CACHE STRING "")
 
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g ${VCPKG_C_FLAGS_DEBUG}" CACHE STRING "")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g ${VCPKG_CXX_FLAGS_DEBUG}" CACHE STRING "")
@@ -60,6 +60,6 @@ set(CMAKE_STATIC_LINKER_FLAGS_RELEASE "" CACHE STRING "")
 set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-Xlinker -plugin-opt=O3 -flto=full -Wl,-s" CACHE STRING "")
 set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-Xlinker -plugin-opt=O3 -flto=full -Wl,-s" CACHE STRING "")
 
-list(APPEND CMAKE_PROGRAM_PATH 0 "${CMAKE_CURRENT_LIST_DIR}/llvm/bin")
+list(PREPEND CMAKE_PROGRAM_PATH "${CMAKE_CURRENT_LIST_DIR}/llvm/bin")
 
 add_definitions(-D_DEFAULT_SOURCE=1)  
