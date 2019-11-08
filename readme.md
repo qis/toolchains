@@ -143,14 +143,5 @@ vcpkg install bcrypt compat ice pdf sql http
 ```
 -->
 
-## Usage
-See [vcpkg-test](https://github.com/qis/vcpkg-test) for usage examples.
-
 ## Resources
-This repository demonstrates how to set up and use a custom build environment to build
-optimized applications and libraries.
-
-* [qis/toolchains](https://github.com/qis/toolchains) Custom vcpkg toolchains.
-* [qis/application](https://github.com/qis/application) CMake template for a C++ application.
-* [qis/library](https://github.com/qis/library) CMake template for a C++ library.
-* [qis/server](https://github.com/qis/server) CMake template for a C++ server.
+See [qis/example](https://github.com/qis/example) for a C++ application example using this setup.
