@@ -31,8 +31,11 @@ Build Vcpkg.
 
 ```cmd
 bootstrap-vcpkg -disableMetrics -win64
-vcpkg integrate install
 ```
+
+<!--
+vcpkg integrate install
+-->
 
 <details>
 <summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file.</summary>
