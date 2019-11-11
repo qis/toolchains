@@ -75,8 +75,6 @@ Build LLVM.
 cd "${VCPKG_ROOT}/scripts/toolchains" && make
 ```
 
-[Instal a custom LLVM toolchain.](linux/llvm.md)
-
 <details>
 <summary>Modify the <code>triplets/x64-linux.cmake</code> triplet file.</summary>
 
