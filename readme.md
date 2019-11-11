@@ -40,15 +40,15 @@ vcpkg integrate install
 <details>
 <summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file.</summary>
 
-Example for targeting CPUs with AVX2 support and favoring Intel.
+Example for targeting CPUs with AVX2 support.
 
 ```cmake
 set(VCPKG_TARGET_ARCHITECTURE x64)
 set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
 
-set(VCPKG_C_FLAGS "/arch:AVX2 /favor:INTEL64")
-set(VCPKG_CXX_FLAGS "/arch:AVX2 /favor:INTEL64")
+set(VCPKG_C_FLAGS "/arch:AVX2")
+set(VCPKG_CXX_FLAGS "/arch:AVX2")
 ```
 
 </details>
