@@ -8,6 +8,22 @@ cmake -E rename vcpkg/scripts/toolchains vcpkg/scripts/toolchains.orig
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
 ```
 
+Patch vcpkg to disable static library post-build architecture checks.
+
+```diff
+--- i/toolsrc/src/vcpkg/postbuildlint.cpp
++++ w/toolsrc/src/vcpkg/postbuildlint.cpp
+@@ -429,7 +429,7 @@ namespace vcpkg::PostBuildLint
+     static LintStatus check_lib_architecture(const std::string& expected_architecture,
+                                              const std::vector<fs::path>& files)
+     {
+-#if defined(_WIN32)
++#if defined(_WIN32) && 0
+         std::vector<FileAndArch> binaries_with_invalid_architecture;
+
+         for (const fs::path& file : files)
+```
+
 Download Strawberry Perl in WSL.
 
 ```sh
@@ -33,9 +49,11 @@ Build Vcpkg.
 bootstrap-vcpkg -disableMetrics -win64
 ```
 
-<!--
-vcpkg integrate install
--->
+Build LLVM.
+
+```sh
+cd "%VCPKG_ROOT%\scripts\toolchains" && make
+```
 
 <details>
 <summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file.</summary>

@@ -1,13 +1,66 @@
+ifeq ($(OS),Windows_NT)
+all: llvm/bin/clang.exe
+else
 all: llvm/include/pstl
+endif
 
 # =================================================================================================
 # llvm
 # =================================================================================================
 
+ifeq ($(OS),Windows_NT)
+
+src/llvm:
+	@if exist src/llvm.7z ( 7z x src/llvm.7z -osrc ) else \
+	  ( git clone --depth 1 --filter=blob:none https://github.com/llvm/llvm-project src/llvm )
+
+build/msvc/CMakeCache.txt: src/llvm
+	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
+	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
+	  -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;polly;lld" \
+	  -DLLVM_TARGETS_TO_BUILD="X86" \
+	  -DLLVM_ENABLE_BACKTRACES=OFF \
+	  -DLLVM_ENABLE_UNWIND_TABLES=OFF \
+	  -DLLVM_ENABLE_WARNINGS=OFF \
+	  -DLLVM_ENABLE_RTTI=OFF \
+	  -DLLVM_INCLUDE_BENCHMARKS=OFF \
+	  -DLLVM_INCLUDE_EXAMPLES=OFF \
+	  -DLLVM_INCLUDE_TESTS=OFF \
+	  -DLLVM_INCLUDE_DOCS=OFF \
+	  -DCLANG_ENABLE_ARCMT=OFF \
+	  -DCLANG_ENABLE_STATIC_ANALYZER=OFF \
+	  -DCLANG_DEFAULT_STD_C="c99" \
+	  -DCLANG_DEFAULT_STD_CXX="cxx2a" \
+	  -DCLANG_DEFAULT_LINKER="lld" \
+	  -DCLANG_PLUGIN_SUPPORT=OFF \
+	  -B build/msvc src/llvm/llvm
+
+llvm/bin/clang.exe: build/msvc/CMakeCache.txt
+	@cmake --build build/msvc -t \
+	  install-clang-stripped \
+	  install-clang-format-stripped \
+	  install-clang-resource-headers \
+	  install-llvm-ar-stripped \
+	  install-lld-stripped \
+	  install-LTO-stripped
+	@cmake -E remove -f "llvm/bin/ld.lld.exe"
+	@cmake -E remove -f "llvm/bin/ld64.lld.exe"
+	@cmake -E remove -f "llvm/bin/lld-link.exe"
+	@cmake -E remove -f "llvm/bin/wasm-ld.exe"
+	@cmake -E remove -f "llvm/bin/clang++.exe"
+	@cmake -E remove -f "llvm/bin/clang-cl.exe"
+	@cmake -E remove -f "llvm/bin/clang-cpp.exe"
+	@cmake -E remove -f "llvm/bin/llvm-ranlib.exe"
+	@cmd /c mklink "llvm\bin\clang++.exe" "clang.exe"
+	@cmd /c mklink "llvm\bin\clang-cl.exe" "clang.exe"
+	@cmd /c mklink "llvm\bin\llvm-ranlib.exe" "llvm-ar.exe"
+	@cmd /c mklink "llvm\bin\lld-link.exe" "lld.exe"
+
+else
+
 src/llvm:
 	@if [ -f src/llvm.7z ]; then 7z x src/llvm.7z -osrc; else \
 	  git clone --depth 1 --filter=blob:none https://github.com/llvm/llvm-project src/llvm; \
-	  cd src/llvm && rm -rf debuginfo-tests libc libclc llgo parallel-libs .[a-zA-Z_]* README.md; \
 	fi
 
 build/llvm/CMakeCache.txt: src/llvm
@@ -70,6 +123,8 @@ llvm/bin/clang: build/llvm/CMakeCache.txt
 	  install-cxxabi-stripped \
 	  install-cxx-stripped \
 	  llvm-config
+
+endif
 
 # =================================================================================================
 # tbb
