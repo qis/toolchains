@@ -39,8 +39,8 @@ Set up environment variables.
 
 ```cmd
 set VCPKG_ROOT=C:\Workspace\vcpkg
-set VCPKG_DEFAULT_TRIPLET=x64-windows
-set PATH=%PATH%;%VCPKG_ROOT%;%VCPKG_ROOT%\scripts\toolchains\windows
+set VCPKG_DEFAULT_TRIPLET=x64-windows-static
+set PATH=%PATH%;%VCPKG_ROOT%
 ```
 
 Build Vcpkg.
@@ -56,13 +56,13 @@ cd "%VCPKG_ROOT%\scripts\toolchains" && make
 ```
 
 <details>
-<summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file.</summary>
+<summary>Modify the <code>triplets/x64-windows-static.cmake</code> triplet file.</summary>
 
 Example for targeting CPUs with AVX2 support.
 
 ```cmake
 set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_CRT_LINKAGE dynamic)
+set(VCPKG_CRT_LINKAGE static)
 set(VCPKG_LIBRARY_LINKAGE static)
 
 set(VCPKG_C_FLAGS "/arch:AVX2")
