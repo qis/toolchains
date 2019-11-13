@@ -13,6 +13,7 @@ ifeq ($(OS),Windows_NT)
 src/llvm:
 	@if exist src/llvm.7z ( 7z x src/llvm.7z -osrc ) else \
 	  ( git clone --depth 1 --filter=blob:none https://github.com/llvm/llvm-project src/llvm )
+	@cmake -P src/clean.cmake
 
 build/msvc/CMakeCache.txt: src/llvm
 	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
@@ -62,6 +63,7 @@ src/llvm:
 	@if [ -f src/llvm.7z ]; then 7z x src/llvm.7z -osrc; else \
 	  git clone --depth 1 --filter=blob:none https://github.com/llvm/llvm-project src/llvm; \
 	fi
+	@cmake -P src/clean.cmake
 
 build/llvm/CMakeCache.txt: src/llvm
 	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \

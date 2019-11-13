@@ -1,6 +1,7 @@
 /*
 .*
 !/.gitignore
+!/clean.cmake
 !/tbb.patch
 !/TBBConfig.cmake
 !/TBBConfigVersion.cmake
