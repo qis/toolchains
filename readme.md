@@ -158,7 +158,7 @@ vcpkg install bcrypt compat ice pdf sql http
 vcpkg install benchmark gtest openssl bzip2 liblzma libzip[bzip2,openssl] zlib zstd && \
 vcpkg install date fmt libssh2 nlohmann-json pugixml ragel spdlog utf8proc && \
 vcpkg install giflib libjpeg-turbo libpng tiff freetype podofo boost && \
-vcpkg install bcrypt compat ice pdf sql http
+vcpkg install backward bcrypt compat ice pdf sql http
 ```
 -->
 
