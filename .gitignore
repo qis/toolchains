@@ -1,9 +1,10 @@
 /*
 .*
-!/res/
 !/src/
 !/.gitignore
 !/linux.cmake
 !/makefile
 !/readme.md
+!/system.cmake
 !/windows.cmake
+!/windows-msvc.cmake
