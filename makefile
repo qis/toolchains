@@ -227,24 +227,24 @@ test: llvm/include/pstl
 # =================================================================================================
 
 clean:
-	cmake -E remove_directory build
-	cmake -E remove_directory src/tbb
-	cmake -E remove_directory src/llvm
-	cmake -E remove llvm/bin/clang++.exe
-	cmake -E remove llvm/bin/clang-cl.exe
-	cmake -E remove llvm/bin/lld-link.exe
-	cmake -E remove llvm/bin/llvm-ranlib.exe
-	cmake -E remove llvm/bin/clang
-	cmake -E remove llvm/bin/clang++
-	cmake -E remove llvm/bin/clang-cl
-	cmake -E remove llvm/bin/clang-cpp
-	cmake -E remove llvm/bin/ld.lld
-	cmake -E remove llvm/bin/ld64.lld
-	cmake -E remove llvm/bin/lld-link
-	cmake -E remove llvm/bin/llvm-ranlib
-	cmake -E remove llvm/bin/llvm-strip
-	cmake -E remove llvm/bin/wasm-ld
-	cmake -E remove llvm/lib/libLTO.so
+	@cmake -E remove_directory build
+	@cmake -E remove_directory src/tbb
+	@cmake -E remove_directory src/llvm
+	@cmake -E remove llvm/bin/clang++.exe
+	@cmake -E remove llvm/bin/clang-cl.exe
+	@cmake -E remove llvm/bin/lld-link.exe
+	@cmake -E remove llvm/bin/llvm-ranlib.exe
+	@cmake -E remove llvm/bin/clang
+	@cmake -E remove llvm/bin/clang++
+	@cmake -E remove llvm/bin/clang-cl
+	@cmake -E remove llvm/bin/clang-cpp
+	@cmake -E remove llvm/bin/ld.lld
+	@cmake -E remove llvm/bin/ld64.lld
+	@cmake -E remove llvm/bin/lld-link
+	@cmake -E remove llvm/bin/llvm-ranlib
+	@cmake -E remove llvm/bin/llvm-strip
+	@cmake -E remove llvm/bin/wasm-ld
+	@cmake -E remove llvm/lib/libLTO.so
 
 # =================================================================================================
 # restore
@@ -253,23 +253,23 @@ clean:
 ifeq ($(OS),Windows_NT)
 
 restore:
-	if not exist "llvm\bin\clang++.exe" cmd /c mklink "llvm\bin\clang++.exe" "clang.exe"
-	if not exist "llvm\bin\clang-cl.exe" cmd /c mklink "llvm\bin\clang-cl.exe" "clang.exe"
-	if not exist "llvm\bin\lld-link.exe" cmd /c mklink "llvm\bin\lld-link.exe" "lld.exe"
-	if not exist "llvm\bin\llvm-ranlib.exe" cmd /c mklink "llvm\bin\llvm-ranlib.exe" "llvm-ar.exe"
+	@if not exist "llvm\bin\clang++.exe" cmd /c mklink "llvm\bin\clang++.exe" "clang.exe"
+	@if not exist "llvm\bin\clang-cl.exe" cmd /c mklink "llvm\bin\clang-cl.exe" "clang.exe"
+	@if not exist "llvm\bin\lld-link.exe" cmd /c mklink "llvm\bin\lld-link.exe" "lld.exe"
+	@if not exist "llvm\bin\llvm-ranlib.exe" cmd /c mklink "llvm\bin\llvm-ranlib.exe" "llvm-ar.exe"
 
 else
 
 restore:
-	find llvm -type d -exec chmod 0755 '{}' ';' -or -type f -exec chmod 0644 '{}' ';'
-	find llvm/bin -type f -and -not -iname '*.dll' -exec chmod 0755 '{}' ';'
-	if [ ! -e llvm/bin/clang ]; then ln -s clang-10 llvm/bin/clang; fi
-	if [ ! -e llvm/bin/clang++ ]; then ln -s clang llvm/bin/clang++; fi
-	if [ ! -e llvm/bin/ld.lld ]; then ln -s lld llvm/bin/ld.lld; fi
-	if [ ! -e llvm/bin/ld64.lld ]; then ln -s lld llvm/bin/ld64.lld; fi
-	if [ ! -e llvm/bin/llvm-ranlib ]; then ln -s llvm-ar llvm/bin/llvm-ranlib; fi
-	if [ ! -e llvm/bin/llvm-strip ]; then ln -s llvm-objcopy llvm/bin/llvm-strip; fi
-	if [ ! -e llvm/lib/libLTO.so ]; then ln -s libLTO.so.10git llvm/lib/libLTO.so; fi
+	@find llvm -type d -exec chmod 0755 '{}' ';' -or -type f -exec chmod 0644 '{}' ';'
+	@find llvm/bin -type f -and -not -iname '*.dll' -exec chmod 0755 '{}' ';'
+	@if [ ! -e llvm/bin/clang ]; then ln -s clang-10 llvm/bin/clang; fi
+	@if [ ! -e llvm/bin/clang++ ]; then ln -s clang llvm/bin/clang++; fi
+	@if [ ! -e llvm/bin/ld.lld ]; then ln -s lld llvm/bin/ld.lld; fi
+	@if [ ! -e llvm/bin/ld64.lld ]; then ln -s lld llvm/bin/ld64.lld; fi
+	@if [ ! -e llvm/bin/llvm-ranlib ]; then ln -s llvm-ar llvm/bin/llvm-ranlib; fi
+	@if [ ! -e llvm/bin/llvm-strip ]; then ln -s llvm-objcopy llvm/bin/llvm-strip; fi
+	@if [ ! -e llvm/lib/libLTO.so ]; then ln -s libLTO.so.10git llvm/lib/libLTO.so; fi
 
 endif
 

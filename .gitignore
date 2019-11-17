@@ -7,5 +7,6 @@
 !/readme.md
 !/system.cmake
 !/windows.cmake
-!/windows-llvm.cmake
-!/windows-msvc.cmake
+!/windows-cl.cmake
+!/windows-clang.cmake
+!/windows-clang-cl.cmake
