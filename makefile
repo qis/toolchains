@@ -125,6 +125,10 @@ llvm/bin/clang: build/llvm/CMakeCache.txt
 	  install-cxxabi-stripped \
 	  install-cxx-stripped \
 	  llvm-config
+	@cmake -E remove llvm/bin/clang-cl
+	@cmake -E remove llvm/bin/clang-cpp
+	@cmake -E remove llvm/bin/lld-link
+	@cmake -E remove llvm/bin/wasm-ld
 
 endif
 
@@ -236,14 +240,10 @@ clean:
 	@cmake -E remove llvm/bin/llvm-ranlib.exe
 	@cmake -E remove llvm/bin/clang
 	@cmake -E remove llvm/bin/clang++
-	@cmake -E remove llvm/bin/clang-cl
-	@cmake -E remove llvm/bin/clang-cpp
 	@cmake -E remove llvm/bin/ld.lld
 	@cmake -E remove llvm/bin/ld64.lld
-	@cmake -E remove llvm/bin/lld-link
 	@cmake -E remove llvm/bin/llvm-ranlib
 	@cmake -E remove llvm/bin/llvm-strip
-	@cmake -E remove llvm/bin/wasm-ld
 	@cmake -E remove llvm/lib/libLTO.so
 
 # =================================================================================================
