@@ -29,7 +29,7 @@ set(LLVM_CPP_FLAGS "-mavx2 -fasm -fopenmp-simd -ffast-math -fomit-frame-pointer 
 set(LLVM_CPP_FLAGS "${LLVM_CPP_FLAGS} -fdiagnostics-absolute-paths -fms-compatibility-version=19.23")
 set(LLVM_CXX_FLAGS "-fcoroutines-ts")
 
-set(LLVM_CPP_FLAGS_DEBUG "-Xclang --dependent-lib=libcmtd -D_MT -g -Xclang -gcodeview")
+set(LLVM_CPP_FLAGS_DEBUG "-Xclang --dependent-lib=libcmtd -D_MT -D_DEBUG -g -Xclang -gcodeview")
 set(LLVM_CXX_FLAGS_DEBUG "-Xclang --dependent-lib=libcpmtd")
 
 set(LLVM_CPP_FLAGS_RELEASE "-Xclang --dependent-lib=libcmt -D_MT -DNDEBUG -flto=full")
