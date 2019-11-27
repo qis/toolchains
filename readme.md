@@ -3,7 +3,7 @@ Custom [vcpkg](https://github.com/Microsoft/vcpkg) toolchains.
 
 ```sh
 cd C:/Workspace || cd /opt
-git clone --depth 1 --filter=blob:none git@github.com:Microsoft/vcpkg
+git clone --depth 1 --filter=blob:none git@github.com:microsoft/vcpkg
 cmake -E rename vcpkg/scripts/toolchains vcpkg/scripts/toolchains.orig
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
 ```
