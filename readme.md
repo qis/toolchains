@@ -83,7 +83,7 @@ export PATH="${PATH}:${VCPKG_ROOT}"
 Build Vcpkg.
 
 ```sh
-CC=gcc CXX=g++ bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries
+bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries
 rm -rf /opt/vcpkg/toolsrc/build.rel
 ```
 
