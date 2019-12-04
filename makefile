@@ -4,18 +4,18 @@ else
 all: llvm/include/pstl
 endif
 
+ifeq ($(OS),Windows_NT)
+
 # =================================================================================================
 # llvm
 # =================================================================================================
-
-ifeq ($(OS),Windows_NT)
 
 src/llvm:
 	@if exist src/llvm.7z ( 7z x src/llvm.7z -osrc ) else \
 	  ( git clone --depth 1 --filter=blob:none https://github.com/llvm/llvm-project src/llvm )
 	@cmake -P src/clean.cmake
 
-build/msvc/CMakeCache.txt: src/llvm
+build/llvm/CMakeCache.txt: src/llvm
 	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
 	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
 	  -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;polly;lld" \
@@ -32,15 +32,19 @@ build/msvc/CMakeCache.txt: src/llvm
 	  -DCLANG_ENABLE_STATIC_ANALYZER=OFF \
 	  -DCLANG_DEFAULT_STD_C="c99" \
 	  -DCLANG_DEFAULT_STD_CXX="cxx2a" \
+	  -DCLANG_DEFAULT_CXX_STDLIB="libc++" \
+	  -DCLANG_DEFAULT_UNWINDLIB="libunwind" \
+	  -DCLANG_DEFAULT_RTLIB="compiler-rt" \
 	  -DCLANG_DEFAULT_LINKER="lld" \
 	  -DCLANG_PLUGIN_SUPPORT=OFF \
-	  -B build/msvc src/llvm/llvm
+	  -B build/llvm src/llvm/llvm
 
-llvm/bin/clang.exe: build/msvc/CMakeCache.txt
-	@cmake --build build/msvc -t \
+llvm/bin/clang.exe: build/llvm/CMakeCache.txt
+	@cmake --build build/llvm -t \
 	  install-clang-stripped \
 	  install-clang-format-stripped \
 	  install-clang-resource-headers \
+	  install-clangDaemon-stripped \
 	  install-llvm-ar-stripped \
 	  install-lld-stripped \
 	  install-LTO-stripped
@@ -58,6 +62,10 @@ llvm/bin/clang.exe: build/msvc/CMakeCache.txt
 	@cmd /c mklink "llvm\bin\lld-link.exe" "lld.exe"
 
 else
+
+# =================================================================================================
+# llvm
+# =================================================================================================
 
 src/llvm:
 	@if [ -f src/llvm.7z ]; then 7z x src/llvm.7z -osrc; else \
@@ -114,6 +122,7 @@ llvm/bin/clang: build/llvm/CMakeCache.txt
 	  install-clang-stripped \
 	  install-clang-format-stripped \
 	  install-clang-resource-headers \
+	  install-clangDaemon-stripped \
 	  install-llvm-ar-stripped \
 	  install-llvm-nm-stripped \
 	  install-llvm-objdump-stripped \
@@ -129,8 +138,6 @@ llvm/bin/clang: build/llvm/CMakeCache.txt
 	@cmake -E remove llvm/bin/clang-cpp
 	@cmake -E remove llvm/bin/lld-link
 	@cmake -E remove llvm/bin/wasm-ld
-
-endif
 
 # =================================================================================================
 # tbb
@@ -225,6 +232,8 @@ test: llvm/include/pstl
 	  -Xlinker -plugin-opt=O3 -Wl,-S -pthread -lc++abi -ltbb
 	@llvm/bin/llvm-strip build/test-re
 	@build/test-re
+
+endif
 
 # =================================================================================================
 # clean
