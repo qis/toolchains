@@ -13,7 +13,7 @@ ifeq ($(OS),Windows_NT)
 src/llvm:
 	@if exist src/llvm.7z ( 7z x src/llvm.7z -osrc ) else \
 	  ( git clone --depth 1 --filter=blob:none https://github.com/llvm/llvm-project src/llvm )
-	@cmake -P src/clean.cmake
+	@cmake -P src/setup.cmake
 
 build/llvm/CMakeCache.txt: src/llvm
 	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
@@ -26,7 +26,7 @@ build/llvm/CMakeCache.txt: src/llvm
 	  -DLLVM_ENABLE_RTTI=OFF \
 	  -DLLVM_INCLUDE_BENCHMARKS=OFF \
 	  -DLLVM_INCLUDE_EXAMPLES=OFF \
-	  -DLLVM_INCLUDE_TESTS=OFF \
+	  -DLLVM_INCLUDE_TESTS=ON \
 	  -DLLVM_INCLUDE_DOCS=OFF \
 	  -DCLANG_ENABLE_ARCMT=OFF \
 	  -DCLANG_ENABLE_STATIC_ANALYZER=OFF \
@@ -36,18 +36,22 @@ build/llvm/CMakeCache.txt: src/llvm
 	  -DCLANG_DEFAULT_UNWINDLIB="libunwind" \
 	  -DCLANG_DEFAULT_RTLIB="compiler-rt" \
 	  -DCLANG_DEFAULT_LINKER="lld" \
+	  -DCLANG_INCLUDE_TESTS=OFF \
 	  -DCLANG_PLUGIN_SUPPORT=OFF \
 	  -B build/llvm src/llvm/llvm
 
 llvm/bin/clang.exe: build/llvm/CMakeCache.txt
 	@cmake --build build/llvm -t \
+	  install-LTO-stripped \
+	  install-lld-stripped \
 	  install-clang-stripped \
 	  install-clang-format-stripped \
 	  install-clang-resource-headers \
-	  install-clangDaemon-stripped \
+	  install-clangd-stripped \
 	  install-llvm-ar-stripped \
-	  install-lld-stripped \
-	  install-LTO-stripped
+	  LLVMTestingSupport \
+	  llvm-config \
+	  llvm-xray
 	@cmake -E remove -f "llvm/bin/ld.lld.exe"
 	@cmake -E remove -f "llvm/bin/ld64.lld.exe"
 	@cmake -E remove -f "llvm/bin/lld-link.exe"
@@ -60,6 +64,97 @@ llvm/bin/clang.exe: build/llvm/CMakeCache.txt
 	@cmd /c mklink "llvm\bin\clang-cl.exe" "clang.exe"
 	@cmd /c mklink "llvm\bin\llvm-ranlib.exe" "llvm-ar.exe"
 	@cmd /c mklink "llvm\bin\lld-link.exe" "lld.exe"
+
+build/runtimes/compiler-rt/CMakeCache.txt: llvm/bin/clang.exe
+	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
+	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm/lib/clang/10.0.0" \
+	  -DCMAKE_C_COMPILER="$(CURDIR)/llvm/bin/clang.exe" \
+	  -DCMAKE_CXX_COMPILER="$(CURDIR)/llvm/bin/clang++.exe" \
+	  -DLLVM_CONFIG_PATH="$(CURDIR)/build/llvm/bin/llvm-config.exe" \
+	  -DLLVM_ENABLE_RUNTIMES="compiler-rt" \
+	  -DCOMPILER_RT_BUILD_SANITIZERS=OFF \
+	  -DCOMPILER_RT_BUILD_LIBFUZZER=OFF \
+	  -DCOMPILER_RT_BUILD_PROFILE=OFF \
+	  -DCOMPILER_RT_BUILD_XRAY=OFF \
+	  -DCOMPILER_RT_INCLUDE_TESTS=OFF \
+	  -Bbuild/runtimes/compiler-rt src/llvm/llvm/runtimes
+
+llvm/lib/clang/10.0.0/lib/windows/clang_rt.builtins-x86_64.lib: build/runtimes/compiler-rt/CMakeCache.txt
+	@cmake --build build/runtimes/compiler-rt -t install-compiler-rt-stripped
+
+build/runtimes/libunwind/CMakeCache.txt: llvm/lib/clang/10.0.0/lib/windows/clang_rt.builtins-x86_64.lib
+	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
+	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
+	  -DCMAKE_C_COMPILER="$(CURDIR)/llvm/bin/clang.exe" \
+	  -DCMAKE_CXX_COMPILER="$(CURDIR)/llvm/bin/clang++.exe" \
+	  -DLLVM_CONFIG_PATH="$(CURDIR)/build/llvm/bin/llvm-config.exe" \
+	  -DLLVM_ENABLE_RUNTIMES="libunwind" \
+	  -DLIBUNWIND_ENABLE_SHARED=OFF \
+	  -DLIBUNWIND_ENABLE_STATIC=ON \
+	  -DLIBUNWIND_USE_COMPILER_RT=ON \
+	  -Bbuild/runtimes/libunwind src/llvm/llvm/runtimes
+
+llvm/lib/unwind.lib: build/runtimes/libunwind/CMakeCache.txt
+	@cmake --build build/runtimes/libunwind -t install-unwind-stripped
+
+llvm/lib/clang/10.0.0/include/unistd.h: llvm/lib/unwind.lib
+	@cmake -E copy_if_different src/unistd.h llvm/lib/clang/10.0.0/include/unistd.h
+
+build/runtimes/libcxxabi/CMakeCache.txt: llvm/lib/clang/10.0.0/include/unistd.h
+	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
+	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
+	  -DCMAKE_C_COMPILER="$(CURDIR)/llvm/bin/clang.exe" \
+	  -DCMAKE_CXX_COMPILER="$(CURDIR)/llvm/bin/clang++.exe" \
+	  -DCMAKE_CXX_FLAGS="-nostdinc++ -D_LIBCPP_NO_VCRUNTIME -D_LIBCPP_HAS_THREAD_API_WIN32 -D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS" \
+	  -DLLVM_CONFIG_PATH="$(CURDIR)/build/llvm/bin/llvm-config.exe" \
+	  -DLLVM_ENABLE_RUNTIMES="libcxxabi" \
+	  -DLIBCXXABI_ENABLE_SHARED=OFF \
+	  -DLIBCXXABI_ENABLE_STATIC=ON \
+	  -DLIBCXXABI_ENABLE_NEW_DELETE_DEFINITIONS=OFF \
+	  -DLIBCXXABI_ENABLE_EXCEPTIONS=ON \
+	  -DLIBCXXABI_ENABLE_THREADS=ON \
+	  -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
+	  -DLIBCXXABI_USE_COMPILER_RT=ON \
+	  -DLIBCXXABI_INCLUDE_TESTS=OFF \
+	  -Bbuild/runtimes/libcxxabi src/llvm/llvm/runtimes
+
+llvm/lib/c++abi.lib: build/runtimes/libcxxabi/CMakeCache.txt
+	@cmake --build build/runtimes/libcxxabi -t install-cxxabi-stripped
+
+build/runtimes/libcxx/CMakeCache.txt: llvm/lib/c++abi.lib
+	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
+	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
+	  -DCMAKE_C_COMPILER="$(CURDIR)/llvm/bin/clang.exe" \
+	  -DCMAKE_CXX_COMPILER="$(CURDIR)/llvm/bin/clang++.exe" \
+	  -DLLVM_CONFIG_PATH="$(CURDIR)/build/llvm/bin/llvm-config.exe" \
+	  -DLLVM_ENABLE_RUNTIMES="libcxx" \
+	  -DLIBCXX_CXX_ABI="libcxxabi" \
+	  -DLIBCXX_CXX_ABI_INCLUDE_PATHS="$(CURDIR)/src/llvm/libcxxabi/include" \
+	  -DLIBCXX_ENABLE_SHARED=OFF \
+	  -DLIBCXX_ENABLE_STATIC=ON \
+	  -DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=OFF \
+	  -DLIBCXX_HAS_WIN32_THREAD_API=ON \
+	  -DLIBCXX_USE_COMPILER_RT=ON \
+	  -DLIBCXX_INCLUDE_BENCHMARKS=OFF \
+	  -DLIBCXX_INCLUDE_TESTS=OFF \
+	  -DLIBCXX_INCLUDE_DOCS=OFF \
+	  -Bbuild/runtimes/libcxx src/llvm/llvm/runtimes
+
+llvm/lib/libc++.lib: build/runtimes/libcxx/CMakeCache.txt
+	@cmake --build build/runtimes/libcxx -t install-cxx-stripped
+
+build/test/CMakeCache.txt: llvm/lib/libc++.lib
+	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel \
+	  -DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/windows-clang.cmake" \
+	  -Bbuild/test test
+
+test:
+	@cmake -E remove_directory build/test
+	@cmake -GNinja -DCMAKE_BUILD_TYPE=Release \
+	  -DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/windows-clang.cmake" \
+	  -Bbuild/test test
+	@cmake --build build/test -t test
+	build/test/test.exe
 
 else
 
@@ -122,7 +217,7 @@ llvm/bin/clang: build/llvm/CMakeCache.txt
 	  install-clang-stripped \
 	  install-clang-format-stripped \
 	  install-clang-resource-headers \
-	  install-clangDaemon-stripped \
+	  install-clangd-stripped \
 	  install-llvm-ar-stripped \
 	  install-llvm-nm-stripped \
 	  install-llvm-objdump-stripped \

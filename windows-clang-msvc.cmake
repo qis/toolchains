@@ -16,11 +16,11 @@ set(CMAKE_CXX_COMPILER "${CMAKE_CURRENT_LIST_DIR}/llvm/bin/clang++.exe" CACHE ST
 set(CMAKE_RC_COMPILER "rc.exe" CACHE STRING "")
 
 if(NOT VCPKG_CRT_LINKAGE)
-  #include(${VCPKG_ROOT}/triplets/${VCPKG_TARGET_TRIPLET}.cmake)
+  include(${VCPKG_ROOT}/triplets/${VCPKG_TARGET_TRIPLET}.cmake)
 endif()
 
 if(NOT VCPKG_CRT_LINKAGE STREQUAL "static")
-  #message(FATAL_ERROR "Invalid setting for VCPKG_CRT_LINKAGE: \"${VCPKG_CRT_LINKAGE}\".")
+  message(FATAL_ERROR "Invalid setting for VCPKG_CRT_LINKAGE: \"${VCPKG_CRT_LINKAGE}\".")
 endif()
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "" CACHE STRING "")
@@ -30,10 +30,10 @@ set(LLVM_CPP_FLAGS "${LLVM_CPP_FLAGS} -fdiagnostics-absolute-paths -fms-compatib
 set(LLVM_CXX_FLAGS "-fcoroutines-ts")
 
 set(LLVM_CPP_FLAGS_DEBUG "-Xclang --dependent-lib=libcmtd -D_MT -D_DEBUG -g -Xclang -gcodeview")
-set(LLVM_CXX_FLAGS_DEBUG "")
+set(LLVM_CXX_FLAGS_DEBUG "-Xclang --dependent-lib=libcpmtd")
 
 set(LLVM_CPP_FLAGS_RELEASE "-Xclang --dependent-lib=libcmt -D_MT -DNDEBUG -flto=full")
-set(LLVM_CXX_FLAGS_RELEASE "-fwhole-program-vtables -fvirtual-function-elimination")
+set(LLVM_CXX_FLAGS_RELEASE "-Xclang --dependent-lib=libcpmt -fwhole-program-vtables -fvirtual-function-elimination")
 
 set(CMAKE_C_FLAGS "${LLVM_CPP_FLAGS} ${VCPKG_C_FLAGS}" CACHE STRING "")
 set(CMAKE_CXX_FLAGS "${LLVM_CPP_FLAGS} ${LLVM_CXX_FLAGS} ${VCPKG_CXX_FLAGS}" CACHE STRING "")

@@ -1,11 +1,9 @@
 /*
 .*
 !/.gitignore
-!/clean.cmake
+!/setup.cmake
 !/tbb.patch
 !/TBBConfig.cmake
 !/TBBConfigVersion.cmake
-!/test-filesystem.cpp
-!/test-pstl.cpp
-!/test-re.cpp
+!/unistd.h
 !/vs.hpp

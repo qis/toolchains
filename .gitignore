@@ -1,6 +1,7 @@
 /*
 .*
 !/src/
+!/test/
 !/.gitignore
 !/linux.cmake
 !/makefile
@@ -10,3 +11,4 @@
 !/windows-cl.cmake
 !/windows-clang.cmake
 !/windows-clang-cl.cmake
+!/windows-clang-msvc.cmake
