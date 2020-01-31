@@ -1,0 +1,5 @@
+Source: boost-uuid
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost uuid module
+Build-Depends: boost

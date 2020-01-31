@@ -1,0 +1,5 @@
+Source: boost-coroutine2
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost coroutine2 module
+Build-Depends: boost

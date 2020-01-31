@@ -1,0 +1,5 @@
+Source: boost-lambda
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost lambda module
+Build-Depends: boost

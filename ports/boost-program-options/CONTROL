@@ -1,0 +1,5 @@
+Source: boost-program-options
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost program options module
+Build-Depends: boost

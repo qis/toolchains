@@ -1,0 +1,5 @@
+Source: boost-heap
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost heap module
+Build-Depends: boost

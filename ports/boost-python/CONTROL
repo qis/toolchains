@@ -1,0 +1,5 @@
+Source: boost-python
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost python module
+Build-Depends: boost

@@ -1,0 +1,5 @@
+Source: boost-outcome
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost outcome module
+Build-Depends: boost

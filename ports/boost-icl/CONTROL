@@ -1,0 +1,5 @@
+Source: boost-icl
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost icl module
+Build-Depends: boost

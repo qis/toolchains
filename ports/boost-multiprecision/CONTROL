@@ -1,0 +1,5 @@
+Source: boost-multiprecision
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost multiprecision module
+Build-Depends: boost

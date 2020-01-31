@@ -1,0 +1,5 @@
+Source: boost-locale
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost locale module
+Build-Depends: boost

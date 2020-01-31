@@ -1,11 +1,11 @@
 /*
 .*
+!/ports/
 !/src/
 !/.gitattributes
 !/.gitignore
 !/config.cmake
 !/linux.cmake
-!/make.cmd
 !/makefile
 !/readme.md
 !/windows.cmake

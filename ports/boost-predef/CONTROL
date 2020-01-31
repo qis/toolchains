@@ -1,0 +1,5 @@
+Source: boost-predef
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost predef module
+Build-Depends: boost

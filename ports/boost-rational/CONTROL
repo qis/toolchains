@@ -1,0 +1,5 @@
+Source: boost-rational
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost rational module
+Build-Depends: boost

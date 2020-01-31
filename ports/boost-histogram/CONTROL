@@ -1,0 +1,5 @@
+Source: boost-histogram
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost histogram module
+Build-Depends: boost

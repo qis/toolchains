@@ -1,0 +1,5 @@
+Source: boost-signals2
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost signals2 module
+Build-Depends: boost

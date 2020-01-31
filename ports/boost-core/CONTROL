@@ -1,0 +1,5 @@
+Source: boost-core
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost core module
+Build-Depends: boost

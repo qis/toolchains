@@ -1,0 +1,5 @@
+Source: boost-scope-exit
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost scope exit module
+Build-Depends: boost

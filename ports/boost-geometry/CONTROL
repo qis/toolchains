@@ -1,0 +1,5 @@
+Source: boost-geometry
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost geometry module
+Build-Depends: boost

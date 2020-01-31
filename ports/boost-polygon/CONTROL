@@ -1,0 +1,5 @@
+Source: boost-polygon
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost polygon module
+Build-Depends: boost

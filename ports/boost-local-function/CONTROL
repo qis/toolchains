@@ -1,0 +1,5 @@
+Source: boost-local-function
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost local function module
+Build-Depends: boost

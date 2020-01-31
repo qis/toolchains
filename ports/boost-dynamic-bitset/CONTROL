@@ -1,0 +1,5 @@
+Source: boost-dynamic-bitset
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost dynamic bitset module
+Build-Depends: boost

@@ -1,0 +1,5 @@
+Source: boost-flyweight
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost flyweight module
+Build-Depends: boost

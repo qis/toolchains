@@ -1,0 +1,5 @@
+Source: boost-array
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost array module
+Build-Depends: boost

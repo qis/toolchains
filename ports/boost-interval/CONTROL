@@ -1,0 +1,5 @@
+Source: boost-interval
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost interval module
+Build-Depends: boost

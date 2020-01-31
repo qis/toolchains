@@ -1,0 +1,5 @@
+Source: boost-log
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost log module
+Build-Depends: boost

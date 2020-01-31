@@ -1,0 +1,5 @@
+Source: boost-math
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost math module
+Build-Depends: boost

@@ -1,0 +1,5 @@
+Source: boost-exception
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost exception module
+Build-Depends: boost

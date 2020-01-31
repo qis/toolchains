@@ -1,0 +1,5 @@
+Source: boost-spirit
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost spirit module
+Build-Depends: boost

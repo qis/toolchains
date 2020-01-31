@@ -2,6 +2,7 @@
 .*
 !/.gitignore
 !/llvm.cmake
+!/ports.cmake
 !/tbb.cmake
 !/tbb.patch
 !/TBBConfig.cmake

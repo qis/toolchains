@@ -1,0 +1,5 @@
+Source: boost-container
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost container module
+Build-Depends: boost

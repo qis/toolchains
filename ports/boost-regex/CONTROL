@@ -1,0 +1,5 @@
+Source: boost-regex
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost regex module
+Build-Depends: boost

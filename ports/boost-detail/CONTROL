@@ -1,0 +1,5 @@
+Source: boost-detail
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost detail module
+Build-Depends: boost

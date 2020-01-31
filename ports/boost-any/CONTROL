@@ -1,0 +1,5 @@
+Source: boost-any
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost any module
+Build-Depends: boost

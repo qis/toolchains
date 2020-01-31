@@ -1,0 +1,5 @@
+Source: boost-context
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost context module
+Build-Depends: boost

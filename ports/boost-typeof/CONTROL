@@ -1,0 +1,5 @@
+Source: boost-typeof
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost typeof module
+Build-Depends: boost

@@ -1,0 +1,5 @@
+Source: boost-tokenizer
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost tokenizer module
+Build-Depends: boost

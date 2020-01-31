@@ -1,0 +1,5 @@
+Source: boost-config
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost config module
+Build-Depends: boost

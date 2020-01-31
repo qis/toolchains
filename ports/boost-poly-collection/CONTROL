@@ -1,0 +1,5 @@
+Source: boost-poly-collection
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost poly collection module
+Build-Depends: boost

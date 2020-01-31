@@ -1,0 +1,5 @@
+Source: boost-throw-exception
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost throw exception module
+Build-Depends: boost

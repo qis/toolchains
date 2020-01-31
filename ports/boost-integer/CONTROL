@@ -1,0 +1,5 @@
+Source: boost-integer
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost integer module
+Build-Depends: boost

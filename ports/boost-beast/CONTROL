@@ -1,0 +1,5 @@
+Source: boost-beast
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost beast module
+Build-Depends: boost

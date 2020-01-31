@@ -1,0 +1,5 @@
+Source: boost-disjoint-sets
+Version: 1.72.0
+Homepage: https://boost.org
+Description: Boost disjoint sets module
+Build-Depends: boost
