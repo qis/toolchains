@@ -46,4 +46,4 @@ list(PREPEND CMAKE_SYSTEM_PREFIX_PATH "${CMAKE_CURRENT_LIST_DIR}/llvm/lib/cmake"
 set(Threads_FOUND TRUE)
 set(CMAKE_THREAD_LIBS_INIT "")
 set(CMAKE_USE_PTHREADS_INIT "1")
-set(Threads::Threads "")
+add_library(Threads::Threads INTERFACE IMPORTED)

@@ -53,4 +53,4 @@ add_definitions(/D_ATL_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_WARNINGS)
 # Disable FindThreads module.
 set(Threads_FOUND TRUE)
 set(CMAKE_USE_WIN32_THREADS_INIT "1")
-set(Threads::Threads "")
+add_library(Threads::Threads INTERFACE IMPORTED)
