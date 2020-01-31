@@ -1,5 +1,0 @@
-Source: boost-ublas
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost ublas module
-Build-Depends: boost

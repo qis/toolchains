@@ -1,5 +1,0 @@
-Source: boost-build
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost build module
-Build-Depends: boost

@@ -1,5 +1,0 @@
-Source: boost-compatibility
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost compatibility module
-Build-Depends: boost

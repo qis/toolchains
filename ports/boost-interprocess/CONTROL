@@ -1,5 +1,0 @@
-Source: boost-interprocess
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost interprocess module
-Build-Depends: boost

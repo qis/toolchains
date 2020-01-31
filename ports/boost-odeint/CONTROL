@@ -1,5 +1,0 @@
-Source: boost-odeint
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost odeint module
-Build-Depends: boost

@@ -1,5 +1,0 @@
-Source: boost-tti
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost tti module
-Build-Depends: boost

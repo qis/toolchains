@@ -1,5 +1,0 @@
-Source: boost-property-tree
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost property tree module
-Build-Depends: boost

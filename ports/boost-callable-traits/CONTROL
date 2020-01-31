@@ -1,5 +1,0 @@
-Source: boost-callable-traits
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost callable traits module
-Build-Depends: boost

@@ -1,5 +1,0 @@
-Source: boost-function-types
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost function types module
-Build-Depends: boost

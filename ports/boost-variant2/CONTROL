@@ -1,5 +1,0 @@
-Source: boost-variant2
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost variant2 module
-Build-Depends: boost

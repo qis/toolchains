@@ -1,5 +1,0 @@
-Source: boost-vcpkg-helpers
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost vcpkg helpers module
-Build-Depends: boost

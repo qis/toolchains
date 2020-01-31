@@ -1,5 +1,0 @@
-Source: boost-circular-buffer
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost circular buffer module
-Build-Depends: boost

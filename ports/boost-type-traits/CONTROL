@@ -1,5 +1,0 @@
-Source: boost-type-traits
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost type traits module
-Build-Depends: boost

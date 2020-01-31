@@ -1,5 +1,0 @@
-Source: boost-graph
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost graph module
-Build-Depends: boost

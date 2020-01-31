@@ -1,5 +1,0 @@
-Source: boost-mpi
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost mpi module
-Build-Depends: boost

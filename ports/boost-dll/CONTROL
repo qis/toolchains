@@ -1,5 +1,0 @@
-Source: boost-dll
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost dll module
-Build-Depends: boost

@@ -1,5 +1,0 @@
-Source: boost-align
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost align module
-Build-Depends: boost

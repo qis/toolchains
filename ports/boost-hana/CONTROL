@@ -1,5 +1,0 @@
-Source: boost-hana
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost hana module
-Build-Depends: boost

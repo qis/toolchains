@@ -1,5 +1,0 @@
-Source: boost-safe-numerics
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost safe numerics module
-Build-Depends: boost

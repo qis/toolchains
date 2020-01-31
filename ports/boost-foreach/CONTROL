@@ -1,5 +1,0 @@
-Source: boost-foreach
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost foreach module
-Build-Depends: boost

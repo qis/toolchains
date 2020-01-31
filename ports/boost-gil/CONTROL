@@ -1,5 +1,0 @@
-Source: boost-gil
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost gil module
-Build-Depends: boost

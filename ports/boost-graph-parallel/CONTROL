@@ -1,5 +1,0 @@
-Source: boost-graph-parallel
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost graph parallel module
-Build-Depends: boost

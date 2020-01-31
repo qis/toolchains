@@ -1,5 +1,0 @@
-Source: boost-logic
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost logic module
-Build-Depends: boost

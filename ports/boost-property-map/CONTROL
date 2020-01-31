@@ -1,5 +1,0 @@
-Source: boost-property-map
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost property map module
-Build-Depends: boost

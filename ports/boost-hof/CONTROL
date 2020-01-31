@@ -1,5 +1,0 @@
-Source: boost-hof
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost hof module
-Build-Depends: boost

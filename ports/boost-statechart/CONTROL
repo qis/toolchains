@@ -1,5 +1,0 @@
-Source: boost-statechart
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost statechart module
-Build-Depends: boost

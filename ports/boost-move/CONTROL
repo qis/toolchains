@@ -1,5 +1,0 @@
-Source: boost-move
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost move module
-Build-Depends: boost

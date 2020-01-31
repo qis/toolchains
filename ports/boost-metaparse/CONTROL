@@ -1,5 +1,0 @@
-Source: boost-metaparse
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost metaparse module
-Build-Depends: boost

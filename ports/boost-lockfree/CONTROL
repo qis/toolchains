@@ -1,5 +1,0 @@
-Source: boost-lockfree
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost lockfree module
-Build-Depends: boost

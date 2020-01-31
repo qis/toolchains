@@ -1,5 +1,0 @@
-Source: boost-modular-build-helper
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost modular build helper module
-Build-Depends: boost

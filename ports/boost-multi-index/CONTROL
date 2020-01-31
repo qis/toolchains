@@ -1,5 +1,0 @@
-Source: boost-multi-index
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost multi index module
-Build-Depends: boost

@@ -1,5 +1,0 @@
-Source: boost-units
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost units module
-Build-Depends: boost

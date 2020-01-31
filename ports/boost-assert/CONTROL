@@ -1,5 +1,0 @@
-Source: boost-assert
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost assert module
-Build-Depends: boost

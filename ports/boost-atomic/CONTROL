@@ -1,5 +1,0 @@
-Source: boost-atomic
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost atomic module
-Build-Depends: boost

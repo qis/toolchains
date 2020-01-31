@@ -1,5 +1,0 @@
-Source: boost-iterator
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost iterator module
-Build-Depends: boost

@@ -1,5 +1,0 @@
-Source: boost-unordered
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost unordered module
-Build-Depends: boost

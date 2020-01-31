@@ -1,5 +1,0 @@
-Source: boost-mp11
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost mp11 module
-Build-Depends: boost

@@ -1,5 +1,0 @@
-Source: boost-type-erasure
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost type erasure module
-Build-Depends: boost

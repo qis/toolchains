@@ -1,5 +1,0 @@
-Source: boost-numeric-conversion
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost numeric conversion module
-Build-Depends: boost

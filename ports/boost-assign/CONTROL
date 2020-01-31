@@ -1,5 +1,0 @@
-Source: boost-assign
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost assign module
-Build-Depends: boost

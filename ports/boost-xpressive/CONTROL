@@ -1,5 +1,0 @@
-Source: boost-xpressive
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost xpressive module
-Build-Depends: boost

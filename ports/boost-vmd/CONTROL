@@ -1,5 +1,0 @@
-Source: boost-vmd
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost vmd module
-Build-Depends: boost

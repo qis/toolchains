@@ -1,5 +1,0 @@
-Source: boost-process
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost process module
-Build-Depends: boost

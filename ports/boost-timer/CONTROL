@@ -1,5 +1,0 @@
-Source: boost-timer
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost timer module
-Build-Depends: boost

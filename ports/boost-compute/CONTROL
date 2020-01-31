@@ -1,5 +1,0 @@
-Source: boost-compute
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost compute module
-Build-Depends: boost

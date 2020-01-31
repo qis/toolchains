@@ -1,5 +1,0 @@
-Source: boost-convert
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost convert module
-Build-Depends: boost

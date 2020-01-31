@@ -1,5 +1,0 @@
-Source: boost-bimap
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost bimap module
-Build-Depends: boost

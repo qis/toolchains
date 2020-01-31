@@ -1,5 +1,0 @@
-Source: boost-accumulators
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost accumulators module
-Build-Depends: boost

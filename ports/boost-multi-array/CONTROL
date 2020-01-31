@@ -1,5 +1,0 @@
-Source: boost-multi-array
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost multi array module
-Build-Depends: boost

@@ -1,5 +1,0 @@
-Source: boost-sort
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost sort module
-Build-Depends: boost

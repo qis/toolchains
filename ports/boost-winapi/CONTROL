@@ -1,5 +1,0 @@
-Source: boost-winapi
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost winapi module
-Build-Depends: boost

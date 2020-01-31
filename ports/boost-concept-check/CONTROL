@@ -1,5 +1,0 @@
-Source: boost-concept-check
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost concept check module
-Build-Depends: boost

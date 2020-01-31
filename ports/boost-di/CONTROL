@@ -1,5 +1,0 @@
-Source: boost-di
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost di module
-Build-Depends: boost

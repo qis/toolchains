@@ -1,5 +1,0 @@
-Source: boost-format
-Version: 1.72.0
-Homepage: https://boost.org
-Description: Boost format module
-Build-Depends: boost
