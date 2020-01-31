@@ -1,115 +1,107 @@
 # Toolchains
-Custom [vcpkg](https://github.com/Microsoft/vcpkg) toolchains.
+Custom [vcpkg](https://github.com/microsoft/vcpkg) toolchains.
+
+## Requirements
+* Working system compiler (Visual Studio 2019 on Windows; GCC on Linux).
+* CMake 3.16.0 or newer.
+* Ninja 1.8.2 or newer.
+* Git 2.17.1 or newer.
+
+## Download
+Download vcpkg with toolset patches and this toolchain.
 
 ```sh
 cd C:/Workspace || cd /opt
-git clone --depth 1 --filter=blob:none git@github.com:microsoft/vcpkg
+git clone git@github.com:microsoft/vcpkg
 cmake -E rename vcpkg/scripts/toolchains vcpkg/scripts/toolchains.orig
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
 ```
 
-Patch vcpkg to disable static library post-build architecture checks.
+Create downloads directory in `cmd.exe`.
 
-```diff
---- i/toolsrc/src/vcpkg/postbuildlint.cpp
-+++ w/toolsrc/src/vcpkg/postbuildlint.cpp
-@@ -429,7 +429,7 @@ namespace vcpkg::PostBuildLint
-     static LintStatus check_lib_architecture(const std::string& expected_architecture,
-                                              const std::vector<fs::path>& files)
-     {
--#if defined(_WIN32)
-+#if defined(_WIN32) && 0
-         std::vector<FileAndArch> binaries_with_invalid_architecture;
-
-         for (const fs::path& file : files)
+```cmd
+md C:\Workspace\downloads
 ```
 
-Download Strawberry Perl in WSL.
-
-```sh
-wget --continue --directory-prefix=/mnt/c/Workspace/vcpkg/downloads \
-  "$(grep strawberryperl.com /mnt/c/Workspace/vcpkg/scripts/cmake/vcpkg_find_acquire_program.cmake | cut -d\" -f2)"
-```
-
-You can create a symlink from `/mnt/c/Workspace/vcpkg` to `/opt/vcpkg` to improve compilation times, but you
-won't be able to use `vcpkg upgrade` or install ports in Windows and WSL at the same time.
-
-## Windows
-Set up environment variables.
+## Setup
+Set Windows environment variables in `rundll32.exe sysdm.cpl,EditEnvironmentVariables`.
 
 ```cmd
 set VCPKG_ROOT=C:\Workspace\vcpkg
-set VCPKG_DEFAULT_TRIPLET=x64-windows-static
-set PATH=%PATH%;%VCPKG_ROOT%
+set VCPKG_DOWNLOADS=C:\Workspace\downloads
+set VCPKG_DEFAULT_TRIPLET=x64-windows
 ```
 
-Build Vcpkg.
-
-```cmd
-bootstrap-vcpkg -disableMetrics -win64
-```
-
-Build LLVM.
+Set Linux environment variables in `~/.bashrc`.
 
 ```sh
-cd "%VCPKG_ROOT%\scripts\toolchains" && make
+export VCPKG_ROOT=/opt/vcpkg
+export VCPKG_DOWNLOADS=/opt/downloads
+export VCPKG_DEFAULT_TRIPLET=x64-linux
 ```
+
+Create symbolic links in `bash.exe`.
+
+```sh
+ln -s /mnt/c/Workspace/vcpkg /opt/vcpkg
+ln -s /mnt/c/Workspace/downloads /opt/downloads
+```
+
+**NOTE**: Do not use `vcpkg install` or `vcpkg upgrade` in `bash.exe` and `cmd.exe` at the same time.
+
+## Vcpkg
+Build vcpkg in `cmd.exe`.
+
+```cmd
+C:\Workspace\vcpkg\bootstrap-vcpkg.bat -disableMetrics -win64
+```
+
+Build vcpkg in `bash.exe`.
+
+```sh
+/opt/vcpkg/bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries && rm -rf /opt/vcpkg/toolsrc/build.rel
+```
+
+## Triplets
+
+<details>
+<summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file.</summary>
+&nbsp;
+
+```cmake
+set(VCPKG_TARGET_ARCHITECTURE x64)
+set(VCPKG_LIBRARY_LINKAGE dynamic)
+set(VCPKG_CRT_LINKAGE dynamic)
+
+set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251")
+set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
+set(VCPKG_LINKER_FLAGS "/ignore:4099")
+```
+
+</details>
 
 <details>
 <summary>Modify the <code>triplets/x64-windows-static.cmake</code> triplet file.</summary>
-
-Example for targeting CPUs with AVX2 support.
+&nbsp;
 
 ```cmake
 set(VCPKG_TARGET_ARCHITECTURE x64)
+set(VCPKG_LIBRARY_LINKAGE static)
 set(VCPKG_CRT_LINKAGE static)
-set(VCPKG_LIBRARY_LINKAGE static)
 
-set(VCPKG_C_FLAGS "/arch:AVX2")
-set(VCPKG_CXX_FLAGS "/arch:AVX2")
+set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251")
+set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
+set(VCPKG_LINKER_FLAGS "/ignore:4099")
 ```
 
 </details>
 
-## Linux
-Set up environment variables.
+## Compiler
+Build LLVM in `bash.exe`.
 
 ```sh
-export VCPKG_ROOT="/opt/vcpkg"
-export VCPKG_DEFAULT_TRIPLET="x64-linux"
-export PATH="${PATH}:${VCPKG_ROOT}"
+make -C /opt/vcpkg/scripts/toolchains
 ```
-
-Build Vcpkg.
-
-```sh
-bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries
-rm -rf /opt/vcpkg/toolsrc/build.rel
-```
-
-Build LLVM.
-
-```sh
-cd "${VCPKG_ROOT}/scripts/toolchains" && make
-```
-
-<details>
-<summary>Modify the <code>triplets/x64-linux.cmake</code> triplet file.</summary>
-
-Example for targeting CPUs with AVX2 support.
-
-```cmake
-set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_CRT_LINKAGE dynamic)
-set(VCPKG_LIBRARY_LINKAGE static)
-
-set(VCPKG_C_FLAGS "-mavx2")
-set(VCPKG_CXX_FLAGS "-mavx2")
-
-set(VCPKG_CMAKE_SYSTEM_NAME Linux)
-```
-
-</details>
 
 ## Ports
 Install ports.
@@ -122,45 +114,22 @@ vcpkg install benchmark gtest
 vcpkg install openssl
 
 # Compression
-vcpkg install bzip2 liblzma libzip[bzip2,openssl] zlib zstd
+vcpkg install bzip2 liblzma zlib zstd
 
 # Utility
-vcpkg install date fmt libssh2 nlohmann-json pugixml ragel spdlog utf8proc
+vcpkg install fmt pugixml spdlog utf8proc
 
 # Images
 vcpkg install giflib libjpeg-turbo libpng tiff
-
-# Fonts
-vcpkg install freetype
-
-# Documents
-vcpkg install podofo
-
-# Boost
-vcpkg install boost
 ```
 
-<!--
-```
-git clone git@github.com:qis/backward vcpkg/ports/backward && ^
-git clone git@github.com:qis/bcrypt vcpkg/ports/bcrypt && ^
-git clone git@github.com:qis/compat vcpkg/ports/compat && ^
-git clone git@github.com:qis/ice vcpkg/ports/ice && ^
-git clone git@github.com:qis/sql vcpkg/ports/sql && ^
-git clone git@github.com:xnetsystems/pdf vcpkg/ports/pdf && ^
-git clone git:libraries/http vcpkg/ports/http
+## Exceptions
+Some ports require macro definitions to disable exceptions.
 
-vcpkg install benchmark gtest openssl bzip2 liblzma libzip[bzip2,openssl] zlib zstd && ^
-vcpkg install date fmt libssh2 nlohmann-json pugixml ragel spdlog utf8proc && ^
-vcpkg install giflib libjpeg-turbo libpng tiff freetype podofo boost && ^
-vcpkg install bcrypt compat ice pdf sql http
-
-vcpkg install benchmark gtest openssl bzip2 liblzma libzip[bzip2,openssl] zlib zstd && \
-vcpkg install date fmt libssh2 nlohmann-json pugixml ragel spdlog utf8proc && \
-vcpkg install giflib libjpeg-turbo libpng tiff freetype podofo boost && \
-vcpkg install backward bcrypt compat ice pdf sql http
-```
--->
+* `gtest` incorrectly sets `_HAS_EXCEPTIONS=1` and requires `GTEST_HAS_EXCEPTIONS=0` during compilation
+* `fmt` requires `FMT_EXCEPTIONS=0`
+* `pugixml` requires `PUGIXML_NO_EXCEPTIONS`
+* `spdlog` requires `SPDLOG_NO_EXCEPTIONS`
 
 ## Resources
 See [qis/example](https://github.com/qis/example) for a C++ application example using this setup.

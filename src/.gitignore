@@ -1,9 +1,8 @@
 /*
 .*
 !/.gitignore
-!/setup.cmake
+!/llvm.cmake
+!/tbb.cmake
 !/tbb.patch
 !/TBBConfig.cmake
 !/TBBConfigVersion.cmake
-!/unistd.h
-!/vs.hpp

@@ -1,35 +1,47 @@
-if (NOT TBB_IMPORTED_TARGETS)
-  set(TBB_IMPORTED_TARGETS "")
-endif()
-
-if (NOT TBB_FIND_COMPONENTS)
-  set(TBB_FIND_COMPONENTS "tbb;tbbmalloc")
-  foreach (_tbb_component ${TBB_FIND_COMPONENTS})
-    set(TBB_FIND_REQUIRED_${_tbb_component} 1)
-  endforeach()
-endif()
-
 set(TBB_INTERFACE_VERSION 11009)
 
-foreach (_tbb_component ${TBB_FIND_COMPONENTS})
-  set(TBB_${_tbb_component}_FOUND 0)
-  set(_tbb_lib "${CMAKE_CURRENT_LIST_DIR}/../../lib${_tbb_component}.a")
-  if (EXISTS "${_tbb_lib}")
-    if (NOT TARGET TBB::${_tbb_component})
-      add_library(TBB::${_tbb_component} STATIC IMPORTED)
-      set_target_properties(TBB::${_tbb_component} PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_LIST_DIR}/../../../include")
-      set_target_properties(TBB::${_tbb_component} PROPERTIES IMPORTED_LOCATION "${_tbb_lib}")
-    else()
-      message(STATUS "Using previously found TBB::${_tbb_component}")
-    endif()
-    list(APPEND TBB_IMPORTED_TARGETS TBB::${_tbb_component})
-    set(TBB_${_tbb_component}_FOUND 1)
-  elseif (TBB_FIND_REQUIRED AND TBB_FIND_REQUIRED_${_tbb_component})
-    message(STATUS "Missing required Intel TBB component: ${_tbb_component}")
-    set(TBB_FOUND FALSE)
-  endif()
-endforeach()
+get_filename_component(_IMPORT_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
+get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
+get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
+if(_IMPORT_PREFIX STREQUAL "/")
+  set(_IMPORT_PREFIX "")
+endif()
 
-list(REMOVE_DUPLICATES TBB_IMPORTED_TARGETS)
+add_library(TBB::tbb STATIC IMPORTED)
+set_target_properties(TBB::tbb PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include")
 
-unset(_tbb_lib)
+add_library(TBB::malloc STATIC IMPORTED)
+set_target_properties(TBB::malloc PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include")
+
+if(WIN32)
+  set_property(TARGET TBB::tbb APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+  set_target_properties(TBB::tbb PROPERTIES
+    IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
+    IMPORTED_LOCATION_DEBUG "${_IMPORT_PREFIX}/lib/tbb_debug.lib")
+
+  set_property(TARGET TBB::malloc APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+  set_target_properties(TBB::malloc PROPERTIES
+    IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
+    IMPORTED_LOCATION_DEBUG "${_IMPORT_PREFIX}/lib/tbbmalloc_debug.lib")
+
+  set_property(TARGET TBB::tbb APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+  set_target_properties(TBB::tbb PROPERTIES
+    IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+    IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib/tbb.lib")
+
+  set_property(TARGET TBB::malloc APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+  set_target_properties(TBB::malloc PROPERTIES
+    IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "CXX"
+    IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib/tbbmalloc.lib")
+else()
+  set_target_properties(TBB::tbb PROPERTIES
+    IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+    IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/libtbb.a")
+
+  set_target_properties(TBB::malloc PROPERTIES
+    IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+    IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/libtbbmalloc.a")
+endif()
+
+set(_IMPORT_PREFIX)

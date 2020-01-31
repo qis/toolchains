@@ -1,177 +1,26 @@
-ifeq ($(OS),Windows_NT)
-all: llvm/bin/clang.exe
-else
-all: llvm/include/pstl
-endif
+system = linux
 
-ifeq ($(OS),Windows_NT)
+all: all/$(system)
 
-# =================================================================================================
-# llvm
-# =================================================================================================
+all/windows:
 
-src/llvm:
-	@if exist src/llvm.7z ( 7z x src/llvm.7z -osrc ) else \
-	  ( git clone --depth 1 --filter=blob:none https://github.com/llvm/llvm-project src/llvm )
-	@cmake -P src/setup.cmake
-
-build/llvm/CMakeCache.txt: src/llvm
-	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
-	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
-	  -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;polly;lld" \
-	  -DLLVM_TARGETS_TO_BUILD="X86" \
-	  -DLLVM_ENABLE_BACKTRACES=OFF \
-	  -DLLVM_ENABLE_UNWIND_TABLES=OFF \
-	  -DLLVM_ENABLE_WARNINGS=OFF \
-	  -DLLVM_ENABLE_RTTI=OFF \
-	  -DLLVM_INCLUDE_BENCHMARKS=OFF \
-	  -DLLVM_INCLUDE_EXAMPLES=OFF \
-	  -DLLVM_INCLUDE_TESTS=ON \
-	  -DLLVM_INCLUDE_DOCS=OFF \
-	  -DCLANG_ENABLE_ARCMT=OFF \
-	  -DCLANG_ENABLE_STATIC_ANALYZER=OFF \
-	  -DCLANG_DEFAULT_STD_C="c99" \
-	  -DCLANG_DEFAULT_STD_CXX="cxx2a" \
-	  -DCLANG_DEFAULT_CXX_STDLIB="libc++" \
-	  -DCLANG_DEFAULT_UNWINDLIB="libunwind" \
-	  -DCLANG_DEFAULT_RTLIB="compiler-rt" \
-	  -DCLANG_DEFAULT_LINKER="lld" \
-	  -DCLANG_INCLUDE_TESTS=OFF \
-	  -DCLANG_PLUGIN_SUPPORT=OFF \
-	  -B build/llvm src/llvm/llvm
-
-llvm/bin/clang.exe: build/llvm/CMakeCache.txt
-	@cmake --build build/llvm -t \
-	  install-LTO-stripped \
-	  install-lld-stripped \
-	  install-clang-stripped \
-	  install-clang-format-stripped \
-	  install-clang-resource-headers \
-	  install-clangd-stripped \
-	  install-llvm-ar-stripped \
-	  LLVMTestingSupport \
-	  llvm-config \
-	  llvm-xray
-	@cmake -E remove -f "llvm/bin/ld.lld.exe"
-	@cmake -E remove -f "llvm/bin/ld64.lld.exe"
-	@cmake -E remove -f "llvm/bin/lld-link.exe"
-	@cmake -E remove -f "llvm/bin/wasm-ld.exe"
-	@cmake -E remove -f "llvm/bin/clang++.exe"
-	@cmake -E remove -f "llvm/bin/clang-cl.exe"
-	@cmake -E remove -f "llvm/bin/clang-cpp.exe"
-	@cmake -E remove -f "llvm/bin/llvm-ranlib.exe"
-	@cmd /c mklink "llvm\bin\clang++.exe" "clang.exe"
-	@cmd /c mklink "llvm\bin\clang-cl.exe" "clang.exe"
-	@cmd /c mklink "llvm\bin\llvm-ranlib.exe" "llvm-ar.exe"
-	@cmd /c mklink "llvm\bin\lld-link.exe" "lld.exe"
-
-build/runtimes/compiler-rt/CMakeCache.txt: llvm/bin/clang.exe
-	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
-	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm/lib/clang/10.0.0" \
-	  -DCMAKE_C_COMPILER="$(CURDIR)/llvm/bin/clang.exe" \
-	  -DCMAKE_CXX_COMPILER="$(CURDIR)/llvm/bin/clang++.exe" \
-	  -DLLVM_CONFIG_PATH="$(CURDIR)/build/llvm/bin/llvm-config.exe" \
-	  -DLLVM_ENABLE_RUNTIMES="compiler-rt" \
-	  -DCOMPILER_RT_BUILD_SANITIZERS=OFF \
-	  -DCOMPILER_RT_BUILD_LIBFUZZER=OFF \
-	  -DCOMPILER_RT_BUILD_PROFILE=OFF \
-	  -DCOMPILER_RT_BUILD_XRAY=OFF \
-	  -DCOMPILER_RT_INCLUDE_TESTS=OFF \
-	  -Bbuild/runtimes/compiler-rt src/llvm/llvm/runtimes
-
-llvm/lib/clang/10.0.0/lib/windows/clang_rt.builtins-x86_64.lib: build/runtimes/compiler-rt/CMakeCache.txt
-	@cmake --build build/runtimes/compiler-rt -t install-compiler-rt-stripped
-
-build/runtimes/libunwind/CMakeCache.txt: llvm/lib/clang/10.0.0/lib/windows/clang_rt.builtins-x86_64.lib
-	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
-	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
-	  -DCMAKE_C_COMPILER="$(CURDIR)/llvm/bin/clang.exe" \
-	  -DCMAKE_CXX_COMPILER="$(CURDIR)/llvm/bin/clang++.exe" \
-	  -DLLVM_CONFIG_PATH="$(CURDIR)/build/llvm/bin/llvm-config.exe" \
-	  -DLLVM_ENABLE_RUNTIMES="libunwind" \
-	  -DLIBUNWIND_ENABLE_SHARED=OFF \
-	  -DLIBUNWIND_ENABLE_STATIC=ON \
-	  -DLIBUNWIND_USE_COMPILER_RT=ON \
-	  -Bbuild/runtimes/libunwind src/llvm/llvm/runtimes
-
-llvm/lib/unwind.lib: build/runtimes/libunwind/CMakeCache.txt
-	@cmake --build build/runtimes/libunwind -t install-unwind-stripped
-
-llvm/lib/clang/10.0.0/include/unistd.h: llvm/lib/unwind.lib
-	@cmake -E copy_if_different src/unistd.h llvm/lib/clang/10.0.0/include/unistd.h
-
-build/runtimes/libcxxabi/CMakeCache.txt: llvm/lib/clang/10.0.0/include/unistd.h
-	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
-	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
-	  -DCMAKE_C_COMPILER="$(CURDIR)/llvm/bin/clang.exe" \
-	  -DCMAKE_CXX_COMPILER="$(CURDIR)/llvm/bin/clang++.exe" \
-	  -DCMAKE_CXX_FLAGS="-nostdinc++ -D_LIBCPP_NO_VCRUNTIME -D_LIBCPP_HAS_THREAD_API_WIN32 -D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS" \
-	  -DLLVM_CONFIG_PATH="$(CURDIR)/build/llvm/bin/llvm-config.exe" \
-	  -DLLVM_ENABLE_RUNTIMES="libcxxabi" \
-	  -DLIBCXXABI_ENABLE_SHARED=OFF \
-	  -DLIBCXXABI_ENABLE_STATIC=ON \
-	  -DLIBCXXABI_ENABLE_NEW_DELETE_DEFINITIONS=OFF \
-	  -DLIBCXXABI_ENABLE_EXCEPTIONS=ON \
-	  -DLIBCXXABI_ENABLE_THREADS=ON \
-	  -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
-	  -DLIBCXXABI_USE_COMPILER_RT=ON \
-	  -DLIBCXXABI_INCLUDE_TESTS=OFF \
-	  -Bbuild/runtimes/libcxxabi src/llvm/llvm/runtimes
-
-llvm/lib/c++abi.lib: build/runtimes/libcxxabi/CMakeCache.txt
-	@cmake --build build/runtimes/libcxxabi -t install-cxxabi-stripped
-
-build/runtimes/libcxx/CMakeCache.txt: llvm/lib/c++abi.lib
-	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
-	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
-	  -DCMAKE_C_COMPILER="$(CURDIR)/llvm/bin/clang.exe" \
-	  -DCMAKE_CXX_COMPILER="$(CURDIR)/llvm/bin/clang++.exe" \
-	  -DLLVM_CONFIG_PATH="$(CURDIR)/build/llvm/bin/llvm-config.exe" \
-	  -DLLVM_ENABLE_RUNTIMES="libcxx" \
-	  -DLIBCXX_CXX_ABI="libcxxabi" \
-	  -DLIBCXX_CXX_ABI_INCLUDE_PATHS="$(CURDIR)/src/llvm/libcxxabi/include" \
-	  -DLIBCXX_ENABLE_SHARED=OFF \
-	  -DLIBCXX_ENABLE_STATIC=ON \
-	  -DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=OFF \
-	  -DLIBCXX_HAS_WIN32_THREAD_API=ON \
-	  -DLIBCXX_USE_COMPILER_RT=ON \
-	  -DLIBCXX_INCLUDE_BENCHMARKS=OFF \
-	  -DLIBCXX_INCLUDE_TESTS=OFF \
-	  -DLIBCXX_INCLUDE_DOCS=OFF \
-	  -Bbuild/runtimes/libcxx src/llvm/llvm/runtimes
-
-llvm/lib/libc++.lib: build/runtimes/libcxx/CMakeCache.txt
-	@cmake --build build/runtimes/libcxx -t install-cxx-stripped
-
-build/test/CMakeCache.txt: llvm/lib/libc++.lib
-	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel \
-	  -DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/windows-clang.cmake" \
-	  -Bbuild/test test
-
-test:
-	@cmake -E remove_directory build/test
-	@cmake -GNinja -DCMAKE_BUILD_TYPE=Release \
-	  -DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/windows-clang.cmake" \
-	  -Bbuild/test test
-	@cmake --build build/test -t test
-	build/test/test.exe
-
-else
+all/linux: llvm
 
 # =================================================================================================
 # llvm
 # =================================================================================================
 
 src/llvm:
-	@if [ -f src/llvm.7z ]; then 7z x src/llvm.7z -osrc; else \
-	  git clone --depth 1 --filter=blob:none https://github.com/llvm/llvm-project src/llvm; \
-	fi
-	@cmake -P src/clean.cmake
+	@cmake -E echo "Downloading llvm ..."
+	@git clone --depth 1 https://github.com/llvm/llvm-project src/llvm
+	@cmake -E echo "Patching llvm ..."
+	@cmake -P src/llvm.cmake
 
-build/llvm/CMakeCache.txt: src/llvm
-	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
+llvm/bin/clang: src/llvm
+	@cmake -GNinja -Wno-dev \
+	  -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
-	  -DLLVM_ENABLE_PROJECTS="lld;lldb;polly;clang;clang-tools-extra;compiler-rt;libunwind;libcxxabi;libcxx;openmp" \
+	  -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb;polly;openmp;compiler-rt;libunwind;libcxxabi;libcxx" \
 	  -DLLVM_TARGETS_TO_BUILD="X86" \
 	  -DLLVM_ENABLE_BACKTRACES=OFF \
 	  -DLLVM_ENABLE_UNWIND_TABLES=OFF \
@@ -182,13 +31,14 @@ build/llvm/CMakeCache.txt: src/llvm
 	  -DLLVM_INCLUDE_DOCS=OFF \
 	  -DCLANG_ENABLE_ARCMT=OFF \
 	  -DCLANG_ENABLE_STATIC_ANALYZER=OFF \
-	  -DCLANG_DEFAULT_STD_C="c99" \
+	  -DCLANG_DEFAULT_STD_C="c11" \
 	  -DCLANG_DEFAULT_STD_CXX="cxx2a" \
 	  -DCLANG_DEFAULT_CXX_STDLIB="libc++" \
-	  -DCLANG_DEFAULT_UNWINDLIB="libunwind" \
+	  -DCLANG_DEFAULT_UNWINDLIB="none" \
 	  -DCLANG_DEFAULT_RTLIB="compiler-rt" \
 	  -DCLANG_DEFAULT_LINKER="lld" \
 	  -DCLANG_PLUGIN_SUPPORT=OFF \
+	  -DOPENMP_ENABLE_LIBOMPTARGET=OFF \
 	  -DCOMPILER_RT_BUILD_SANITIZERS=OFF \
 	  -DCOMPILER_RT_BUILD_LIBFUZZER=OFF \
 	  -DCOMPILER_RT_BUILD_PROFILE=OFF \
@@ -204,12 +54,10 @@ build/llvm/CMakeCache.txt: src/llvm
 	  -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
 	  -DLIBCXX_ENABLE_SHARED=OFF \
 	  -DLIBCXX_ENABLE_STATIC=ON \
-	  -DLIBCXX_ENABLE_PARALLEL_ALGORITHMS=OFF \
+	  -DLIBCXX_USE_COMPILER_RT=ON \
 	  -DLIBCXX_INCLUDE_BENCHMARKS=OFF \
-	  -DOPENMP_ENABLE_LIBOMPTARGET=OFF \
+	  -DLIBCXX_ENABLE_PARALLEL_ALGORITHMS=ON \
 	  -B build/llvm src/llvm/llvm
-
-llvm/bin/clang: build/llvm/CMakeCache.txt
 	@cmake --build build/llvm -t \
 	  install-LTO \
 	  install-lld-stripped \
@@ -217,7 +65,6 @@ llvm/bin/clang: build/llvm/CMakeCache.txt
 	  install-clang-stripped \
 	  install-clang-format-stripped \
 	  install-clang-resource-headers \
-	  install-clangd-stripped \
 	  install-llvm-ar-stripped \
 	  install-llvm-nm-stripped \
 	  install-llvm-objdump-stripped \
@@ -227,35 +74,56 @@ llvm/bin/clang: build/llvm/CMakeCache.txt
 	  install-compiler-rt-headers-stripped \
 	  install-unwind-stripped \
 	  install-cxxabi-stripped \
-	  install-cxx-stripped \
-	  llvm-config
-	@cmake -E remove llvm/bin/clang-cl
-	@cmake -E remove llvm/bin/clang-cpp
-	@cmake -E remove llvm/bin/lld-link
-	@cmake -E remove llvm/bin/wasm-ld
+	  install-cxx-stripped
+	@cmake -E remove -f "llvm/bin/clang"
+	@cmake -E remove -f "llvm/bin/clang-cl"
+	@cmake -E remove -f "llvm/bin/clang-cpp"
+	@cmake -E remove -f "llvm/bin/lld-link"
+	@cmake -E remove -f "llvm/bin/wasm-ld"
+	@cmake -E remove -f "llvm/lib/libLTO.so"
+	@cmake -E rename "llvm/bin/clang-11" "llvm/bin/clang"
+	@cmake -E rename "llvm/lib/libLTO.so.11git" "llvm/lib/libLTO.so"
+
+llvm: llvm/bin/clang restore llvm/include/pstl
+	@cmake -E copy src/llvm/clang/LICENSE.TXT llvm/share/clang/license.txt
+	@cmake -E copy src/llvm/clang-tools-extra/LICENSE.TXT llvm/share/clang-tools-extra/license.txt
+	@cmake -E copy src/llvm/openmp/LICENSE.TXT llvm/share/openmp/license.txt
+	@cmake -E copy src/llvm/polly/LICENSE.TXT llvm/share/polly/license.txt
+	@cmake -E copy src/llvm/llvm/LICENSE.TXT llvm/share/llvm/license.txt
+	@cmake -E copy src/llvm/lld/LICENSE.TXT llvm/share/lld/license.txt
+	@cmake -E copy src/llvm/lldb/LICENSE.TXT llvm/share/lldb/license.txt
+	@cmake -E copy src/llvm/compiler-rt/LICENSE.TXT llvm/share/compiler-rt/license.txt
+	@cmake -E copy src/llvm/libunwind/LICENSE.TXT llvm/share/libunwind/license.txt
+	@cmake -E copy src/llvm/libcxxabi/LICENSE.TXT llvm/share/libcxxabi/license.txt
+	@cmake -E copy src/llvm/libcxx/LICENSE.TXT llvm/share/libcxx/license.txt
+	@cmake -E copy src/llvm/pstl/LICENSE.TXT llvm/share/pstl/license.txt
+	@cmake -E copy src/tbb/LICENSE llvm/share/tbb/license.txt
 
 # =================================================================================================
 # tbb
 # =================================================================================================
 
 src/tbb.tar.gz:
+	@cmake -E echo "Downloading tbb ..."
 	@curl -L https://github.com/intel/tbb/archive/2019_U9.tar.gz -o src/tbb.tar.gz
 
 src/tbb: src/tbb.tar.gz
-	@mkdir -p src/tbb
+	@cmake -E echo "Extracting tbb ..."
+	@cmake -E make_directory src/tbb
 	@tar xf src/tbb.tar.gz -C src/tbb --strip-components 1
-	@patch -p1 < src/tbb.patch
+	@cmake -E echo "Patching tbb ..."
+	@cd src/tbb && git --work-tree=. --git-dir=.git apply ../tbb.patch --ignore-whitespace --whitespace=nowarn
 
-llvm/lib/cmake/TBB/TBBConfig.cmake: llvm/bin/clang src/tbb
-	@rm -rf src/tbb/build/*_debug src/tbb/build/*_release
-	@cd src/tbb && \
-	  CC="$(CURDIR)/llvm/bin/clang -fasm -fomit-frame-pointer -fmerge-all-constants" \
-	  CXX="$(CURDIR)/llvm/bin/clang++ -fasm -fomit-frame-pointer -fmerge-all-constants -Werror -Wno-deprecated-volatile" \
-	  make extra_inc=big_iron.inc compiler=clang arch=intel64 stdver=c++2a stdlib=libc++ tbb tbbmalloc
-	@mkdir -p llvm/include llvm/lib/cmake/TBB
-	@cp -R src/tbb/include/tbb llvm/include/
-	@cp -R src/tbb/build/*_release/libtbb*.a llvm/lib/
-	@cp -R src/TBBConfig.cmake src/TBBConfigVersion.cmake llvm/lib/cmake/TBB/
+llvm/include/tbb/version_string.ver: src/tbb
+	@cd src/tbb/include && find tbb -name '*.h' -exec cmake -E copy "{}" "$(CURDIR)/llvm/include/{}" ";"
+	@echo '#define __TBB_VERSION_STRINGS(N) "2019"' > llvm/include/tbb/version_string.ver
+
+llvm/lib/libtbb.a: llvm/include/tbb/version_string.ver
+	@cmake -P src/tbb.cmake
+	@cmake -E copy build/tbb/libtbb.a llvm/lib/libtbb.a
+	@cmake -E copy build/tbb/libtbbmalloc.a llvm/lib/libtbbmalloc.a
+	@cmake -E copy src/TBBConfig.cmake llvm/lib/cmake/TBB/TBBConfig.cmake
+	@cmake -E copy src/TBBConfigVersion.cmake llvm/lib/cmake/TBB/TBBConfigVersion.cmake
 	@find llvm/include/tbb llvm/lib/libtbb*.a llvm/lib/cmake/TBB \
 	  -type d -exec chmod 0755 '{}' ';' -or -type f -exec chmod 0644 '{}' ';'
 
@@ -263,118 +131,56 @@ llvm/lib/cmake/TBB/TBBConfig.cmake: llvm/bin/clang src/tbb
 # pstl
 # =================================================================================================
 
-build/pstl/CMakeCache.txt: llvm/lib/cmake/TBB/TBBConfig.cmake
-	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -Wno-dev \
-	  -DCMAKE_PREFIX_PATH="$(CURDIR)/llvm" \
+llvm/include/pstl: llvm/lib/libtbb.a
+	@cmake -GNinja -Wno-dev \
+	  -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
-	  -DCMAKE_C_COMPILER="$(CURDIR)/llvm/bin/clang" \
-	  -DCMAKE_CXX_COMPILER="$(CURDIR)/llvm/bin/clang++" \
-	  -DCMAKE_C_FLAGS="-std=c11 -fasm -fomit-frame-pointer -fmerge-all-constants" \
-	  -DCMAKE_CXX_FLAGS="-std=c++2a -fasm -fomit-frame-pointer -fmerge-all-constants" \
-	  -DCMAKE_SHARED_LINKER_FLAGS="-pthread -lc++abi -ldl" \
-	  -DCMAKE_EXE_LINKER_FLAGS="-pthread -lc++abi -ldl" \
-	  -DLLVM_ENABLE_PROJECTS="libunwind;libcxxabi;libcxx;pstl" \
-	  -DLLVM_TARGETS_TO_BUILD="X86" \
-	  -DLLVM_ENABLE_BACKTRACES=OFF \
-	  -DLLVM_ENABLE_UNWIND_TABLES=OFF \
-	  -DLLVM_ENABLE_WARNINGS=OFF \
-	  -DLLVM_INCLUDE_BENCHMARKS=OFF \
-	  -DLLVM_INCLUDE_EXAMPLES=OFF \
-	  -DLLVM_INCLUDE_TESTS=OFF \
-	  -DLLVM_INCLUDE_DOCS=OFF \
-	  -DLIBUNWIND_ENABLE_SHARED=OFF \
-	  -DLIBUNWIND_ENABLE_STATIC=ON \
-	  -DLIBUNWIND_USE_COMPILER_RT=ON \
-	  -DLIBCXXABI_ENABLE_SHARED=OFF \
-	  -DLIBCXXABI_ENABLE_STATIC=ON \
-	  -DLIBCXXABI_ENABLE_STATIC_UNWINDER=ON \
-	  -DLIBCXXABI_USE_COMPILER_RT=ON \
-	  -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
-	  -DLIBCXX_ENABLE_SHARED=OFF \
-	  -DLIBCXX_ENABLE_STATIC=ON \
-	  -DLIBCXX_ENABLE_PARALLEL_ALGORITHMS=ON \
-	  -DLIBCXX_INCLUDE_BENCHMARKS=OFF \
-	  -DLIBCXX_USE_COMPILER_RT=ON \
+	  -DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/linux.cmake" \
+	  -DVCPKG_TARGET_TRIPLET="x64-linux" \
 	  -DPSTL_PARALLEL_BACKEND="tbb" \
-	  -B build/pstl src/llvm/llvm
-
-llvm/include/pstl: build/pstl/CMakeCache.txt
-	@cmake --build build/pstl -t install-unwind-stripped
-	@cmake --build build/pstl -t install-cxxabi-stripped
-	@cmake --build build/pstl -t install-cxx-stripped
-	@cmake --build build/pstl -t install-pstl
+	  -B build/pstl src/llvm/pstl
+	@cmake --build build/pstl --target install
 
 # =================================================================================================
-# test
+# package
 # =================================================================================================
 
-test: llvm/include/pstl
-	@llvm/bin/clang++ -std=c++2a -Os -flto=full -fwhole-program-vtables -fvirtual-function-elimination \
-	  -fasm -fopenmp-simd -fomit-frame-pointer -fmerge-all-constants -fdiagnostics-absolute-paths -fPIC \
-	  -isystem llvm/include src/test-filesystem.cpp -o build/test-filesystem \
-	  -Xlinker -plugin-opt=O3 -Wl,-S -pthread -lc++abi -ltbb
-	@llvm/bin/llvm-strip build/test-filesystem
-	@build/test-filesystem
-	@llvm/bin/clang++ -std=c++2a -Os -flto=full -fwhole-program-vtables -fvirtual-function-elimination \
-	  -fasm -fopenmp-simd -fomit-frame-pointer -fmerge-all-constants -fdiagnostics-absolute-paths -fPIC \
-	  -isystem llvm/include src/test-pstl.cpp -o build/test-pstl \
-	  -Xlinker -plugin-opt=O3 -Wl,-S -pthread -lc++abi -ltbb
-	@llvm/bin/llvm-strip build/test-pstl
-	@build/test-pstl
-	@llvm/bin/clang++ -std=c++2a -Os -flto=full -fwhole-program-vtables -fvirtual-function-elimination \
-	  -fasm -fopenmp-simd -fomit-frame-pointer -fmerge-all-constants -fdiagnostics-absolute-paths -fPIC \
-	  -isystem llvm/include src/test-re.cpp -o build/test-re \
-	  -Xlinker -plugin-opt=O3 -Wl,-S -pthread -lc++abi -ltbb
-	@llvm/bin/llvm-strip build/test-re
-	@build/test-re
-
-endif
+package: clean
+	@cmake -E remove -f toolchain.7z
+	@cd .. && 7z a -mx=9 -myx=9 -ms=2g toolchains/toolchains.7z \
+	  toolchains/llvm \
+	  toolchains/config.cmake \
+	  toolchains/linux.cmake \
+	  toolchains/make.cmd \
+	  toolchains/makefile \
+	  toolchains/readme.md \
+	  toolchains/windows.cmake
 
 # =================================================================================================
 # clean
 # =================================================================================================
 
 clean:
-	@cmake -E remove_directory build
-	@cmake -E remove_directory src/tbb
-	@cmake -E remove_directory src/llvm
-	@cmake -E remove llvm/bin/clang++.exe
-	@cmake -E remove llvm/bin/clang-cl.exe
-	@cmake -E remove llvm/bin/lld-link.exe
-	@cmake -E remove llvm/bin/llvm-ranlib.exe
-	@cmake -E remove llvm/bin/clang
-	@cmake -E remove llvm/bin/clang++
-	@cmake -E remove llvm/bin/ld.lld
-	@cmake -E remove llvm/bin/ld64.lld
-	@cmake -E remove llvm/bin/llvm-ranlib
-	@cmake -E remove llvm/bin/llvm-strip
-	@cmake -E remove llvm/lib/libLTO.so
+	@cmake -E remove -f "llvm/bin/clang++"
+	@cmake -E remove -f "llvm/bin/ld.lld"
+	@cmake -E remove -f "llvm/bin/ld64.lld"
+	@cmake -E remove -f "llvm/bin/llvm-ranlib"
+	@cmake -E remove -f "llvm/bin/llvm-strip"
 
 # =================================================================================================
 # restore
 # =================================================================================================
 
-ifeq ($(OS),Windows_NT)
+restore/windows:
+	@wsl make restore
 
-restore:
-	@if not exist "llvm\bin\clang++.exe" cmd /c mklink "llvm\bin\clang++.exe" "clang.exe"
-	@if not exist "llvm\bin\clang-cl.exe" cmd /c mklink "llvm\bin\clang-cl.exe" "clang.exe"
-	@if not exist "llvm\bin\lld-link.exe" cmd /c mklink "llvm\bin\lld-link.exe" "lld.exe"
-	@if not exist "llvm\bin\llvm-ranlib.exe" cmd /c mklink "llvm\bin\llvm-ranlib.exe" "llvm-ar.exe"
+restore/linux: clean
+	@ln -s clang llvm/bin/clang++
+	@ln -s lld llvm/bin/ld.lld
+	@ln -s lld llvm/bin/ld64.lld
+	@ln -s llvm-ar llvm/bin/llvm-ranlib
+	@ln -s llvm-objcopy llvm/bin/llvm-strip
+	find llvm -type d -exec chmod 0755 '{}' ';' -or -type f -exec chmod 0644 '{}' ';'
+	find llvm/bin -type f -and -not -iname '*.dll' -exec chmod 0755 '{}' ';'
 
-else
-
-restore:
-	@find llvm -type d -exec chmod 0755 '{}' ';' -or -type f -exec chmod 0644 '{}' ';'
-	@find llvm/bin -type f -and -not -iname '*.dll' -exec chmod 0755 '{}' ';'
-	@if [ ! -e llvm/bin/clang ]; then ln -s clang-10 llvm/bin/clang; fi
-	@if [ ! -e llvm/bin/clang++ ]; then ln -s clang llvm/bin/clang++; fi
-	@if [ ! -e llvm/bin/ld.lld ]; then ln -s lld llvm/bin/ld.lld; fi
-	@if [ ! -e llvm/bin/ld64.lld ]; then ln -s lld llvm/bin/ld64.lld; fi
-	@if [ ! -e llvm/bin/llvm-ranlib ]; then ln -s llvm-ar llvm/bin/llvm-ranlib; fi
-	@if [ ! -e llvm/bin/llvm-strip ]; then ln -s llvm-objcopy llvm/bin/llvm-strip; fi
-	@if [ ! -e llvm/lib/libLTO.so ]; then ln -s libLTO.so.10git llvm/lib/libLTO.so; fi
-
-endif
-
-.PHONY: all test clean restore
+restore: restore/$(system) restore/$(system)
