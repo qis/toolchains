@@ -1,6 +1,6 @@
 MAKEFLAGS += --no-print-directory
 
-all: llvm ports
+all: llvm
 
 # =================================================================================================
 # llvm
@@ -138,13 +138,6 @@ llvm/include/pstl: llvm/lib/libtbb.a
 	@cmake --build build/pstl --target install
 
 # =================================================================================================
-# ports
-# =================================================================================================
-
-ports:
-	@cmake -P src/ports.cmake
-
-# =================================================================================================
 # package
 # =================================================================================================
 
@@ -183,4 +176,4 @@ restore: clean
 	find llvm -type d -exec chmod 0755 '{}' ';' -or -type f -exec chmod 0644 '{}' ';'
 	find llvm/bin -type f -and -not -iname '*.dll' -exec chmod 0755 '{}' ';'
 
-.PHONY: all llvm ports package clean restore
+.PHONY: all llvm package clean restore
