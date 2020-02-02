@@ -51,7 +51,7 @@ add_library(tbb
   src/old/spin_rw_mutex_v2.cpp
   src/old/task_v2.cpp)
 
-target_compile_definitions(tbb PRIVATE __TBB_BUILD=1)
+target_compile_definitions(tbb PRIVATE __TBB_BUILD=1 PUBLIC __TBB_NO_IMPLICIT_LINKAGE=1)
 target_include_directories(tbb PRIVATE ${CMAKE_CURRENT_BINARY_DIR} src src/rml/include)
 target_include_directories(tbb PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -87,8 +87,8 @@ add_library(tbbmalloc
   src/tbb/itt_notify.cpp
   src/tbbmalloc/frontend.cpp)
 
-target_compile_definitions(tbbmalloc PRIVATE __TBBMALLOC_BUILD=1)
 target_include_directories(tbbmalloc PRIVATE ${CMAKE_CURRENT_BINARY_DIR} src src/rml/include src/tbbmalloc)
+target_compile_definitions(tbbmalloc PRIVATE __TBBMALLOC_BUILD=1 PUBLIC __TBBMALLOC_NO_IMPLICIT_LINKAGE=1)
 target_link_libraries(tbbmalloc PUBLIC tbb)
 
 if(WIN32)
@@ -212,7 +212,7 @@ configure_package_config_file(TBBConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/TBB
   INSTALL_DESTINATION lib/cmake/TBB)
 
 write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/TBBConfigVersion.cmake
-  VERSION ${PROJECT_VERSION} COMPATIBILITY SameMajorVersion)
+  VERSION ${PROJECT_VERSION} COMPATIBILITY AnyNewerVersion)
 
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/TBBConfig.cmake

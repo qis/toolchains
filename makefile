@@ -93,14 +93,13 @@ llvm: llvm/bin/clang restore llvm/include/pstl
 	@cmake -E copy src/llvm/libcxxabi/LICENSE.TXT llvm/share/libcxxabi/license.txt
 	@cmake -E copy src/llvm/libcxx/LICENSE.TXT llvm/share/libcxx/license.txt
 	@cmake -E copy src/llvm/pstl/LICENSE.TXT llvm/share/pstl/license.txt
-	@cmake -E copy src/tbb/LICENSE llvm/share/tbb/license.txt
 
 # =================================================================================================
 # tbb
 # =================================================================================================
 
 tbb:
-	@vcpkg install --overlay-ports="$(CURDIR)/src/tbb" tbb[pstl]
+	@vcpkg install --overlay-ports="$(CURDIR)/src/tbb" tbb[pstl]:x64-linux
 
 # =================================================================================================
 # pstl
