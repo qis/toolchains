@@ -94,6 +94,24 @@ set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
 
 </details>
 
+<details>
+<summary>Modify the <code>triplets/x64-linux.cmake</code> triplet file.</summary>
+&nbsp;
+
+```cmake
+set(VCPKG_CMAKE_SYSTEM_NAME Linux)
+set(VCPKG_TARGET_ARCHITECTURE x64)
+set(VCPKG_CRT_LINKAGE dynamic)
+set(VCPKG_LIBRARY_LINKAGE static)
+
+if(PORT STREQUAL openssl-unix)
+  set(VCPKG_C_FLAGS "-fasm")
+  set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
+endif()
+```
+
+</details>
+
 ## Compiler
 Build LLVM in `bash.exe`.
 

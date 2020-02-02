@@ -1,6 +1,11 @@
 include_guard(GLOBAL)
 include("${CMAKE_CURRENT_LIST_DIR}/config.cmake")
 
+# Set C standard.
+set(CMAKE_C_STANDARD 11 CACHE STRING "")
+set(CMAKE_C_STANDARD_REQUIRED ON CACHE STRING "")
+set(CMAKE_C_EXTENSIONS OFF CACHE STRING "")
+
 # Set runtime library.
 set(CMAKE_MSVC_RUNTIME_LIBRARY "" CACHE STRING "")  
 if(VCPKG_CRT_LINKAGE STREQUAL "dynamic")
