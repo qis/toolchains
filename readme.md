@@ -104,7 +104,7 @@ make -C /opt/vcpkg/scripts/toolchains
 Install the same TBB version in `cmd.exe`.
 
 ```cmd
-vcpkg install --overlay-ports="%VCPKG_ROOT%\scripts\toolchains\src\tbb" tbb
+vcpkg install --overlay-ports="%VCPKG_ROOT%\scripts\toolchains\tbb" tbb
 ```
 
 ## Ports

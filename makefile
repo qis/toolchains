@@ -95,17 +95,11 @@ llvm: llvm/bin/clang restore llvm/include/pstl
 	@cmake -E copy src/llvm/pstl/LICENSE.TXT llvm/share/pstl/license.txt
 
 # =================================================================================================
-# tbb
-# =================================================================================================
-
-tbb:
-	@vcpkg install --overlay-ports="$(CURDIR)/src/tbb" tbb[pstl]:x64-linux
-
-# =================================================================================================
 # pstl
 # =================================================================================================
 
 llvm/include/pstl: tbb
+	@vcpkg install --overlay-ports="$(CURDIR)/tbb" tbb[pstl]:x64-linux
 	@cmake -GNinja -Wno-dev \
 	  -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
@@ -138,10 +132,11 @@ include/boost: src/boost.tar.gz
 package: clean
 	@cmake -E remove -f toolchain.7z
 	@cd .. && 7z a -mx=9 -myx=9 -ms=2g toolchains/toolchains.7z \
+	  toolchains/include \
 	  toolchains/llvm \
+	  toolchains/tbb \
 	  toolchains/config.cmake \
 	  toolchains/linux.cmake \
-	  toolchains/make.cmd \
 	  toolchains/makefile \
 	  toolchains/readme.md \
 	  toolchains/windows.cmake

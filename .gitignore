@@ -1,6 +1,7 @@
 /*
 .*
 !/src/
+!/tbb/
 !/.gitattributes
 !/.gitignore
 !/config.cmake
