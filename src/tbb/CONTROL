@@ -1,0 +1,7 @@
+Source: tbb
+Version: 2020_U1-1
+Homepage: https://github.com/intel/tbb
+Description: Intel's Threading Building Blocks.
+
+Feature: pstl
+Description: Build for ParallelSTL use.

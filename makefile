@@ -1,6 +1,6 @@
 MAKEFLAGS += --no-print-directory
 
-all: llvm
+all: llvm boost
 
 # =================================================================================================
 # llvm
@@ -99,43 +99,38 @@ llvm: llvm/bin/clang restore llvm/include/pstl
 # tbb
 # =================================================================================================
 
-src/tbb.tar.gz:
-	@cmake -E echo "Downloading tbb ..."
-	@curl -L https://github.com/intel/tbb/archive/2019_U9.tar.gz -o src/tbb.tar.gz
-
-src/tbb: src/tbb.tar.gz
-	@cmake -E echo "Extracting tbb ..."
-	@cmake -E make_directory src/tbb
-	@tar xf src/tbb.tar.gz -C src/tbb --strip-components 1
-	@cmake -E echo "Patching tbb ..."
-	@cd src/tbb && git --work-tree=. --git-dir=.git apply ../tbb.patch --ignore-whitespace --whitespace=nowarn
-
-llvm/include/tbb/version_string.ver: src/tbb
-	@cd src/tbb/include && find tbb -name '*.h' -exec cmake -E copy "{}" "$(CURDIR)/llvm/include/{}" ";"
-	@echo '#define __TBB_VERSION_STRINGS(N) "2019"' > llvm/include/tbb/version_string.ver
-
-llvm/lib/libtbb.a: llvm/include/tbb/version_string.ver
-	@cmake -P src/tbb.cmake
-	@cmake -E copy build/tbb/libtbb.a llvm/lib/libtbb.a
-	@cmake -E copy build/tbb/libtbbmalloc.a llvm/lib/libtbbmalloc.a
-	@cmake -E copy src/TBBConfig.cmake llvm/lib/cmake/TBB/TBBConfig.cmake
-	@cmake -E copy src/TBBConfigVersion.cmake llvm/lib/cmake/TBB/TBBConfigVersion.cmake
-	@find llvm/include/tbb llvm/lib/libtbb*.a llvm/lib/cmake/TBB \
-	  -type d -exec chmod 0755 '{}' ';' -or -type f -exec chmod 0644 '{}' ';'
+tbb:
+	@vcpkg install --overlay-ports="$(CURDIR)/src/tbb" tbb[pstl]
 
 # =================================================================================================
 # pstl
 # =================================================================================================
 
-llvm/include/pstl: llvm/lib/libtbb.a
+llvm/include/pstl: tbb
 	@cmake -GNinja -Wno-dev \
 	  -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
-	  -DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/linux.cmake" \
+	  -DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/../buildsystems/vcpkg.cmake" \
+	  -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE="$(CURDIR)/linux.cmake" \
 	  -DVCPKG_TARGET_TRIPLET="x64-linux" \
 	  -DPSTL_PARALLEL_BACKEND="tbb" \
 	  -B build/pstl src/llvm/pstl
 	@cmake --build build/pstl --target install
+
+# =================================================================================================
+# boost
+# =================================================================================================
+
+boost: include/boost
+
+src/boost.tar.gz:
+	@cmake -E echo "Downloading boost ..."
+	@curl -L https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz -o src/boost.tar.gz
+
+include/boost: src/boost.tar.gz
+	@cmake -E echo "Extracting boost ..."
+	@cmake -E make_directory include
+	@tar xf src/boost.tar.gz -C include --strip-components 1 boost_1_72_0/boost
 
 # =================================================================================================
 # package

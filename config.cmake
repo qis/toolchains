@@ -30,3 +30,8 @@ endif()
 if(NOT VCPKG_CRT_LINKAGE)
   include("${VCPKG_ROOT}/triplets/${VCPKG_TARGET_TRIPLET}.cmake")
 endif()
+
+# Set boost variables.
+if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/include/boost)
+  set(Boost_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
+endif()

@@ -1,8 +1,5 @@
 /*
 .*
+!/tbb/
 !/.gitignore
 !/llvm.cmake
-!/tbb.cmake
-!/tbb.patch
-!/TBBConfig.cmake
-!/TBBConfigVersion.cmake
