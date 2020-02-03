@@ -129,7 +129,9 @@ include/boost: src/boost.tar.gz
 # package
 # =================================================================================================
 
-package: clean
+package: clean package-toolchain restore
+
+package-toolchain:
 	@cmake -E remove -f toolchain.7z
 	@cd .. && 7z a -mx=9 -myx=9 -ms=2g toolchains/toolchains.7z \
 	  toolchains/include \
