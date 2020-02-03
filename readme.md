@@ -154,4 +154,9 @@ Some ports require macro definitions to disable exceptions.
 * `spdlog` requires `SPDLOG_NO_EXCEPTIONS`
 
 ## Resources
-See [qis/example](https://github.com/qis/example) for a C++ application example using this setup.
+The following repositories show how this setup can be used in a production environment.
+
+* [qis/test](https://github.com/qis/test)
+* [qis/example](https://github.com/qis/example)
+* [qis/library](https://github.com/qis/library)
+* [qis/server](https://github.com/qis/server)
