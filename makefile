@@ -98,8 +98,7 @@ llvm: llvm/bin/clang restore llvm/include/pstl
 # pstl
 # =================================================================================================
 
-llvm/include/pstl: tbb
-	@vcpkg install --overlay-ports="$(CURDIR)/tbb" tbb[pstl]:x64-linux
+llvm/include/pstl:
 	@cmake -GNinja -Wno-dev \
 	  -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
@@ -164,7 +163,8 @@ restore: clean
 	@ln -s lld llvm/bin/ld64.lld
 	@ln -s llvm-ar llvm/bin/llvm-ranlib
 	@ln -s llvm-objcopy llvm/bin/llvm-strip
-	find llvm -type d -exec chmod 0755 '{}' ';' -or -type f -exec chmod 0644 '{}' ';'
-	find llvm/bin -type f -and -not -iname '*.dll' -exec chmod 0755 '{}' ';'
+	@find llvm -type d -exec chmod 0755 '{}' ';' -or -type f -exec chmod 0644 '{}' ';'
+	@find llvm/bin -type f -and -not -iname '*.dll' -exec chmod 0755 '{}' ';'
+	@vcpkg install --overlay-ports="$(CURDIR)/tbb" tbb[pstl]:x64-linux
 
 .PHONY: all llvm package clean restore
