@@ -1,5 +1,7 @@
 MAKEFLAGS += --no-print-directory
 
+MUSL ?= OFF
+
 all: llvm boost
 
 # =================================================================================================
@@ -16,6 +18,7 @@ llvm/bin/clang: src/llvm
 	@cmake -GNinja -Wno-dev \
 	  -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
+	  -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
 	  -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb;polly;openmp;compiler-rt;libunwind;libcxxabi;libcxx" \
 	  -DLLVM_TARGETS_TO_BUILD="X86" \
 	  -DLLVM_ENABLE_BACKTRACES=OFF \
@@ -50,11 +53,12 @@ llvm/bin/clang: src/llvm
 	  -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
 	  -DLIBCXX_ENABLE_SHARED=OFF \
 	  -DLIBCXX_ENABLE_STATIC=ON \
+	  -DLIBCXX_HAS_MUSL_LIBC=$(MUSL) \
 	  -DLIBCXX_USE_COMPILER_RT=ON \
 	  -DLIBCXX_INCLUDE_BENCHMARKS=OFF \
 	  -DLIBCXX_ENABLE_PARALLEL_ALGORITHMS=ON \
 	  -B build/llvm src/llvm/llvm
-	@cmake --build build/llvm -t \
+	@ninja -C build/llvm \
 	  install-LTO \
 	  install-lld-stripped \
 	  install-lldb-stripped \
