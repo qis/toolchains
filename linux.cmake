@@ -6,6 +6,11 @@ set(CMAKE_C_STANDARD 11 CACHE STRING "")
 set(CMAKE_C_STANDARD_REQUIRED ON CACHE STRING "")
 set(CMAKE_C_EXTENSIONS ON CACHE STRING "")
 
+# Set C++ standard.
+set(CMAKE_CXX_STANDARD 20 CACHE STRING "")
+set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE STRING "")
+set(CMAKE_CXX_EXTENSIONS OFF CACHE STRING "")
+
 # Set system.
 set(CMAKE_CROSSCOMPILING OFF CACHE BOOL "")
 set(CMAKE_SYSTEM_PROCESSOR x86_64 CACHE STRING "")
@@ -19,10 +24,10 @@ set(CMAKE_AR "${CMAKE_CURRENT_LIST_DIR}/llvm/bin/llvm-ar" CACHE STRING "")
 set(CMAKE_NM "${CMAKE_CURRENT_LIST_DIR}/llvm/bin/llvm-nm" CACHE STRING "")
 
 # Set compiler flags.
-set(CLANG_C_FLAGS "-fPIC -fdiagnostics-absolute-paths -D_DEFAULT_SOURCE=1")
+set(CLANG_C_FLAGS "-fasm -fPIC -fdiagnostics-absolute-paths -D_DEFAULT_SOURCE=1")
 set(CLANG_C_FLAGS_RELEASE "-flto=full")
 
-set(CLANG_CXX_FLAGS "${CLANG_C_FLAGS} -fasm -fcoroutines-ts -isystem ${CMAKE_CURRENT_LIST_DIR}/llvm/include")
+set(CLANG_CXX_FLAGS "${CLANG_C_FLAGS} -fcoroutines-ts -isystem ${CMAKE_CURRENT_LIST_DIR}/llvm/include")
 set(CLANG_CXX_FLAGS_RELEASE "${CLANG_C_FLAGS_RELEASE} -fwhole-program-vtables -fvirtual-function-elimination")
 
 set(CMAKE_C_FLAGS_INIT "${CLANG_C_FLAGS} ${VCPKG_C_FLAGS}")
