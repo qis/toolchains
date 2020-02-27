@@ -1,3 +1,15 @@
+include_guard(GLOBAL)
+
+# Set C standard.
+set(CMAKE_C_STANDARD 11 CACHE STRING "")
+set(CMAKE_C_STANDARD_REQUIRED ON CACHE STRING "")
+set(CMAKE_C_EXTENSIONS ON CACHE STRING "")
+
+# Set C++ standard.
+set(CMAKE_CXX_STANDARD 20 CACHE STRING "")
+set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE STRING "")
+set(CMAKE_CXX_EXTENSIONS OFF CACHE STRING "")
+
 # Get vcpkg root directory.
 if(NOT VCPKG_ROOT)
   if(DEFINED ENV{VCPKG_ROOT})
@@ -19,9 +31,4 @@ endif()
 # Load vcpkg triplet.
 if(NOT VCPKG_CRT_LINKAGE)
   include("${VCPKG_ROOT}/triplets/${VCPKG_TARGET_TRIPLET}.cmake")
-endif()
-
-# Set boost variables.
-if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/include/boost)
-  set(Boost_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
 endif()

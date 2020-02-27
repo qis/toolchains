@@ -1,6 +1,7 @@
 MAKEFLAGS += --no-print-directory
 
-MUSL ?= OFF
+TRIPLE	?= x86_64-linux-gnu
+MUSL	?= OFF
 
 all: llvm boost
 
@@ -9,9 +10,7 @@ all: llvm boost
 # =================================================================================================
 
 src/llvm:
-	@cmake -E echo "Downloading llvm ..."
 	@git clone --depth 1 https://github.com/llvm/llvm-project src/llvm
-	@cmake -E echo "Patching llvm ..."
 	@cmake -P src/llvm.cmake
 
 llvm/bin/clang: src/llvm
@@ -20,6 +19,7 @@ llvm/bin/clang: src/llvm
 	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
 	  -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
 	  -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;lldb;polly;openmp;compiler-rt;libunwind;libcxxabi;libcxx" \
+	  -DLLVM_DEFAULT_TARGET_TRIPLE="$(TRIPLE)" \
 	  -DLLVM_TARGETS_TO_BUILD="X86" \
 	  -DLLVM_ENABLE_BACKTRACES=OFF \
 	  -DLLVM_ENABLE_UNWIND_TABLES=OFF \
@@ -31,7 +31,7 @@ llvm/bin/clang: src/llvm
 	  -DCLANG_ENABLE_ARCMT=OFF \
 	  -DCLANG_ENABLE_STATIC_ANALYZER=OFF \
 	  -DCLANG_DEFAULT_STD_C="c11" \
-	  -DCLANG_DEFAULT_STD_CXX="cxx2a" \
+	  -DCLANG_DEFAULT_STD_CXX="cxx20" \
 	  -DCLANG_DEFAULT_CXX_STDLIB="libc++" \
 	  -DCLANG_DEFAULT_UNWINDLIB="none" \
 	  -DCLANG_DEFAULT_RTLIB="compiler-rt" \
@@ -53,6 +53,7 @@ llvm/bin/clang: src/llvm
 	  -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
 	  -DLIBCXX_ENABLE_SHARED=OFF \
 	  -DLIBCXX_ENABLE_STATIC=ON \
+	  -DLIBCXX_ENABLE_STATIC_ABI_LIBRARY=ON \
 	  -DLIBCXX_HAS_MUSL_LIBC=$(MUSL) \
 	  -DLIBCXX_USE_COMPILER_RT=ON \
 	  -DLIBCXX_INCLUDE_BENCHMARKS=OFF \
@@ -85,18 +86,6 @@ llvm/bin/clang: src/llvm
 	@cmake -E rename "llvm/lib/libLTO.so.11git" "llvm/lib/libLTO.so"
 
 llvm: llvm/bin/clang restore llvm/include/pstl
-	@cmake -E copy src/llvm/clang/LICENSE.TXT llvm/share/clang/license.txt
-	@cmake -E copy src/llvm/clang-tools-extra/LICENSE.TXT llvm/share/clang-tools-extra/license.txt
-	@cmake -E copy src/llvm/openmp/LICENSE.TXT llvm/share/openmp/license.txt
-	@cmake -E copy src/llvm/polly/LICENSE.TXT llvm/share/polly/license.txt
-	@cmake -E copy src/llvm/llvm/LICENSE.TXT llvm/share/llvm/license.txt
-	@cmake -E copy src/llvm/lld/LICENSE.TXT llvm/share/lld/license.txt
-	@cmake -E copy src/llvm/lldb/LICENSE.TXT llvm/share/lldb/license.txt
-	@cmake -E copy src/llvm/compiler-rt/LICENSE.TXT llvm/share/compiler-rt/license.txt
-	@cmake -E copy src/llvm/libunwind/LICENSE.TXT llvm/share/libunwind/license.txt
-	@cmake -E copy src/llvm/libcxxabi/LICENSE.TXT llvm/share/libcxxabi/license.txt
-	@cmake -E copy src/llvm/libcxx/LICENSE.TXT llvm/share/libcxx/license.txt
-	@cmake -E copy src/llvm/pstl/LICENSE.TXT llvm/share/pstl/license.txt
 
 # =================================================================================================
 # pstl
@@ -114,21 +103,6 @@ llvm/include/pstl:
 	@cmake --build build/pstl --target install
 
 # =================================================================================================
-# boost
-# =================================================================================================
-
-boost: include/boost
-
-src/boost.tar.gz:
-	@cmake -E echo "Downloading boost ..."
-	@curl -L https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz -o src/boost.tar.gz
-
-include/boost: src/boost.tar.gz
-	@cmake -E echo "Extracting boost ..."
-	@cmake -E make_directory include
-	@tar xf src/boost.tar.gz -C include --strip-components 1 boost_1_72_0/boost
-
-# =================================================================================================
 # package
 # =================================================================================================
 
@@ -137,7 +111,6 @@ package: clean package-toolchain restore
 package-toolchain:
 	@cmake -E remove -f toolchain.7z
 	@cd .. && 7z a -mx=9 -myx=9 -ms=2g toolchains/toolchains.7z \
-	  toolchains/include \
 	  toolchains/llvm \
 	  toolchains/tbb \
 	  toolchains/config.cmake \
