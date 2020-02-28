@@ -7,24 +7,33 @@ Custom [vcpkg](https://github.com/microsoft/vcpkg) toolchains.
 * Ninja 1.8.2 or newer.
 * Git 2.17.1 or newer.
 
+## Directories
+Create directories in `cmd.exe`.
+
+```cmd
+md C:\Workspace
+md C:\Workspace\downloads
+```
+
+Create symlinks in `wsl.exe`.
+
+```sh
+sudo ln -s /mnt/c/Workspace/vcpkg /opt/vcpkg
+sudo ln -s /mnt/c/Workspace/downloads /opt/downloads
+```
+
 ## Download
 Download vcpkg with toolset patches and this toolchain.
 
 ```sh
-cd C:/Workspace || cd /opt
+cd C:\Workspace
 git clone git@github.com:microsoft/vcpkg
-cmake -E rename vcpkg/scripts/toolchains vcpkg/scripts/toolchains.orig
+move vcpkg/scripts/toolchains vcpkg/scripts/toolchains.orig
 git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
 ```
 
-Create downloads directory in `cmd.exe`.
-
-```cmd
-md C:\Workspace\downloads
-```
-
 ## Setup
-Set Windows environment variables in `rundll32.exe sysdm.cpl,EditEnvironmentVariables`.
+Set Windows environment variables.
 
 ```cmd
 set VCPKG_ROOT=C:\Workspace\vcpkg
@@ -32,22 +41,13 @@ set VCPKG_DOWNLOADS=C:\Workspace\downloads
 set VCPKG_DEFAULT_TRIPLET=x64-windows
 ```
 
-Set Linux environment variables in `~/.bashrc`.
+Set Linux environment variables.
 
 ```sh
 export VCPKG_ROOT=/opt/vcpkg
 export VCPKG_DOWNLOADS=/opt/downloads
 export VCPKG_DEFAULT_TRIPLET=x64-linux
 ```
-
-Create symbolic links in `bash.exe`.
-
-```sh
-ln -s /mnt/c/Workspace/vcpkg /opt/vcpkg
-ln -s /mnt/c/Workspace/downloads /opt/downloads
-```
-
-**NOTE**: Do not use `vcpkg install` or `vcpkg upgrade` in `bash.exe` and `cmd.exe` at the same time.
 
 ## Vcpkg
 Build vcpkg in `cmd.exe`.
@@ -56,7 +56,7 @@ Build vcpkg in `cmd.exe`.
 C:\Workspace\vcpkg\bootstrap-vcpkg.bat -disableMetrics -win64
 ```
 
-Build vcpkg in `bash.exe`.
+Build vcpkg in `wsl.exe`.
 
 ```sh
 /opt/vcpkg/bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries && rm -rf /opt/vcpkg/toolsrc/build.rel
@@ -101,14 +101,14 @@ set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
 ```cmake
 set(VCPKG_CMAKE_SYSTEM_NAME Linux)
 set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_CRT_LINKAGE dynamic)
+set(VCPKG_CRT_LINKAGE static)
 set(VCPKG_LIBRARY_LINKAGE static)
 ```
 
 </details>
 
 ## Compiler
-Build LLVM in `bash.exe`.
+Build LLVM in `wsl.exe`.
 
 ```sh
 make -C /opt/vcpkg/scripts/toolchains
