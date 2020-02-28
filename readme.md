@@ -25,7 +25,7 @@ sudo ln -s /mnt/c/Workspace/downloads /opt/downloads
 ## Download
 Download vcpkg with toolset patches and this toolchain.
 
-```sh
+```cmd
 cd C:\Workspace
 git clone git@github.com:microsoft/vcpkg
 move vcpkg/scripts/toolchains vcpkg/scripts/toolchains.orig
