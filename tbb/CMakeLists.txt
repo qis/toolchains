@@ -146,6 +146,9 @@ if(BUILD_SHARED_LIBS)
       endif()
     endif()
   endif()
+else()
+  target_compile_definitions(tbb PRIVATE __TBB_DYNAMIC_LOAD_ENABLED=0)
+  target_compile_definitions(tbbmalloc PRIVATE __TBB_DYNAMIC_LOAD_ENABLED=0)
 endif()
 
 # =================================================================================================
