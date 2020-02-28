@@ -1,9 +1,9 @@
 MAKEFLAGS += --no-print-directory
 
-TRIPLE	?= x86_64-linux-gnu
-MUSL	?= OFF
+TRIPLE	!= gcc -dumpmachine
+MUSL	!= echo $(TRIPLE) | grep musl >/dev/null && echo "ON" || echo "OFF"
 
-all: llvm boost
+all: llvm
 
 # =================================================================================================
 # llvm
