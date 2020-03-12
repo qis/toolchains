@@ -1,6 +1,6 @@
 MAKEFLAGS += --no-print-directory
 
-TRIPLE	!= gcc -dumpmachine
+TRIPLE	!= gcc -dumpmachine | grep musl >/dev/null && echo "x86_64-linux-musl" || echo "x86_64-linux-gnu"
 MUSL	!= echo $(TRIPLE) | grep musl >/dev/null && echo "ON" || echo "OFF"
 
 all: llvm
@@ -57,7 +57,6 @@ llvm/bin/clang: src/llvm
 	  -DLIBCXX_HAS_MUSL_LIBC=$(MUSL) \
 	  -DLIBCXX_USE_COMPILER_RT=ON \
 	  -DLIBCXX_INCLUDE_BENCHMARKS=OFF \
-	  -DLIBCXX_ENABLE_PARALLEL_ALGORITHMS=ON \
 	  -B build/llvm src/llvm/llvm
 	@ninja -C build/llvm \
 	  install-LTO \
@@ -85,22 +84,7 @@ llvm/bin/clang: src/llvm
 	@cmake -E rename "llvm/bin/clang-11" "llvm/bin/clang"
 	@cmake -E rename "llvm/lib/libLTO.so.11git" "llvm/lib/libLTO.so"
 
-llvm: llvm/bin/clang restore llvm/include/pstl
-
-# =================================================================================================
-# pstl
-# =================================================================================================
-
-llvm/include/pstl:
-	@cmake -GNinja -Wno-dev \
-	  -DCMAKE_BUILD_TYPE=Release \
-	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
-	  -DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/../buildsystems/vcpkg.cmake" \
-	  -DVCPKG_CHAINLOAD_TOOLCHAIN_FILE="$(CURDIR)/linux.cmake" \
-	  -DVCPKG_TARGET_TRIPLET="x64-linux" \
-	  -DPSTL_PARALLEL_BACKEND="tbb" \
-	  -B build/pstl src/llvm/pstl
-	@cmake --build build/pstl --target install
+llvm: llvm/bin/clang restore
 
 # =================================================================================================
 # package
@@ -142,6 +126,5 @@ restore: clean
 	@ln -s llvm-objcopy llvm/bin/llvm-strip
 	@find llvm -type d -exec chmod 0755 '{}' ';' -or -type f -exec chmod 0644 '{}' ';'
 	@find llvm/bin -type f -and -not -iname '*.dll' -exec chmod 0755 '{}' ';'
-	@vcpkg install --overlay-ports="$(CURDIR)/tbb" tbb[pstl]:x64-linux
 
 .PHONY: all llvm package clean restore
