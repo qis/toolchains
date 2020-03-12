@@ -116,12 +116,6 @@ Build LLVM in `wsl.exe`.
 make -C /opt/vcpkg/scripts/toolchains
 ```
 
-Install the same TBB version in `cmd.exe`.
-
-```cmd
-vcpkg install --overlay-ports="%VCPKG_ROOT%\scripts\toolchains\tbb" tbb:x64-windows tbb:x64-windows-static
-```
-
 ## Ports
 Install ports.
 
