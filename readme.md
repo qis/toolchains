@@ -3,7 +3,7 @@ Custom [vcpkg](https://github.com/microsoft/vcpkg) toolchains.
 
 ## Requirements
 * Working system compiler (Visual Studio 2019 on Windows; GCC on Linux).
-* CMake 3.16.0 or newer.
+* CMake 3.17.0 or newer.
 * Ninja 1.8.2 or newer.
 * Git 2.17.1 or newer.
 
@@ -28,8 +28,7 @@ Download vcpkg with toolset patches and this toolchain.
 ```cmd
 cd C:\Workspace
 git clone git@github.com:microsoft/vcpkg
-move vcpkg/scripts/toolchains vcpkg/scripts/toolchains.orig
-git clone git@github.com:qis/toolchains vcpkg/scripts/toolchains
+git clone git@github.com:qis/toolchains vcpkg/triplets/toolchains
 ```
 
 ## Setup
@@ -70,8 +69,11 @@ Build vcpkg in `wsl.exe`.
 
 ```cmake
 set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_LIBRARY_LINKAGE dynamic)
 set(VCPKG_CRT_LINKAGE dynamic)
+set(VCPKG_LIBRARY_LINKAGE dynamic)
+
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
+set(VCPKG_LOAD_VCVARS_ENV ON)
 
 set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251 /wd4275")
 set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
@@ -85,8 +87,11 @@ set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
 
 ```cmake
 set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_LIBRARY_LINKAGE static)
 set(VCPKG_CRT_LINKAGE static)
+set(VCPKG_LIBRARY_LINKAGE static)
+
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
+set(VCPKG_LOAD_VCVARS_ENV ON)
 
 set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251 /wd4275")
 set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
@@ -99,10 +104,12 @@ set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
 &nbsp;
 
 ```cmake
-set(VCPKG_CMAKE_SYSTEM_NAME Linux)
 set(VCPKG_TARGET_ARCHITECTURE x64)
 set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
+
+set(VCPKG_CMAKE_SYSTEM_NAME Linux)
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "/opt/vcpkg/triplets/toolchains/linux.cmake")
 ```
 
 **NOTE**: `VCPKG_CRT_LINKAGE` can be `static` on musl-based Linux distributions.
@@ -113,7 +120,7 @@ set(VCPKG_LIBRARY_LINKAGE static)
 Build LLVM in `wsl.exe`.
 
 ```sh
-make -C /opt/vcpkg/scripts/toolchains
+make -C /opt/vcpkg/triplets/toolchains
 ```
 
 ## Ports
@@ -124,18 +131,25 @@ Install ports.
 vcpkg install benchmark gtest
 
 # Encryption
-vcpkg install openssl
+vcpkg install openssl libssh2
 
 # Compression
 vcpkg install bzip2 liblzma zlib zstd
 
 # Utility
-vcpkg install fmt pugixml spdlog utf8proc
+vcpkg install date fmt bfgroup-lyra pugixml spdlog tbb utf8proc
 
 # Images
 vcpkg install giflib libjpeg-turbo libpng tiff
+
+# Fonts
+vcpkg install freetype harfbuzz
+
+# Boost
+vcpkg install boost
 ```
 
+<!--
 ## Exceptions
 Some ports require macro definitions to disable exceptions.
 
@@ -151,3 +165,4 @@ The following repositories show how this setup can be used in a production envir
 * [qis/example](https://github.com/qis/example)
 * [qis/library](https://github.com/qis/library)
 * [qis/server](https://github.com/qis/server)
+-->

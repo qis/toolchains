@@ -9,11 +9,10 @@ all: llvm
 # llvm
 # =================================================================================================
 
-src/llvm:
-	@git clone --depth 1 https://github.com/llvm/llvm-project src/llvm
-	@cmake -P src/llvm.cmake
+src:
+	@git clone --depth 1 https://github.com/llvm/llvm-project src
 
-llvm/bin/clang: src/llvm
+llvm/bin/clang: src
 	@cmake -GNinja -Wno-dev \
 	  -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/llvm" \
@@ -57,7 +56,7 @@ llvm/bin/clang: src/llvm
 	  -DLIBCXX_HAS_MUSL_LIBC=$(MUSL) \
 	  -DLIBCXX_USE_COMPILER_RT=ON \
 	  -DLIBCXX_INCLUDE_BENCHMARKS=OFF \
-	  -B build/llvm src/llvm/llvm
+	  -B build/llvm src/llvm
 	@ninja -C build/llvm \
 	  install-LTO \
 	  install-lld-stripped \
@@ -96,7 +95,6 @@ package-toolchain:
 	@cmake -E remove -f toolchain.7z
 	@cd .. && 7z a -mx=9 -myx=9 -ms=2g toolchains/toolchains.7z \
 	  toolchains/llvm \
-	  toolchains/tbb \
 	  toolchains/config.cmake \
 	  toolchains/linux.cmake \
 	  toolchains/makefile \
