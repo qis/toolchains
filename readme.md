@@ -79,23 +79,7 @@ set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251 /wd4275")
 set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
 ```
 
-</details>
-
-<details>
-<summary>Modify the <code>triplets/x64-windows-static.cmake</code> triplet file.</summary>
-&nbsp;
-
-```cmake
-set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_CRT_LINKAGE static)
-set(VCPKG_LIBRARY_LINKAGE static)
-
-set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
-set(VCPKG_LOAD_VCVARS_ENV ON)
-
-set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251 /wd4275")
-set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
-```
+**NOTE**: `VCPKG_CRT_LINKAGE` can be `static`.
 
 </details>
 
@@ -111,10 +95,10 @@ set(VCPKG_LIBRARY_LINKAGE static)
 set(VCPKG_CMAKE_SYSTEM_NAME Linux)
 set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "/opt/vcpkg/triplets/toolchains/linux.cmake")
 
-set(VCPKG_LINKER_FLAGS "-ldl")  # remove on musl based systems
+set(VCPKG_LINKER_FLAGS "-ldl")  # remove on musl-based systems
 ```
 
-**NOTE**: `VCPKG_CRT_LINKAGE` can be `static` on musl-based Linux distributions.
+**NOTE**: `VCPKG_CRT_LINKAGE` can be `static`.
 
 </details>
 
@@ -139,7 +123,7 @@ vcpkg install openssl libssh2
 vcpkg install bzip2 liblzma zlib zstd
 
 # Utility
-vcpkg install date fmt bfgroup-lyra pugixml spdlog tbb utf8proc
+vcpkg install bfgroup-lyra date fmt libssh2 pugixml spdlog tbb utf8proc
 
 # Images
 vcpkg install giflib libjpeg-turbo libpng tiff
