@@ -70,7 +70,7 @@ Build vcpkg in `wsl.exe`.
 ```cmake
 set(VCPKG_TARGET_ARCHITECTURE x64)
 set(VCPKG_CRT_LINKAGE dynamic)
-set(VCPKG_LIBRARY_LINKAGE dynamic)
+set(VCPKG_LIBRARY_LINKAGE static)
 
 set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
 set(VCPKG_LOAD_VCVARS_ENV ON)
@@ -110,6 +110,8 @@ set(VCPKG_LIBRARY_LINKAGE static)
 
 set(VCPKG_CMAKE_SYSTEM_NAME Linux)
 set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "/opt/vcpkg/triplets/toolchains/linux.cmake")
+
+set(VCPKG_LINKER_FLAGS "-ldl")  # remove on musl based systems
 ```
 
 **NOTE**: `VCPKG_CRT_LINKAGE` can be `static` on musl-based Linux distributions.
