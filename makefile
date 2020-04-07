@@ -2,6 +2,7 @@ MAKEFLAGS += --no-print-directory
 
 TRIPLE	!= gcc -dumpmachine | grep musl >/dev/null && echo "x86_64-linux-musl" || echo "x86_64-linux-gnu"
 MUSL	!= echo $(TRIPLE) | grep musl >/dev/null && echo "ON" || echo "OFF"
+DATE	!= date +%F
 
 all: llvm
 
@@ -10,7 +11,7 @@ all: llvm
 # =================================================================================================
 
 src:
-	@git clone --depth 1 https://github.com/llvm/llvm-project src
+	git clone --depth 1 https://github.com/llvm/llvm-project src
 
 llvm/bin/clang: src
 	@cmake -GNinja -Wno-dev \
@@ -74,14 +75,14 @@ llvm/bin/clang: src
 	  install-unwind-stripped \
 	  install-cxxabi-stripped \
 	  install-cxx-stripped
-	@cmake -E remove -f "llvm/bin/clang"
-	@cmake -E remove -f "llvm/bin/clang-cl"
-	@cmake -E remove -f "llvm/bin/clang-cpp"
-	@cmake -E remove -f "llvm/bin/lld-link"
-	@cmake -E remove -f "llvm/bin/wasm-ld"
-	@cmake -E remove -f "llvm/lib/libLTO.so"
-	@cmake -E rename "llvm/bin/clang-11" "llvm/bin/clang"
-	@cmake -E rename "llvm/lib/libLTO.so.11git" "llvm/lib/libLTO.so"
+	rm -f llvm/bin/clang
+	rm -f llvm/bin/clang-cl
+	rm -f llvm/bin/clang-cpp
+	rm -f llvm/bin/lld-link
+	rm -f llvm/bin/wasm-ld
+	rm -f llvm/lib/libLTO.so
+	mv llvm/bin/clang-11 llvm/bin/clang
+	mv llvm/lib/libLTO.so.11git llvm/lib/libLTO.so
 
 llvm: llvm/bin/clang restore
 
@@ -92,37 +93,37 @@ llvm: llvm/bin/clang restore
 package: clean package-toolchain restore
 
 package-toolchain:
-	@cmake -E remove -f toolchain.7z
-	@cd .. && 7z a -mx=9 -myx=9 -ms=2g toolchains/toolchains.7z \
-	  toolchains/llvm \
-	  toolchains/config.cmake \
-	  toolchains/linux.cmake \
-	  toolchains/makefile \
-	  toolchains/readme.md \
-	  toolchains/windows.cmake
+	rm -f toolchain.7z
+	7z a -mx=9 -myx=9 -ms=2g toolchains-$(DATE).7z \
+	  llvm \
+	  config.cmake \
+	  linux.cmake \
+	  makefile \
+	  readme.md \
+	  windows.cmake
 
 # =================================================================================================
 # clean
 # =================================================================================================
 
 clean:
-	@cmake -E remove -f "llvm/bin/clang++"
-	@cmake -E remove -f "llvm/bin/ld.lld"
-	@cmake -E remove -f "llvm/bin/ld64.lld"
-	@cmake -E remove -f "llvm/bin/llvm-ranlib"
-	@cmake -E remove -f "llvm/bin/llvm-strip"
+	rm -f llvm/bin/clang++
+	rm -f llvm/bin/ld.lld
+	rm -f llvm/bin/ld64.lld
+	rm -f llvm/bin/llvm-ranlib
+	rm -f llvm/bin/llvm-strip
 
 # =================================================================================================
 # restore
 # =================================================================================================
 
 restore: clean
-	@ln -s clang llvm/bin/clang++
-	@ln -s lld llvm/bin/ld.lld
-	@ln -s lld llvm/bin/ld64.lld
-	@ln -s llvm-ar llvm/bin/llvm-ranlib
-	@ln -s llvm-objcopy llvm/bin/llvm-strip
-	@find llvm -type d -exec chmod 0755 '{}' ';' -or -type f -exec chmod 0644 '{}' ';'
-	@find llvm/bin -type f -and -not -iname '*.dll' -exec chmod 0755 '{}' ';'
+	ln -s clang llvm/bin/clang++
+	ln -s lld llvm/bin/ld.lld
+	ln -s lld llvm/bin/ld64.lld
+	ln -s llvm-ar llvm/bin/llvm-ranlib
+	ln -s llvm-objcopy llvm/bin/llvm-strip
+	find llvm -type d -exec chmod 0755 '{}' ';' -or -type f -exec chmod 0644 '{}' ';'
+	find llvm/bin -type f -and -not -iname '*.dll' -exec chmod 0755 '{}' ';'
 
 .PHONY: all llvm package clean restore
