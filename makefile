@@ -105,8 +105,8 @@ package: clean
 	  makefile \
 	  makefile.nmake \
 	  readme.md \
-	  windows-llvm.cmake \
-	  windows-msvc.cmake
+	  windows.cmake \
+	  windows-llvm.cmake
 
 # =================================================================================================
 # clean
