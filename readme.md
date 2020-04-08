@@ -136,9 +136,6 @@ vcpkg install giflib libjpeg-turbo libpng tiff
 
 # Fonts
 vcpkg install freetype harfbuzz
-
-# Boost
-vcpkg install boost
 ```
 
 ## Overlay
