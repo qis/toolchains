@@ -2,7 +2,7 @@ include_guard(GLOBAL)
 include("${CMAKE_CURRENT_LIST_DIR}/config.cmake")
 
 # Set runtime library.
-set(CMAKE_MSVC_RUNTIME_LIBRARY "" CACHE STRING "")  
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<STREQUAL:${VCPKG_CRT_LINKAGE},dynamic>:DLL>" CACHE STRING "")
 if(VCPKG_CRT_LINKAGE STREQUAL "dynamic")
   set(VCPKG_CRT_FLAG "/MD")
   set(VCPKG_DBG_FLAG "/Zi")

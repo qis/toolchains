@@ -10,8 +10,8 @@ set(CMAKE_CXX_STANDARD 20 CACHE STRING "")
 set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE STRING "")
 set(CMAKE_CXX_EXTENSIONS OFF CACHE STRING "")
 
-# Get vcpkg root directory.
-if(NOT VCPKG_ROOT)
+# Determine vcpkg root directory.
+if(NOT DEFINED VCPKG_ROOT)
   if(DEFINED ENV{VCPKG_ROOT})
     set(VCPKG_ROOT "$ENV{VCPKG_ROOT}" CACHE STRING "")
   else()
@@ -19,16 +19,20 @@ if(NOT VCPKG_ROOT)
   endif()
 endif()
 
-# Get vcpkg triplet.
+# Determine vcpkg target triplet.
 if(NOT VCPKG_TARGET_TRIPLET)
   if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET})
     set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING "")
   else()
-    message(FATAL_ERROR "Missing setting for VCPKG_TARGET_TRIPLET. $ENV{VCPKG_DEFAULT_TRIPLET}")
+    if(WIN32)
+      set(VCPKG_TARGET_TRIPLET "x64-windows" CACHE STRING "")
+    else()
+      set(VCPKG_TARGET_TRIPLET "x64-linux" CACHE STRING "")
+    endif()
   endif()
 endif()
 
-# Load vcpkg triplet.
+# Include vcpkg triplet.
 if(NOT VCPKG_CRT_LINKAGE)
   include("${VCPKG_ROOT}/triplets/${VCPKG_TARGET_TRIPLET}.cmake")
 endif()
