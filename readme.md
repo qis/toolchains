@@ -155,7 +155,7 @@ vcpkg install --overlay-ports=C:/Workspace/ports boost tbb
 Install ports in `wsl.exe`.
 
 ```sh
-vcpkg install --ports-overlay=/opt/ports boost tbb
+vcpkg install --overlay-ports=/opt/ports boost tbb
 ```
 
 <!--
