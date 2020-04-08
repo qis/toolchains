@@ -5,7 +5,7 @@ all: llvm
 # =================================================================================================
 
 src:
-	git clone --depth 1 https://github.com/llvm/llvm-project src
+	git clone --config core.autocrlf=false --depth 1 https://github.com/llvm/llvm-project src
 
 llvm/bin/clang.exe: src
 	@cmake -GNinja -Wno-dev \
@@ -43,7 +43,6 @@ llvm/bin/clang.exe: src
 	  install-llvm-objdump-stripped \
 	  install-llvm-ranlib-stripped \
 	  install-llvm-strip-stripped
-	cmake -E remove llvm/bin/clang-cl.exe
 	cmake -E remove llvm/bin/clang-cpp.exe
 	cmake -E remove llvm/bin/wasm-ld.exe
 
@@ -83,6 +82,7 @@ clean-linux:
 
 clean-windows:
 	cmake -E remove -f llvm/bin/clang++.exe
+	cmake -E remove -f llvm/bin/clang-cl.exe
 	cmake -E remove -f llvm/bin/ld.lld.exe
 	cmake -E remove -f llvm/bin/ld64.lld.exe
 	cmake -E remove -f llvm/bin/lld-link.exe
@@ -95,7 +95,9 @@ clean-windows:
 
 restore: clean-windows
 	cmake -E create_symlink clang.exe llvm/bin/clang++.exe
+	cmake -E create_symlink clang.exe llvm/bin/clang-cl.exe
 	cmake -E create_symlink lld.exe llvm/bin/ld.lld.exe
 	cmake -E create_symlink lld.exe llvm/bin/ld64.lld.exe
+	cmake -E create_symlink lld.exe llvm/bin/lld-link.exe
 	cmake -E create_symlink llvm-ar.exe llvm/bin/llvm-ranlib.exe
 	cmake -E create_symlink llvm-objcopy.exe llvm/bin/llvm-strip.exe

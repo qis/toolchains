@@ -8,5 +8,5 @@
 !/makefile
 !/makefile.nmake
 !/readme.md
+!/windows.cmake
 !/windows-llvm.cmake
-!/windows-msvc.cmake

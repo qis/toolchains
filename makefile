@@ -10,7 +10,7 @@ all: llvm
 # =================================================================================================
 
 src:
-	git clone --depth 1 https://github.com/llvm/llvm-project src
+	git clone --config core.autocrlf=false --depth 1 https://github.com/llvm/llvm-project src
 
 llvm/bin/clang: src
 	@cmake -GNinja -Wno-dev \
@@ -123,6 +123,7 @@ clean-linux:
 
 clean-windows:
 	cmake -E remove -f llvm/bin/clang++.exe
+	cmake -E remove -f llvm/bin/clang-cl.exe
 	cmake -E remove -f llvm/bin/ld.lld.exe
 	cmake -E remove -f llvm/bin/ld64.lld.exe
 	cmake -E remove -f llvm/bin/lld-link.exe
