@@ -26,9 +26,8 @@ sudo ln -s /mnt/c/Workspace/downloads /opt/downloads
 Download vcpkg with toolset patches and this toolchain.
 
 ```cmd
-cd C:\Workspace
-git clone git@github.com:microsoft/vcpkg
-git clone git@github.com:qis/toolchains vcpkg/triplets/toolchains
+git clone git@github.com:microsoft/vcpkg C:/Workspace/vcpkg
+git clone git@github.com:qis/toolchains C:/Workspace/vcpkg/triplets/toolchains
 ```
 
 ## Setup
@@ -142,9 +141,9 @@ vcpkg install freetype harfbuzz
 Create a ports overlay for [boost](https://www.boost.org/) and [tbb](https://software.intel.com/en-us/tbb).
 
 ```cmd
-cd C:\Workspace
-git clone git@github.com:qis/boost ports
-git clone git@github.com:qis/tbb ports/tbb
+git clone git@github.com:qis/boost C:/Workspace/ports
+cmake -DVCPKG_ROOT=C:/Workspace/vcpkg -P C:/Workspace/ports/create.cmake
+git clone git@github.com:qis/tbb C:/Workspace/ports/tbb
 ```
 
 Install ports in `cmd.exe`.
