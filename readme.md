@@ -72,7 +72,7 @@ set(VCPKG_TARGET_ARCHITECTURE x64)
 set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
 
-set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows-msvc.cmake")
 set(VCPKG_LOAD_VCVARS_ENV ON)
 
 set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251 /wd4275")
@@ -103,10 +103,16 @@ set(VCPKG_LINKER_FLAGS "-ldl")  # remove on musl-based systems
 </details>
 
 ## Compiler
+Build LLVM in `cmd.exe` (optional).
+
+```cmd
+cd C:\Workspace\vcpkg\triplets\toolchains && make
+```
+
 Build LLVM in `wsl.exe`.
 
 ```sh
-make -C /opt/vcpkg/triplets/toolchains
+cd /opt/vcpkg/triplets/toolchains && make
 ```
 
 ## Ports
@@ -123,7 +129,7 @@ vcpkg install openssl libssh2
 vcpkg install bzip2 liblzma zlib zstd
 
 # Utility
-vcpkg install bfgroup-lyra date fmt libssh2 pugixml spdlog tbb utf8proc
+vcpkg install bfgroup-lyra date fmt libssh2 pugixml spdlog utf8proc
 
 # Images
 vcpkg install giflib libjpeg-turbo libpng tiff
@@ -135,6 +141,27 @@ vcpkg install freetype harfbuzz
 vcpkg install boost
 ```
 
+## Overlay
+Create a ports overlay for [boost](https://www.boost.org/) and [tbb](https://software.intel.com/en-us/tbb).
+
+```cmd
+cd C:\Workspace
+git clone git@github.com:qis/boost ports
+git clone git@github.com:qis/tbb ports/tbb
+```
+
+Install ports in `cmd.exe`.
+
+```cmd
+vcpkg install --overlay-ports=C:/Workspace/ports boost tbb
+```
+
+Install ports in `wsl.exe`.
+
+```sh
+vcpkg install --ports-overlay=/opt/ports boost tbb
+```
+
 <!--
 ## Exceptions
 Some ports require macro definitions to disable exceptions.
@@ -144,7 +171,6 @@ Some ports require macro definitions to disable exceptions.
 * `pugixml` requires `PUGIXML_NO_EXCEPTIONS`
 * `spdlog` requires `SPDLOG_NO_EXCEPTIONS`
 
-## Resources
 The following repositories show how this setup can be used in a production environment.
 
 * [qis/test](https://github.com/qis/test)
