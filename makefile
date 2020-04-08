@@ -95,18 +95,9 @@ llvm: llvm/bin/clang restore
 # =================================================================================================
 
 package: clean
-	@cmake -E remove -f toolchain.7z
-	@echo Generating toolchains.7z ...
-	@7z a -mx=9 -myx=9 -ms=2g toolchains.7z \
-	  llvm \
-	  config.cmake \
-	  linux.cmake \
-	  make.cmd \
-	  makefile \
-	  makefile.nmake \
-	  readme.md \
-	  windows.cmake \
-	  windows-llvm.cmake
+	@echo Generating llvm.7z ...
+	@cmake -E remove -f llvm.7z
+	@7z a -mx=9 -myx=9 -ms=2g llvm.7z llvm
 
 # =================================================================================================
 # clean
