@@ -63,7 +63,7 @@ Build vcpkg in `wsl.exe`.
 ## Triplets
 
 <details>
-<summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file.</summary>
+<summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file to use MSVC.</summary>
 &nbsp;
 
 ```cmake
@@ -72,6 +72,28 @@ set(VCPKG_CRT_LINKAGE dynamic)
 set(VCPKG_LIBRARY_LINKAGE static)
 
 set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
+set(VCPKG_LOAD_VCVARS_ENV ON)
+
+set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251 /wd4275")
+set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
+```
+
+**NOTE**: `VCPKG_CRT_LINKAGE` can be `static`.
+
+</details>
+
+<details>
+<summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file to use LLVM (optional).</summary>
+&nbsp;
+
+```cmake
+set(VCPKG_TARGET_ARCHITECTURE x64)
+set(VCPKG_CRT_LINKAGE dynamic)
+set(VCPKG_LIBRARY_LINKAGE static)
+
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows-llvm.cmake")
+set(VCPKG_POLICY_SKIP_ARCHITECTURE_CHECK enabled)
+set(VCPKG_POLICY_SKIP_DUMPBIN_CHECKS enabled)
 set(VCPKG_LOAD_VCVARS_ENV ON)
 
 set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251 /wd4275")

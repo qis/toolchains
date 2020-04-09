@@ -4,11 +4,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/config.cmake")
 # Set compiler.
 set(CMAKE_C_COMPILER "${CMAKE_CURRENT_LIST_DIR}/llvm/bin/clang-cl.exe" CACHE STRING "" FORCE)
 set(CMAKE_CXX_COMPILER "${CMAKE_CURRENT_LIST_DIR}/llvm/bin/clang-cl.exe" CACHE STRING "" FORCE)
-
-# TODO: Use lld-link.exe when vcpkg provides a way to disable post-build checks.
-#set(CMAKE_LINKER "${CMAKE_CURRENT_LIST_DIR}/llvm/bin/lld-link.exe" CACHE STRING "" FORCE)
-set(CMAKE_LINKER "link.exe" CACHE STRING "" FORCE)
-
+set(CMAKE_LINKER "${CMAKE_CURRENT_LIST_DIR}/llvm/bin/lld-link.exe" CACHE STRING "" FORCE)
 set(CMAKE_RC_COMPILER "rc.exe" CACHE STRING "" FORCE)
 
 # Set runtime library.
@@ -31,10 +27,8 @@ if (DEFINED VCPKG_SET_CHARSET_FLAG AND NOT VCPKG_SET_CHARSET_FLAG)
 endif()
 
 # Set compiler flags.
-
-# TODO: Enable LTO when vcpkg provides a way to disable post-build checks.
-#set(CLANG_C_FLAGS_RELEASE "/clang:-flto=full")
-#set(CLANG_CXX_FLAGS_RELEASE "/clang:-fwhole-program-vtables /clang:-fvirtual-function-elimination")
+set(CLANG_C_FLAGS_RELEASE "/clang:-flto=full")
+set(CLANG_CXX_FLAGS_RELEASE "/clang:-fwhole-program-vtables /clang:-fvirtual-function-elimination")
 
 set(CMAKE_C_FLAGS "/DWIN32 /D_WINDOWS /FC ${VCPKG_C_FLAGS} /clang:-fasm /clang:-fopenmp-simd ${CHARSET_FLAG}" CACHE STRING "")
 set(CMAKE_C_FLAGS_DEBUG "/Od /Ob0 /GS /RTC1 ${VCPKG_C_FLAGS_DEBUG} ${VCPKG_CRT_FLAG}d ${VCPKG_DBG_FLAG}" CACHE STRING "")
@@ -42,7 +36,7 @@ set(CMAKE_C_FLAGS_RELEASE "/O1 /Oi /Ob2 /GS- ${VCPKG_C_FLAGS_RELEASE} ${VCPKG_CR
 set(CMAKE_C_FLAGS_MINSIZEREL "/O1 /Oi /Ob1 /GS- ${VCPKG_C_FLAGS_RELEASE} ${VCPKG_CRT_FLAG} ${CLANG_C_FLAGS_RELEASE} /DNDEBUG" CACHE STRING "")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "/O2 /Oi /Ob1 /GS- ${VCPKG_C_FLAGS_RELEASE} ${VCPKG_CRT_FLAG} ${CLANG_C_FLAGS_RELEASE} ${VCPKG_DBG_FLAG} /DNDEBUG" CACHE STRING "")
 
-# TODO: Remove /U__cpp_concepts when LLVM adds MS STL support.
+# TODO: Remove /U__cpp_concepts once LLVM adds MS STL support.
 set(CMAKE_CXX_FLAGS "/DWIN32 /D_WINDOWS /U__cpp_concepts /FC /permissive- /EHsc /GR ${VCPKG_CXX_FLAGS} /clang:-fasm /clang:-fopenmp-simd ${CHARSET_FLAG}" CACHE STRING "")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${VCPKG_CXX_FLAGS_DEBUG} /clang:-fcoroutines-ts" CACHE STRING "")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${VCPKG_CXX_FLAGS_RELEASE} /clang:-fcoroutines-ts ${CLANG_CXX_FLAGS_RELEASE}" CACHE STRING "")
