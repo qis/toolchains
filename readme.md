@@ -102,6 +102,15 @@ set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
 
 **NOTE**: `VCPKG_CRT_LINKAGE` can be `static`.
 
+Currently this requires patching vcpkg to disable post-build checks.
+
+```cmd
+cd C:\Workspace\vcpkg
+git remote add neumann git@github.com:neumann-a/vcpkg
+git fetch neumann
+git merge neumann/skip_dll_architecture_check
+```
+
 </details>
 
 <details>
