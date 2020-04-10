@@ -61,6 +61,7 @@ Build vcpkg in `wsl.exe`.
 ```
 
 ## Triplets
+Overwrite existing vcpkg triplet files or create new ones.
 
 <details>
 <summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file to use MSVC.</summary>
@@ -101,15 +102,6 @@ set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
 ```
 
 **NOTE**: `VCPKG_CRT_LINKAGE` can be `static`.
-
-Currently this requires patching vcpkg to disable post-build checks.
-
-```cmd
-cd C:\Workspace\vcpkg
-git remote add neumann git@github.com:neumann-a/vcpkg
-git fetch neumann
-git merge neumann/skip_dll_architecture_check
-```
 
 </details>
 
