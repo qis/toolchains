@@ -148,7 +148,7 @@ vcpkg install benchmark gtest
 vcpkg install openssl
 
 # Compression
-vcpkg install bzip2 liblzma zlib zstd
+vcpkg install bzip2 liblzma libzip zlib zstd
 
 # Utility
 vcpkg install bfgroup-lyra date fmt libssh2 pugixml spdlog utf8proc
