@@ -64,7 +64,7 @@ Build vcpkg in `wsl.exe`.
 Overwrite existing vcpkg triplet files or create new ones.
 
 <details>
-<summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file to use MSVC.</summary>
+<summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file.</summary>
 &nbsp;
 
 ```cmake
@@ -84,7 +84,7 @@ set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
 </details>
 
 <details>
-<summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file to use LLVM (optional).</summary>
+<summary>Modify the <code>triplets/x64-windows-llvm.cmake</code> triplet file (optional).</summary>
 &nbsp;
 
 ```cmake
