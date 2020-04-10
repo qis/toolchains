@@ -145,7 +145,7 @@ Install ports.
 vcpkg install benchmark gtest
 
 # Encryption
-vcpkg install openssl libssh2
+vcpkg install openssl
 
 # Compression
 vcpkg install bzip2 liblzma zlib zstd
