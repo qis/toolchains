@@ -34,17 +34,21 @@ git clone git@github.com:qis/toolchains C:/Workspace/vcpkg/triplets/toolchains
 Set Windows environment variables.
 
 ```cmd
-set VCPKG_ROOT=C:\Workspace\vcpkg
-set VCPKG_DOWNLOADS=C:\Workspace\downloads
+set VSCMD_SKIP_SENDTELEMETRY=1
+set VCPKG_KEEP_ENV_VARS=VSCMD_SKIP_SENDTELEMETRY
 set VCPKG_DEFAULT_TRIPLET=x64-windows
+set VCPKG_DOWNLOADS=C:\Workspace\downloads
+set VCPKG_ROOT=C:\Workspace\vcpkg
 ```
 
 Set Linux environment variables.
 
 ```sh
-export VCPKG_ROOT=/opt/vcpkg
-export VCPKG_DOWNLOADS=/opt/downloads
-export VCPKG_DEFAULT_TRIPLET=x64-linux
+export VSCMD_SKIP_SENDTELEMETRY=1
+export VCPKG_KEEP_ENV_VARS=VSCMD_SKIP_SENDTELEMETRY
+export VCPKG_DEFAULT_TRIPLET="x64-linux"
+export VCPKG_DOWNLOADS="/opt/downloads"
+export VCPKG_ROOT="/opt/vcpkg"
 ```
 
 ## Vcpkg
