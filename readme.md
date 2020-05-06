@@ -44,8 +44,6 @@ set VCPKG_ROOT=C:\Workspace\vcpkg
 Set Linux environment variables.
 
 ```sh
-export VSCMD_SKIP_SENDTELEMETRY=1
-export VCPKG_KEEP_ENV_VARS=VSCMD_SKIP_SENDTELEMETRY
 export VCPKG_DEFAULT_TRIPLET="x64-linux"
 export VCPKG_DOWNLOADS="/opt/downloads"
 export VCPKG_ROOT="/opt/vcpkg"
