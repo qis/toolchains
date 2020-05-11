@@ -2,10 +2,32 @@ include_guard(GLOBAL)
 include("${CMAKE_CURRENT_LIST_DIR}/config.cmake")
 
 # Set compiler.
-set(CMAKE_C_COMPILER "${CMAKE_CURRENT_LIST_DIR}/llvm/bin/clang-cl.exe" CACHE STRING "" FORCE)
-set(CMAKE_CXX_COMPILER "${CMAKE_CURRENT_LIST_DIR}/llvm/bin/clang-cl.exe" CACHE STRING "" FORCE)
-set(CMAKE_LINKER "${CMAKE_CURRENT_LIST_DIR}/llvm/bin/lld-link.exe" CACHE STRING "" FORCE)
+set(ProgramFilesX86 "ProgramFiles(x86)")
+set(ProgramFilesX86 "$ENV{${ProgramFilesX86}}")
+
+find_program(clang-cl NAMES clang-cl PATHS
+  ${CMAKE_CURRENT_LIST_DIR}/llvm/bin
+  $ENV{ProgramW6432}/LLVM/bin
+  $ENV{ProgramFiles}/LLVM/bin
+  ${ProgramFilesX86}/LLVM/bin)
+if(NOT clang-cl)
+  message(FATAL_ERROR "Could not find program: clang-cl")
+endif()
+
+find_program(lld-link NAMES lld-link PATHS
+  ${CMAKE_CURRENT_LIST_DIR}/llvm/bin
+  $ENV{ProgramW6432}/LLVM/bin
+  $ENV{ProgramFiles}/LLVM/bin
+  ${ProgramFilesX86}/LLVM/bin)
+if(NOT lld-link)
+  message(FATAL_ERROR "Could not find program: clang-cl")
+endif()
+
+set(CMAKE_C_COMPILER "${clang-cl}" CACHE STRING "" FORCE)
+set(CMAKE_CXX_COMPILER "${clang-cl}" CACHE STRING "" FORCE)
+set(CMAKE_ASM_MASM_COMPILER "ml64.exe" CACHE STRING "" FORCE)
 set(CMAKE_RC_COMPILER "rc.exe" CACHE STRING "" FORCE)
+set(CMAKE_LINKER "${lld-link}" CACHE STRING "" FORCE)
 
 # Set runtime library.
 if(VCPKG_CRT_LINKAGE STREQUAL "dynamic")
@@ -63,8 +85,3 @@ set(CMAKE_RC_FLAGS_DEBUG_INIT "-D_DEBUG")
 add_compile_definitions(_WIN64 _WIN32_WINNT=0x0A00 WINVER=0x0A00)
 add_compile_definitions(_CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_DEPRECATE)
 add_compile_definitions(_ATL_SECURE_NO_DEPRECATE _SCL_SECURE_NO_WARNINGS)
-
-# Disable FindThreads module.
-set(Threads_FOUND TRUE)
-set(CMAKE_USE_WIN32_THREADS_INIT "1")
-add_library(Threads::Threads INTERFACE IMPORTED)

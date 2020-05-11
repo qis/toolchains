@@ -4,7 +4,7 @@ Custom [vcpkg](https://github.com/microsoft/vcpkg) toolchains.
 ## Requirements
 * Working system compiler (Visual Studio 2019 on Windows; GCC on Linux).
 * CMake 3.17.0 or newer.
-* Ninja 1.8.2 or newer.
+* Ninja 1.10.0 or newer.
 * Git 2.17.1 or newer.
 
 ## Directories
@@ -36,7 +36,7 @@ Set Windows environment variables.
 ```cmd
 set VSCMD_SKIP_SENDTELEMETRY=1
 set VCPKG_KEEP_ENV_VARS=VSCMD_SKIP_SENDTELEMETRY
-set VCPKG_DEFAULT_TRIPLET=x64-windows
+set VCPKG_DEFAULT_TRIPLET=x64-windows-msvc
 set VCPKG_DOWNLOADS=C:\Workspace\downloads
 set VCPKG_ROOT=C:\Workspace\vcpkg
 ```
@@ -44,7 +44,7 @@ set VCPKG_ROOT=C:\Workspace\vcpkg
 Set Linux environment variables.
 
 ```sh
-export VCPKG_DEFAULT_TRIPLET="x64-linux"
+export VCPKG_DEFAULT_TRIPLET="x64-linux-llvm"
 export VCPKG_DOWNLOADS="/opt/downloads"
 export VCPKG_ROOT="/opt/vcpkg"
 ```
@@ -66,7 +66,7 @@ Build vcpkg in `wsl.exe`.
 Overwrite existing vcpkg triplet files or create new ones.
 
 <details>
-<summary>Modify the <code>triplets/x64-windows.cmake</code> triplet file.</summary>
+<summary>Modify the <code>triplets/x64-windows-msvc.cmake</code> triplet file.</summary>
 &nbsp;
 
 ```cmake
@@ -108,7 +108,7 @@ set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
 </details>
 
 <details>
-<summary>Modify the <code>triplets/x64-linux.cmake</code> triplet file.</summary>
+<summary>Modify the <code>triplets/x64-linux-llvm.cmake</code> triplet file.</summary>
 &nbsp;
 
 ```cmake
@@ -127,6 +127,26 @@ set(VCPKG_LINKER_FLAGS "-ldl")  # remove on musl-based systems
 </details>
 
 ## Compiler
+Install [LLVM](https://releases.llvm.org/download.html) and add it to the `Path` system environment variable.
+
+Install [LLVM](https://releases.llvm.org/download.html) in WSL.
+
+```sh
+sudo rm -rf /opt/llvm; sudo mkdir -p /opt/llvm
+wget https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz
+sudo tar xf clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz -C /opt/llvm --strip-components 1
+echo "/opt/llvm/lib" | sudo tee /etc/ld.so.conf.d/llvm.conf
+sudo ldconfig
+```
+
+Switch the default C and C++ compiler to LLVM.
+
+```sh
+sudo update-alternatives --install /usr/bin/cc cc /opt/llvm/bin/clang 100
+sudo update-alternatives --install /usr/bin/c++ c++ /opt/llvm/bin/clang++ 100
+```
+
+<!--
 Build LLVM in `cmd.exe` (optional).
 
 ```cmd
@@ -138,6 +158,7 @@ Build LLVM in `wsl.exe`.
 ```sh
 cd /opt/vcpkg/triplets/toolchains && make
 ```
+-->
 
 ## Ports
 Install ports.

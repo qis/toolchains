@@ -56,8 +56,3 @@ set(CMAKE_RC_FLAGS_DEBUG_INIT "-D_DEBUG")
 add_compile_definitions(_WIN64 _WIN32_WINNT=0x0A00 WINVER=0x0A00)
 add_compile_definitions(_CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_DEPRECATE)
 add_compile_definitions(_ATL_SECURE_NO_DEPRECATE _SCL_SECURE_NO_WARNINGS)
-
-# Disable FindThreads module.
-set(Threads_FOUND TRUE)
-set(CMAKE_USE_WIN32_THREADS_INIT "1")
-add_library(Threads::Threads INTERFACE IMPORTED)
