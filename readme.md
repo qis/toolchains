@@ -78,7 +78,7 @@ set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windo
 set(VCPKG_LOAD_VCVARS_ENV ON)
 
 set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251 /wd4275")
-set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
+set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} /EHsc /GR")
 ```
 
 **NOTE**: `VCPKG_CRT_LINKAGE` can be `static`.
@@ -100,7 +100,7 @@ set(VCPKG_POLICY_SKIP_DUMPBIN_CHECKS enabled)
 set(VCPKG_LOAD_VCVARS_ENV ON)
 
 set(VCPKG_C_FLAGS "/arch:AVX2 /W3 -Wno-unused-variable")
-set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
+set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} /EHsc /GR")
 ```
 
 **NOTE**: `VCPKG_CRT_LINKAGE` can be `static`.
@@ -127,26 +127,6 @@ set(VCPKG_LINKER_FLAGS "-ldl")  # remove on musl-based systems
 </details>
 
 ## Compiler
-Install [LLVM](https://releases.llvm.org/download.html) and add it to the `Path` system environment variable.
-
-Install [LLVM](https://releases.llvm.org/download.html) in WSL.
-
-```sh
-sudo rm -rf /opt/llvm; sudo mkdir -p /opt/llvm
-wget https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz
-sudo tar xf clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz -C /opt/llvm --strip-components 1
-echo "/opt/llvm/lib" | sudo tee /etc/ld.so.conf.d/llvm.conf
-sudo ldconfig
-```
-
-Switch the default C and C++ compiler to LLVM.
-
-```sh
-sudo update-alternatives --install /usr/bin/cc cc /opt/llvm/bin/clang 100
-sudo update-alternatives --install /usr/bin/c++ c++ /opt/llvm/bin/clang++ 100
-```
-
-<!--
 Build LLVM in `cmd.exe` (optional).
 
 ```cmd
@@ -158,7 +138,6 @@ Build LLVM in `wsl.exe`.
 ```sh
 cd /opt/vcpkg/triplets/toolchains && make
 ```
--->
 
 ## Ports
 Install ports.
@@ -219,4 +198,44 @@ The following repositories show how this setup can be used in a production envir
 * [qis/example](https://github.com/qis/example)
 * [qis/library](https://github.com/qis/library)
 * [qis/server](https://github.com/qis/server)
+
+<details>
+<summary>Modify the <code>triplets/x64-windows-msvc-debug.cmake</code> triplet file.</summary>
+&nbsp;
+
+```cmake
+set(VCPKG_TARGET_ARCHITECTURE x64)
+set(VCPKG_CRT_LINKAGE dynamic)
+set(VCPKG_LIBRARY_LINKAGE dynamic)
+
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
+set(VCPKG_LOAD_VCVARS_ENV ON)
+
+set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251 /wd4275")
+set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} /EHs-c- /GR- -D_HAS_EXCEPTIONS=0")
+
+set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DFMT_EXCEPTIONS=0")
+```
+
+</details>
+
+<details>
+<summary>Modify the <code>triplets/x64-windows-msvc-release.cmake</code> triplet file.</summary>
+&nbsp;
+
+```cmake
+set(VCPKG_TARGET_ARCHITECTURE x64)
+set(VCPKG_CRT_LINKAGE static)
+set(VCPKG_LIBRARY_LINKAGE static)
+
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
+set(VCPKG_LOAD_VCVARS_ENV ON)
+
+set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251 /wd4275")
+set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} /EHs-c- /GR- -D_HAS_EXCEPTIONS=0")
+
+set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DFMT_EXCEPTIONS=0")
+```
+
+</details>
 -->

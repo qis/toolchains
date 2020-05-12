@@ -10,7 +10,8 @@ all: llvm
 # =================================================================================================
 
 src:
-	git clone --config core.autocrlf=false --depth 1 https://github.com/llvm/llvm-project src
+	git clone --config core.autocrlf=false --depth 1 \
+	  -b release/10.x https://github.com/llvm/llvm-project src
 
 llvm/bin/clang: src
 	@cmake -GNinja -Wno-dev \
@@ -83,10 +84,9 @@ llvm/bin/clang: src
 	cmake -E remove llvm/bin/wasm-ld
 	cmake -E remove llvm/lib/libLTO.so
 	cmake -E remove llvm/lib/libclang.so
-	cmake -E remove llvm/lib/libclang.so.11git
-	cmake -E rename llvm/lib/libLTO.so.11git llvm/lib/libLTO.so
-	cmake -E rename llvm/lib/libclang.so.11 llvm/lib/libclang.so
-	cmake -E rename llvm/bin/clang-11 llvm/bin/clang
+	cmake -E rename llvm/lib/libLTO.so.10 llvm/lib/libLTO.so
+	cmake -E rename llvm/lib/libclang.so.10 llvm/lib/libclang.so
+	cmake -E rename llvm/bin/clang-10 llvm/bin/clang
 
 llvm: llvm/bin/clang restore
 

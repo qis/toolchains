@@ -5,7 +5,8 @@ all: llvm
 # =================================================================================================
 
 src:
-	git clone --config core.autocrlf=false --depth 1 https://github.com/llvm/llvm-project src
+	git clone --config core.autocrlf=false --depth 1 \
+	  -b release/10.x https://github.com/llvm/llvm-project src
 
 llvm/bin/clang.exe: src
 	@cmake -GNinja -Wno-dev \
