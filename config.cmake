@@ -36,3 +36,8 @@ endif()
 if(NOT VCPKG_CRT_LINKAGE)
   include("${VCPKG_ROOT}/triplets/${VCPKG_TARGET_TRIPLET}.cmake")
 endif()
+
+# Prefer LLVM executables.
+if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/llvm/bin)
+  list(INSERT CMAKE_PROGRAM_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/llvm/bin)
+endif()

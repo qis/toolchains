@@ -63,6 +63,7 @@ llvm/bin/clang: src
 	  install-lld-stripped \
 	  install-lldb-stripped \
 	  install-clang-stripped \
+	  install-clang-tidy-stripped \
 	  install-clang-format-stripped \
 	  install-clang-resource-headers \
 	  install-libclang-stripped \

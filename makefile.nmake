@@ -35,6 +35,7 @@ llvm/bin/clang.exe: src
 	  install-lld-stripped \
 	  install-lldb-stripped \
 	  install-clang-stripped \
+	  install-clang-tidy-stripped \
 	  install-clang-format-stripped \
 	  install-clang-resource-headers \
 	  install-libclang-stripped \
@@ -46,7 +47,6 @@ llvm/bin/clang.exe: src
 	  install-llvm-strip-stripped
 	cmake -E remove llvm/bin/clang-cpp.exe
 	cmake -E remove llvm/bin/wasm-ld.exe
-
 
 llvm: llvm/bin/clang.exe restore
 
