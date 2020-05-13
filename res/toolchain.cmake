@@ -50,8 +50,19 @@ if(WIN32)
   # Disable interface export warnings.
   add_compile_options(/wd4275)
 
+  # Disable CMake PCH warning.
+  add_link_options(/ignore:4042)
+
   # Add windows defines.
   add_compile_definitions(_WIN64 _WIN32_WINNT=0x0A00 WINVER=0x0A00)
   add_compile_definitions(_CRT_SECURE_NO_DEPRECATE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_DEPRECATE)
   add_compile_definitions(_ATL_SECURE_NO_DEPRECATE _SCL_SECURE_NO_WARNINGS)
+endif()
+
+# Configure clang-tidy.
+if(NOT WIN32 AND CMAKE_BUILD_TYPE MATCHES Release)
+  find_program(clang-tidy NAMES clang-tidy)
+  if(clang-tidy)
+    set(CMAKE_CXX_CLANG_TIDY ${clang-tidy})
+  endif()
 endif()
