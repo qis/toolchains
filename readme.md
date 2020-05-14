@@ -62,88 +62,10 @@ Build vcpkg in `wsl.exe`.
 /opt/vcpkg/bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries && rm -rf /opt/vcpkg/toolsrc/build.rel
 ```
 
-## Triplets
-Overwrite existing vcpkg triplet files or create new ones.
-
-<details>
-<summary>Modify the <code>triplets/x64-windows-msvc.cmake</code> triplet file.</summary>
-&nbsp;
-
-```cmake
-set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_CRT_LINKAGE dynamic)
-set(VCPKG_LIBRARY_LINKAGE static)
-
-set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
-set(VCPKG_LOAD_VCVARS_ENV ON)
-
-set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251 /wd4275")
-set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} /EHsc /GR")
-
-if(PORT STREQUAL harfbuzz)
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /wd4172")
-endif()
-
-if(PORT STREQUAL libssh2)
-  set(VCPKG_LIBRARY_LINKAGE static)
-endif()
-```
-
-**NOTE**: `VCPKG_CRT_LINKAGE` can be changed to `static` or `VCPKG_LIBRARY_LINKAGE` to `dynamic`.
-
-</details>
-
-<details>
-<summary>Modify the <code>triplets/x64-windows-llvm.cmake</code> triplet file (optional).</summary>
-&nbsp;
-
-```cmake
-set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_CRT_LINKAGE dynamic)
-set(VCPKG_LIBRARY_LINKAGE static)
-
-set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows-llvm.cmake")
-set(VCPKG_POLICY_SKIP_ARCHITECTURE_CHECK enabled)
-set(VCPKG_POLICY_SKIP_DUMPBIN_CHECKS enabled)
-set(VCPKG_LOAD_VCVARS_ENV ON)
-
-set(VCPKG_C_FLAGS "/arch:AVX2 /W3 -Wno-unused-variable")
-set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} /EHsc /GR")
-
-if(PORT STREQUAL harfbuzz)
-  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /wd4172")
-endif()
-
-if(PORT STREQUAL libssh2)
-  set(VCPKG_LIBRARY_LINKAGE static)
-endif()
-```
-
-**NOTE**: `VCPKG_CRT_LINKAGE` can be changed to `static` or `VCPKG_LIBRARY_LINKAGE` to `dynamic`.
-
-</details>
-
-<details>
-<summary>Modify the <code>triplets/x64-linux-llvm.cmake</code> triplet file.</summary>
-&nbsp;
-
-```cmake
-set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_CRT_LINKAGE dynamic)
-set(VCPKG_LIBRARY_LINKAGE static)
-
-set(VCPKG_CMAKE_SYSTEM_NAME Linux)
-set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "/opt/vcpkg/triplets/toolchains/linux.cmake")
-
-set(VCPKG_LINKER_FLAGS "-ldl")  # remove on musl-based systems
-```
-
-**NOTE**: `VCPKG_CRT_LINKAGE` can be changed to `static`.
-
-</details>
-
 ## Compiler
-Build LLVM in `cmd.exe` (optional).
+Skip this step if you decide to use [release](https://github.com/qis/toolchains/releases) binaries.
+
+Build LLVM in `cmd.exe`.
 
 ```cmd
 cd C:\Workspace\vcpkg\triplets\toolchains && make

@@ -93,3 +93,4 @@ restore: clean-windows
 	cmake -E create_symlink lld.exe llvm/bin/lld-link.exe
 	cmake -E create_symlink llvm-ar.exe llvm/bin/llvm-ranlib.exe
 	cmake -E create_symlink llvm-objcopy.exe llvm/bin/llvm-strip.exe
+	cmake -P res/install.cmake

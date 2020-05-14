@@ -134,5 +134,6 @@ restore: clean-linux
 	cmake -E create_symlink llvm-objcopy llvm/bin/llvm-strip
 	find llvm -type d -exec chmod 0755 '{}' ';' -or -type f -exec chmod 0644 '{}' ';'
 	find llvm/bin -type f -and -not -iname '*.dll' -exec chmod 0755 '{}' ';'
+	cmake -P res/install.cmake
 
 .PHONY: all llvm package clean restore
