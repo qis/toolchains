@@ -79,6 +79,10 @@ set(VCPKG_LOAD_VCVARS_ENV ON)
 
 set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251 /wd4275")
 set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} /EHsc /GR")
+
+if(PORT STREQUAL harfbuzz)
+  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /wd4172")
+endif()
 ```
 
 **NOTE**: `VCPKG_CRT_LINKAGE` can be `static`.
@@ -101,6 +105,10 @@ set(VCPKG_LOAD_VCVARS_ENV ON)
 
 set(VCPKG_C_FLAGS "/arch:AVX2 /W3 -Wno-unused-variable")
 set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} /EHsc /GR")
+
+if(PORT STREQUAL harfbuzz)
+  set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} /wd4172")
+endif()
 ```
 
 **NOTE**: `VCPKG_CRT_LINKAGE` can be `static`.
