@@ -192,38 +192,58 @@ target_link_libraries(objects PUBLIC BZip2::BZip2)
 # =============================================================================
 # liblzma
 # =============================================================================
-get_property(multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-if(multi_config)
-  message(FATAL_ERROR "Multi-config generators are not supported.")
-endif()
+find_path(LZMA_INCLUDE_DIR lzma.h)
+get_filename_component(LZMA_ROOT_DIR ${LZMA_INCLUDE_DIR} DIRECTORY)
+
+find_library(LZMA_LIBRARY_DEBUG NAMES lzma lzmad
+  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${LZMA_ROOT_DIR}/debug/lib)
+
+find_library(LZMA_LIBRARY_RELEASE NAMES lzma
+  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${LZMA_ROOT_DIR}/lib)
 
 include(FindPackageHandleStandardArgs)
-find_path(LZMA_INCLUDE_DIR lzma.h)
-if(CMAKE_BUILD_TYPE MATCHES Debug)
-  find_library(LZMA_LIBRARY NAMES lzmad)
-else()
-  find_library(LZMA_LIBRARY NAMES lzma)
-endif()
-find_package_handle_standard_args(LZMA DEFAULT_MSG LZMA_INCLUDE_DIR LZMA_LIBRARY)
+find_package_handle_standard_args(LZMA DEFAULT_MSG
+  LZMA_INCLUDE_DIR LZMA_LIBRARY_DEBUG LZMA_LIBRARY_RELEASE)
 
-target_include_directories(objects PUBLIC ${LZMA_INCLUDE_DIR})
-target_link_libraries(objects PUBLIC ${LZMA_LIBRARY})
+add_library(lzma::lzma UNKNOWN IMPORTED)
+set_target_properties(lzma::lzma PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "${LZMA_INCLUDE_DIR}"
+  IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+  IMPORTED_CONFIGURATIONS "DEBUG;RELEASE"
+  MAP_IMPORTED_CONFIG_MINSIZEREL Release
+  MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
+  IMPORTED_LOCATION_DEBUG "${LZMA_LIBRARY_DEBUG}"
+  IMPORTED_LOCATION_RELEASE "${LZMA_LIBRARY_RELEASE}")
+
+target_link_libraries(${PROJECT_NAME} PUBLIC lzma::lzma)
 
 # =============================================================================
 # libzip
 # =============================================================================
-get_property(multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-if(multi_config)
-  message(FATAL_ERROR "Multi-config generators are not supported.")
-endif()
+find_path(ZIP_INCLUDE_DIR zip.h)
+get_filename_component(ZIP_ROOT_DIR ${ZIP_INCLUDE_DIR} DIRECTORY)
+
+find_library(ZIP_LIBRARY_DEBUG NAMES zip
+  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${ZIP_ROOT_DIR}/debug/lib)
+
+find_library(ZIP_LIBRARY_RELEASE NAMES zip
+  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${ZIP_ROOT_DIR}/lib)
 
 include(FindPackageHandleStandardArgs)
-find_path(ZIP_INCLUDE_DIR zip.h)
-find_library(ZIP_LIBRARY NAMES zip)
-find_package_handle_standard_args(ZIP DEFAULT_MSG ZIP_INCLUDE_DIR ZIP_LIBRARY)
+find_package_handle_standard_args(ZIP DEFAULT_MSG
+  ZIP_INCLUDE_DIR ZIP_LIBRARY_DEBUG ZIP_LIBRARY_RELEASE)
 
-target_include_directories(objects PUBLIC ${ZIP_INCLUDE_DIR})
-target_link_libraries(objects PUBLIC ${ZIP_LIBRARY})
+add_library(zip::zip UNKNOWN IMPORTED)
+set_target_properties(zip::zip PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "${ZIP_INCLUDE_DIR}"
+  IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+  IMPORTED_CONFIGURATIONS "DEBUG;RELEASE"
+  MAP_IMPORTED_CONFIG_MINSIZEREL Release
+  MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
+  IMPORTED_LOCATION_DEBUG "${ZIP_LIBRARY_DEBUG}"
+  IMPORTED_LOCATION_RELEASE "${ZIP_LIBRARY_RELEASE}")
+
+target_link_libraries(${PROJECT_NAME} PUBLIC zip::zip)
 
 # =============================================================================
 # lz4
@@ -291,25 +311,42 @@ target_link_libraries(objects PUBLIC spdlog::spdlog)
 # =============================================================================
 # utf8proc
 # =============================================================================
-get_property(multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-if(multi_config)
-  message(FATAL_ERROR "Multi-config generators are not supported.")
-endif()
+find_path(UTF8PROC_INCLUDE_DIR utf8proc.h)
+get_filename_component(UTF8PROC_ROOT_DIR ${UTF8PROC_INCLUDE_DIR} DIRECTORY)
+
+find_library(UTF8PROC_LIBRARY_DEBUG NAMES utf8proc utf8proc_static
+  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${UTF8PROC_ROOT_DIR}/debug/lib)
+
+find_library(UTF8PROC_LIBRARY_RELEASE NAMES utf8proc utf8proc_static
+  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${UTF8PROC_ROOT_DIR}/lib)
 
 include(FindPackageHandleStandardArgs)
-find_path(UTF8PROC_INCLUDE_DIR utf8proc.h)
-find_library(UTF8PROC_LIBRARY NAMES utf8proc utf8proc_static)
-get_filename_component(UTF8PROC_LIBRARY_NAME ${UTF8PROC_LIBRARY} NAME_WE)
-if(UTF8PROC_LIBRARY_NAME STREQUAL utf8proc_static)
-  set(UTF8PROC_DEFINITIONS UTF8PROC_STATIC=1)
-else()
-  set(UTF8PROC_DEFINITIONS "")
-endif()
-find_package_handle_standard_args(UTF8PROC DEFAULT_MSG UTF8PROC_INCLUDE_DIR UTF8PROC_LIBRARY)
+find_package_handle_standard_args(UTF8PROC DEFAULT_MSG
+  UTF8PROC_INCLUDE_DIR UTF8PROC_LIBRARY_DEBUG UTF8PROC_LIBRARY_RELEASE)
 
-target_compile_definitions(objects PUBLIC ${UTF8PROC_DEFINITIONS})
-target_include_directories(objects PUBLIC ${UTF8PROC_INCLUDE_DIR})
-target_link_libraries(objects PUBLIC ${UTF8PROC_LIBRARY})
+add_library(utf8proc::utf8proc UNKNOWN IMPORTED)
+set_target_properties(utf8proc::utf8proc PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "${UTF8PROC_INCLUDE_DIR}"
+  IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+  IMPORTED_CONFIGURATIONS "DEBUG;RELEASE"
+  MAP_IMPORTED_CONFIG_MINSIZEREL Release
+  MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
+  IMPORTED_LOCATION_DEBUG "${UTF8PROC_LIBRARY_DEBUG}"
+  IMPORTED_LOCATION_RELEASE "${UTF8PROC_LIBRARY_RELEASE}")
+
+get_filename_component(UTF8PROC_LIBRARY_NAME_DEBUG ${UTF8PROC_LIBRARY_DEBUG} NAME_WE)
+if(UTF8PROC_LIBRARY_NAME_DEBUG STREQUAL "utf8proc_static")
+  set_property(TARGET utf8proc::utf8proc APPEND PROPERTY
+    INTERFACE_COMPILE_DEFINITIONS "$<$<CONFIG:Debug>:UTF8PROC_STATIC=1>")
+endif()
+
+get_filename_component(UTF8PROC_LIBRARY_NAME_RELEASE ${UTF8PROC_LIBRARY_RELEASE} NAME_WE)
+if(UTF8PROC_LIBRARY_NAME_RELEASE STREQUAL "utf8proc_static")
+  set_property(TARGET utf8proc::utf8proc APPEND PROPERTY
+    INTERFACE_COMPILE_DEFINITIONS "$<$<CONFIG:Release>:UTF8PROC_STATIC=1>")
+endif()
+
+target_link_libraries(${PROJECT_NAME} PUBLIC utf8proc::utf8proc)
 
 # =============================================================================
 # giflib
@@ -326,22 +363,30 @@ target_link_libraries(objects PUBLIC JPEG::JPEG)
 # =============================================================================
 # libjpeg-turbo
 # =============================================================================
-get_property(multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-if(multi_config)
-  message(FATAL_ERROR "Multi-config generators are not supported.")
-endif()
+find_path(TURBOJPEG_INCLUDE_DIR turbojpeg.h)
+get_filename_component(TURBOJPEG_ROOT_DIR ${TURBOJPEG_INCLUDE_DIR} DIRECTORY)
+
+find_library(TURBOJPEG_LIBRARY_DEBUG NAMES turbojpeg turbojpegd
+  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${TURBOJPEG_ROOT_DIR}/debug/lib)
+
+find_library(TURBOJPEG_LIBRARY_RELEASE NAMES turbojpeg
+  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${TURBOJPEG_ROOT_DIR}/lib)
 
 include(FindPackageHandleStandardArgs)
-find_path(TURBOJPEG_INCLUDE_DIR utf8proc.h)
-if(WIN32 AND CMAKE_BUILD_TYPE MATCHES Debug)
-  find_library(TURBOJPEG_LIBRARY NAMES turbojpegd)
-else()
-  find_library(TURBOJPEG_LIBRARY NAMES turbojpeg)
-endif()
-find_package_handle_standard_args(TURBOJPEG DEFAULT_MSG TURBOJPEG_INCLUDE_DIR TURBOJPEG_LIBRARY)
+find_package_handle_standard_args(TURBOJPEG DEFAULT_MSG
+  TURBOJPEG_INCLUDE_DIR TURBOJPEG_LIBRARY_DEBUG TURBOJPEG_LIBRARY_RELEASE)
 
-target_include_directories(objects PUBLIC ${TURBOJPEG_INCLUDE_DIR})
-target_link_libraries(objects PUBLIC ${TURBOJPEG_LIBRARY})
+add_library(turbojpeg::turbojpeg UNKNOWN IMPORTED)
+set_target_properties(turbojpeg::turbojpeg PROPERTIES
+  INTERFACE_INCLUDE_DIRECTORIES "${TURBOJPEG_INCLUDE_DIR}"
+  IMPORTED_LINK_INTERFACE_LANGUAGES "C"
+  IMPORTED_CONFIGURATIONS "DEBUG;RELEASE"
+  MAP_IMPORTED_CONFIG_MINSIZEREL Release
+  MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
+  IMPORTED_LOCATION_DEBUG "${TURBOJPEG_LIBRARY_DEBUG}"
+  IMPORTED_LOCATION_RELEASE "${TURBOJPEG_LIBRARY_RELEASE}")
+
+target_link_libraries(${PROJECT_NAME} PUBLIC turbojpeg::turbojpeg)
 
 # =============================================================================
 # libpng
