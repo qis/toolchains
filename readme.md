@@ -89,7 +89,7 @@ if(PORT STREQUAL libssh2)
 endif()
 ```
 
-**NOTE**: `VCPKG_CRT_LINKAGE` can be `static`.
+**NOTE**: `VCPKG_CRT_LINKAGE` can be changed to `static` or `VCPKG_LIBRARY_LINKAGE` to `dynamic`.
 
 </details>
 
@@ -119,7 +119,7 @@ if(PORT STREQUAL libssh2)
 endif()
 ```
 
-**NOTE**: `VCPKG_CRT_LINKAGE` can be `static`.
+**NOTE**: `VCPKG_CRT_LINKAGE` can be changed to `static` or `VCPKG_LIBRARY_LINKAGE` to `dynamic`.
 
 </details>
 
@@ -138,7 +138,7 @@ set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "/opt/vcpkg/triplets/toolchains/linux.cmake")
 set(VCPKG_LINKER_FLAGS "-ldl")  # remove on musl-based systems
 ```
 
-**NOTE**: `VCPKG_CRT_LINKAGE` can be `static`.
+**NOTE**: `VCPKG_CRT_LINKAGE` can be changed to `static`.
 
 </details>
 
