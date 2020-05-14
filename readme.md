@@ -144,16 +144,16 @@ Install ports.
 
 ```sh
 # Development
-vcpkg install benchmark gtest
+vcpkg install benchmark catch2
 
 # Encryption
 vcpkg install openssl
 
 # Compression
-vcpkg install bzip2 liblzma libzip zlib zstd
+vcpkg install bzip2 liblzma libzip lz4 zlib zstd
 
 # Utility
-vcpkg install bfgroup-lyra date fmt libssh2 pugixml spdlog utf8proc
+vcpkg install date fmt libssh2 pugixml spdlog utf8proc
 
 # Images
 vcpkg install giflib libjpeg-turbo libpng tiff
@@ -183,21 +183,21 @@ Install ports in `wsl.exe`.
 vcpkg install --overlay-ports=/opt/ports boost tbb
 ```
 
+## Usage
+The following project templates demonstrate how this setup can be used in a production environment.
+
+* [qis/application](https://github.com/qis/application)
+* [qis/library](https://github.com/qis/library)
+* [qis/test](https://github.com/qis/test)
+* [qis/xaml](https://github.com/qis/xaml)
+
 <!--
 ## Exceptions
 Some ports require macro definitions to disable exceptions.
 
-* `gtest` incorrectly sets `_HAS_EXCEPTIONS=1` and requires `GTEST_HAS_EXCEPTIONS=0` during compilation
 * `fmt` requires `FMT_EXCEPTIONS=0`
 * `pugixml` requires `PUGIXML_NO_EXCEPTIONS`
 * `spdlog` requires `SPDLOG_NO_EXCEPTIONS`
-
-The following repositories show how this setup can be used in a production environment.
-
-* [qis/test](https://github.com/qis/test)
-* [qis/example](https://github.com/qis/example)
-* [qis/library](https://github.com/qis/library)
-* [qis/server](https://github.com/qis/server)
 
 <details>
 <summary>Modify the <code>triplets/x64-windows-msvc-debug.cmake</code> triplet file.</summary>
