@@ -284,12 +284,8 @@ target_link_libraries(${PROJECT_NAME} PUBLIC JPEGTURBO::JPEGTURBO)
 # =============================================================================
 # libpng
 # =============================================================================
-find_package(libpng CONFIG REQUIRED)
-if(TARGET png)
-  target_link_libraries(${PROJECT_NAME} PUBLIC png)
-else()
-  target_link_libraries(${PROJECT_NAME} PUBLIC png_static)
-endif()
+find_package(PNG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC PNG::PNG)
 
 # =============================================================================
 # tiff
@@ -312,7 +308,7 @@ target_link_libraries(objects PUBLIC harfbuzz::harfbuzz)
 # =============================================================================
 # boost
 # =============================================================================
-find_package(Boost REQUIRED COMPONENTS headers filesystem)
+find_package(Boost 1.73.0 REQUIRED COMPONENTS headers filesystem)
 target_link_libraries(objects PUBLIC Boost::headers Boost::filesystem)
 target_compile_definitions(objects PUBLIC
   BOOST_ASIO_HAS_CO_AWAIT

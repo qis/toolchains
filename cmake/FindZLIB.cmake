@@ -3,9 +3,9 @@ find_path(ZLIB_INCLUDE_DIR zlib.h PATH_SUFFIXES include)
 if(NOT ZLIB_LIBRARIES OR NOT ZLIB_LIBRARY_RELEASE OR NOT ZLIB_LIBRARY_DEBUG)
   get_filename_component(ZLIB_ROOT_DIR ${ZLIB_INCLUDE_DIR} DIRECTORY)
   find_library(ZLIB_LIBRARY_RELEASE NAMES z zlib NAMES_PER_DIR
-    NO_DEFAULT_PATH PATHS ${ZLIB_ROOT_DIR}/lib)
+    NO_DEFAULT_PATH PATHS ${ZLIB_ROOT_DIR}/lib PATH_SUFFIXES lib)
   find_library(ZLIB_LIBRARY_DEBUG NAMES z zd zlib zlibd NAMES_PER_DIR
-    NO_DEFAULT_PATH PATHS ${ZLIB_ROOT_DIR}/debug/lib)
+    NO_DEFAULT_PATH PATHS ${ZLIB_ROOT_DIR}/debug/lib PATH_SUFFIXES lib)
   include(SelectLibraryConfigurations)
   select_library_configurations(ZLIB)
 else()
