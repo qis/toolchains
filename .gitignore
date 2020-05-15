@@ -1,5 +1,6 @@
 /*
 .*
+!/cmake/
 !/res/
 !/.gitattributes
 !/.gitignore

@@ -177,73 +177,25 @@ endif()
 # openssl
 # =============================================================================
 find_package(OpenSSL REQUIRED)
-target_link_libraries(objects PUBLIC OpenSSL::Crypto OpenSSL::SSL)
-
-if(WIN32)
-  target_link_libraries(objects PUBLIC crypt32 ws2_32)
-endif()
+target_link_libraries(${PROJECT_NAME} PUBLIC OpenSSL::Crypto OpenSSL::SSL)
 
 # =============================================================================
 # bzip2
 # =============================================================================
 find_package(BZip2 REQUIRED)
-target_link_libraries(objects PUBLIC BZip2::BZip2)
+target_link_libraries(${PROJECT_NAME} PUBLIC BZip2::BZip2)
 
 # =============================================================================
 # liblzma
 # =============================================================================
-find_path(LZMA_INCLUDE_DIR lzma.h)
-get_filename_component(LZMA_ROOT_DIR ${LZMA_INCLUDE_DIR} DIRECTORY)
-
-find_library(LZMA_LIBRARY_DEBUG NAMES lzma lzmad
-  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${LZMA_ROOT_DIR}/debug/lib)
-
-find_library(LZMA_LIBRARY_RELEASE NAMES lzma
-  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${LZMA_ROOT_DIR}/lib)
-
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(LZMA DEFAULT_MSG
-  LZMA_INCLUDE_DIR LZMA_LIBRARY_DEBUG LZMA_LIBRARY_RELEASE)
-
-add_library(lzma::lzma UNKNOWN IMPORTED)
-set_target_properties(lzma::lzma PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "${LZMA_INCLUDE_DIR}"
-  IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-  IMPORTED_CONFIGURATIONS "DEBUG;RELEASE"
-  MAP_IMPORTED_CONFIG_MINSIZEREL Release
-  MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
-  IMPORTED_LOCATION_DEBUG "${LZMA_LIBRARY_DEBUG}"
-  IMPORTED_LOCATION_RELEASE "${LZMA_LIBRARY_RELEASE}")
-
-target_link_libraries(${PROJECT_NAME} PUBLIC lzma::lzma)
+find_package(LibLZMA CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
 
 # =============================================================================
 # libzip
 # =============================================================================
-find_path(ZIP_INCLUDE_DIR zip.h)
-get_filename_component(ZIP_ROOT_DIR ${ZIP_INCLUDE_DIR} DIRECTORY)
-
-find_library(ZIP_LIBRARY_DEBUG NAMES zip
-  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${ZIP_ROOT_DIR}/debug/lib)
-
-find_library(ZIP_LIBRARY_RELEASE NAMES zip
-  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${ZIP_ROOT_DIR}/lib)
-
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(ZIP DEFAULT_MSG
-  ZIP_INCLUDE_DIR ZIP_LIBRARY_DEBUG ZIP_LIBRARY_RELEASE)
-
-add_library(zip::zip UNKNOWN IMPORTED)
-set_target_properties(zip::zip PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "${ZIP_INCLUDE_DIR}"
-  IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-  IMPORTED_CONFIGURATIONS "DEBUG;RELEASE"
-  MAP_IMPORTED_CONFIG_MINSIZEREL Release
-  MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
-  IMPORTED_LOCATION_DEBUG "${ZIP_LIBRARY_DEBUG}"
-  IMPORTED_LOCATION_RELEASE "${ZIP_LIBRARY_RELEASE}")
-
-target_link_libraries(${PROJECT_NAME} PUBLIC zip::zip)
+find_package(ZIP REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC ZIP::ZIP)
 
 # =============================================================================
 # lz4
@@ -268,9 +220,6 @@ target_link_libraries(objects PUBLIC libzstd)
 # =============================================================================
 find_package(date CONFIG REQUIRED)
 target_link_libraries(objects PUBLIC date::date date::tz)
-
-find_package(Threads REQUIRED)
-target_link_libraries(objects PUBLIC Threads::Threads)
 
 # =============================================================================
 # fmt
@@ -311,41 +260,7 @@ target_link_libraries(objects PUBLIC spdlog::spdlog)
 # =============================================================================
 # utf8proc
 # =============================================================================
-find_path(UTF8PROC_INCLUDE_DIR utf8proc.h)
-get_filename_component(UTF8PROC_ROOT_DIR ${UTF8PROC_INCLUDE_DIR} DIRECTORY)
-
-find_library(UTF8PROC_LIBRARY_DEBUG NAMES utf8proc utf8proc_static
-  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${UTF8PROC_ROOT_DIR}/debug/lib)
-
-find_library(UTF8PROC_LIBRARY_RELEASE NAMES utf8proc utf8proc_static
-  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${UTF8PROC_ROOT_DIR}/lib)
-
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(UTF8PROC DEFAULT_MSG
-  UTF8PROC_INCLUDE_DIR UTF8PROC_LIBRARY_DEBUG UTF8PROC_LIBRARY_RELEASE)
-
-add_library(utf8proc::utf8proc UNKNOWN IMPORTED)
-set_target_properties(utf8proc::utf8proc PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "${UTF8PROC_INCLUDE_DIR}"
-  IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-  IMPORTED_CONFIGURATIONS "DEBUG;RELEASE"
-  MAP_IMPORTED_CONFIG_MINSIZEREL Release
-  MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
-  IMPORTED_LOCATION_DEBUG "${UTF8PROC_LIBRARY_DEBUG}"
-  IMPORTED_LOCATION_RELEASE "${UTF8PROC_LIBRARY_RELEASE}")
-
-get_filename_component(UTF8PROC_LIBRARY_NAME_DEBUG ${UTF8PROC_LIBRARY_DEBUG} NAME_WE)
-if(UTF8PROC_LIBRARY_NAME_DEBUG STREQUAL "utf8proc_static")
-  set_property(TARGET utf8proc::utf8proc APPEND PROPERTY
-    INTERFACE_COMPILE_DEFINITIONS "$<$<CONFIG:Debug>:UTF8PROC_STATIC=1>")
-endif()
-
-get_filename_component(UTF8PROC_LIBRARY_NAME_RELEASE ${UTF8PROC_LIBRARY_RELEASE} NAME_WE)
-if(UTF8PROC_LIBRARY_NAME_RELEASE STREQUAL "utf8proc_static")
-  set_property(TARGET utf8proc::utf8proc APPEND PROPERTY
-    INTERFACE_COMPILE_DEFINITIONS "$<$<CONFIG:Release>:UTF8PROC_STATIC=1>")
-endif()
-
+find_package(Utf8Proc REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC utf8proc::utf8proc)
 
 # =============================================================================
@@ -363,42 +278,24 @@ target_link_libraries(objects PUBLIC JPEG::JPEG)
 # =============================================================================
 # libjpeg-turbo
 # =============================================================================
-find_path(TURBOJPEG_INCLUDE_DIR turbojpeg.h)
-get_filename_component(TURBOJPEG_ROOT_DIR ${TURBOJPEG_INCLUDE_DIR} DIRECTORY)
-
-find_library(TURBOJPEG_LIBRARY_DEBUG NAMES turbojpeg turbojpegd
-  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${TURBOJPEG_ROOT_DIR}/debug/lib)
-
-find_library(TURBOJPEG_LIBRARY_RELEASE NAMES turbojpeg
-  NAMES_PER_DIR NO_CMAKE_PATH PATHS ${TURBOJPEG_ROOT_DIR}/lib)
-
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(TURBOJPEG DEFAULT_MSG
-  TURBOJPEG_INCLUDE_DIR TURBOJPEG_LIBRARY_DEBUG TURBOJPEG_LIBRARY_RELEASE)
-
-add_library(turbojpeg::turbojpeg UNKNOWN IMPORTED)
-set_target_properties(turbojpeg::turbojpeg PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "${TURBOJPEG_INCLUDE_DIR}"
-  IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-  IMPORTED_CONFIGURATIONS "DEBUG;RELEASE"
-  MAP_IMPORTED_CONFIG_MINSIZEREL Release
-  MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
-  IMPORTED_LOCATION_DEBUG "${TURBOJPEG_LIBRARY_DEBUG}"
-  IMPORTED_LOCATION_RELEASE "${TURBOJPEG_LIBRARY_RELEASE}")
-
-target_link_libraries(${PROJECT_NAME} PUBLIC turbojpeg::turbojpeg)
+find_package(JPEGTURBO REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC JPEGTURBO::JPEGTURBO)
 
 # =============================================================================
 # libpng
 # =============================================================================
-find_package(PNG REQUIRED)
-target_link_libraries(objects PUBLIC PNG::PNG)
+find_package(libpng CONFIG REQUIRED)
+if(TARGET png)
+  target_link_libraries(${PROJECT_NAME} PUBLIC png)
+else()
+  target_link_libraries(${PROJECT_NAME} PUBLIC png_static)
+endif()
 
 # =============================================================================
 # tiff
 # =============================================================================
 find_package(TIFF REQUIRED)
-target_link_libraries(objects PUBLIC TIFF::TIFF)
+target_link_libraries(${PROJECT_NAME} PUBLIC TIFF::TIFF)
 
 # =============================================================================
 # freetype
@@ -415,7 +312,7 @@ target_link_libraries(objects PUBLIC harfbuzz::harfbuzz)
 # =============================================================================
 # boost
 # =============================================================================
-find_package(Boost 1.73.0 CONFIG REQUIRED COMPONENTS headers filesystem)
+find_package(Boost REQUIRED COMPONENTS headers filesystem)
 target_link_libraries(objects PUBLIC Boost::headers Boost::filesystem)
 target_compile_definitions(objects PUBLIC
   BOOST_ASIO_HAS_CO_AWAIT
@@ -430,6 +327,12 @@ target_compile_definitions(objects PUBLIC
 # =============================================================================
 find_package(TBB CONFIG REQUIRED)
 target_link_libraries(objects PUBLIC TBB::tbb TBB::tbbmalloc)
+
+# =============================================================================
+# threads
+# =============================================================================
+find_package(Threads REQUIRED)
+target_link_libraries(objects PUBLIC Threads::Threads)
 
 # =============================================================================
 

@@ -41,3 +41,6 @@ endif()
 if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/llvm/bin)
   list(INSERT CMAKE_PROGRAM_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/llvm/bin)
 endif()
+
+# Modules
+list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/cmake)
