@@ -28,14 +28,16 @@ if (DEFINED VCPKG_SET_CHARSET_FLAG AND NOT VCPKG_SET_CHARSET_FLAG)
 endif()
 
 # Set compiler flags.
-set(CMAKE_C_FLAGS "/DWIN32 /D_WINDOWS /FC ${VCPKG_C_FLAGS} /clang:-fasm /clang:-fopenmp-simd ${CHARSET_FLAG}" CACHE STRING "")
+set(CLANG_FLAGS "/clang:-fasm /clang:-fopenmp-simd /clang:-Wno-nullability-completeness")
+
+set(CMAKE_C_FLAGS "/DWIN32 /D_WINDOWS /FC ${VCPKG_C_FLAGS} ${CLANG_FLAGS} ${CHARSET_FLAG}" CACHE STRING "")
 set(CMAKE_C_FLAGS_DEBUG "/Od /Ob0 /GS /RTC1 ${VCPKG_C_FLAGS_DEBUG} ${VCPKG_CRT_FLAG}d ${VCPKG_DBG_FLAG}" CACHE STRING "")
 set(CMAKE_C_FLAGS_RELEASE "/O1 /Oi /Ob2 /GS- ${VCPKG_C_FLAGS_RELEASE} ${VCPKG_CRT_FLAG} /clang:-flto=full /DNDEBUG" CACHE STRING "")
 set(CMAKE_C_FLAGS_MINSIZEREL "/O1 /Oi /Ob1 /GS- ${VCPKG_C_FLAGS_RELEASE} ${VCPKG_CRT_FLAG} /clang:-flto=full /DNDEBUG" CACHE STRING "")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "/O2 /Oi /Ob1 /GS- ${VCPKG_C_FLAGS_RELEASE} ${VCPKG_CRT_FLAG} /clang:-flto=full ${VCPKG_DBG_FLAG} /DNDEBUG" CACHE STRING "")
 
 # TODO: Remove /U__cpp_concepts once LLVM adds MS STL support.
-set(CMAKE_CXX_FLAGS "/DWIN32 /D_WINDOWS /U__cpp_concepts /FC /permissive- ${VCPKG_CXX_FLAGS} /clang:-fasm /clang:-fopenmp-simd ${CHARSET_FLAG}" CACHE STRING "")
+set(CMAKE_CXX_FLAGS "/DWIN32 /D_WINDOWS /U__cpp_concepts /FC /permissive- ${VCPKG_CXX_FLAGS} ${CLANG_FLAGS} ${CHARSET_FLAG}" CACHE STRING "")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${VCPKG_CXX_FLAGS_DEBUG} /clang:-fcoroutines-ts" CACHE STRING "")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${VCPKG_CXX_FLAGS_RELEASE} /clang:-fcoroutines-ts /clang:-fwhole-program-vtables" CACHE STRING "")
 set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} ${VCPKG_CXX_FLAGS_RELEASE} /clang:-fcoroutines-ts /clang:-fwhole-program-vtables" CACHE STRING "")

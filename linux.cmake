@@ -14,7 +14,8 @@ set(CMAKE_AR "${CMAKE_CURRENT_LIST_DIR}/llvm/bin/llvm-ar" CACHE STRING "")
 set(CMAKE_NM "${CMAKE_CURRENT_LIST_DIR}/llvm/bin/llvm-nm" CACHE STRING "")
 
 # Set compiler flags.
-set(CLANG_C_FLAGS "-fasm -fPIC -fdiagnostics-absolute-paths -D_DEFAULT_SOURCE=1")
+set(CLANG_C_FLAGS "-fasm -fPIC -fdiagnostics-absolute-paths -D_DEFAULT_SOURCE=1 -Wall -Wextra -Wpedantic")
+set(CLANG_C_FLAGS "${CLANG_C_FLAGS} -Wno-unused-variable -Wno-unused-parameter -Wrange-loop-analysis")
 set(CLANG_C_FLAGS_RELEASE "-flto=full")
 
 set(CLANG_CXX_FLAGS "${CLANG_C_FLAGS} -fcoroutines-ts -stdlib=libc++")
