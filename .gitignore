@@ -1,14 +1,10 @@
 /*
 .*
 !/cmake/
-!/res/
-!/.gitattributes
+!/triplets/
 !/.gitignore
 !/config.cmake
+!/format.cmake
 !/linux.cmake
-!/make.cmd
-!/makefile
-!/makefile.nmake
 !/readme.md
 !/windows.cmake
-!/windows-llvm.cmake

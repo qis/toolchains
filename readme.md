@@ -1,87 +1,170 @@
 # Toolchains
 Custom [vcpkg](https://github.com/microsoft/vcpkg) toolchains.
 
-## Requirements
-* Working system compiler (Visual Studio 2019 on Windows; GCC on Linux).
-* CMake 3.17.0 or newer.
-* Ninja 1.10.0 or newer.
-* Git 2.17.1 or newer.
+## Windows
+Install [Git](https://git-scm.com/downloads) with specific settings.
 
-## Directories
-Create directories in `cmd.exe`.
+```
+Select Destination Location
+  C:\Program Files\Git
+
+Select Components
+  ☐ Windows Explorer integration
+  ☑ Git LFS (Large File Support)
+  ☐ Associate .git* configuration files with the default text editor
+  ☐ Associate .sh files to be run with Bash
+
+Select Start Menu Folder
+  ☑ Don't create a Start Menu folder
+
+Choosing the default editor used by Git
+  [Select other editor as Git's default editor]
+  Location of editor: C:\Program Files (x86)\Vim\vim81\gvim.exe
+  [Test Custom Editor]
+
+Adjusting your PATH environment
+  ◉ Use Git from Git Bash only
+
+Choosing HTTPS transport backend
+  ◉ Use the OpenSSL library
+
+Configuring the line ending conversions
+  ◉ Checkout as-is, commit as-is
+
+Configuring the terminal emulator to use with Git Bash
+  ◉ Use Windows' default console window
+
+Configuring file system caching
+  ☑ Enable file system caching
+  ☑ Enable Git Credential Manager
+  ☑ Enable symbolic links
+```
+
+Install [Visual Studio](https://visualstudio.microsoft.com/downloads/).
+
+```
+Workloads
++ ☑ Desktop development with C++
+```
+
+Configure system environment variable `Path`.
+
+```
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VisualStudio\NodeJs
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\Llvm\x64\bin
+C:\Program Files\Git\cmd
+C:\Workspace\vcpkg
+```
+
+Configure system environment variables.
+
+```cmd
+set VSCMD_SKIP_SENDTELEMETRY=1
+set VCPKG_KEEP_ENV_VARS=VSCMD_SKIP_SENDTELEMETRY
+set VCPKG_DEFAULT_TRIPLET=x64-windows-ipo
+set VCPKG_DOWNLOADS=C:\Workspace\downloads
+set VCPKG_PORTS=C:\Workspace\ports
+set VCPKG_ROOT=C:\Workspace\vcpkg
+```
+
+Create directories.
 
 ```cmd
 md C:\Workspace
+md C:\Workspace\ports
 md C:\Workspace\downloads
 ```
 
-Create symlinks in `wsl.exe`.
-
-```sh
-sudo ln -s /mnt/c/Workspace/vcpkg /opt/vcpkg
-sudo ln -s /mnt/c/Workspace/downloads /opt/downloads
-```
-
-## Download
-Download vcpkg with toolset patches and this toolchain.
+Download vcpkg.
 
 ```cmd
 git clone git@github.com:microsoft/vcpkg C:/Workspace/vcpkg
 git clone git@github.com:qis/toolchains C:/Workspace/vcpkg/triplets/toolchains
 ```
 
-## Setup
-Set Windows environment variables.
-
-```cmd
-set VSCMD_SKIP_SENDTELEMETRY=1
-set VCPKG_KEEP_ENV_VARS=VSCMD_SKIP_SENDTELEMETRY
-set VCPKG_DEFAULT_TRIPLET=x64-windows-msvc
-set VCPKG_DOWNLOADS=C:\Workspace\downloads
-set VCPKG_ROOT=C:\Workspace\vcpkg
-```
-
-Set Linux environment variables.
-
-```sh
-export VCPKG_DEFAULT_TRIPLET="x64-linux-llvm"
-export VCPKG_DOWNLOADS="/opt/downloads"
-export VCPKG_ROOT="/opt/vcpkg"
-```
-
-## Vcpkg
-Build vcpkg in `cmd.exe`.
+Build vcpkg.
 
 ```cmd
 C:\Workspace\vcpkg\bootstrap-vcpkg.bat -disableMetrics -win64
 ```
 
-Build vcpkg in `wsl.exe`.
+Install triplets.
+
+```cmd
+cmake -P C:\Workspace\vcpkg\triplets\toolchains\triplets\install.cmake
+```
+
+Create a ports overlay for [boost](https://www.boost.org/) and [tbb](https://software.intel.com/en-us/tbb).
+
+```cmd
+git clone git@github.com:qis/boost C:/Workspace/ports
+cmake -DVCPKG_ROOT=C:/Workspace/vcpkg -P C:/Workspace/ports/create.cmake
+git clone git@github.com:qis/tbb C:/Workspace/ports/tbb
+```
+
+## Linux
+Install [LLVM](https://llvm.org/).
+
+```sh
+sudo apt install -y -o APT::Install-Suggests=0 -o APT::Install-Recommends=0 \
+  clang clang-format clang-tidy llvm-dev lld lldb libc++-dev libc++abi-dev \
+  binutils-dev linux-headers-generic
+```
+
+Switch the default C and C++ compiler to LLVM.
+
+```sh
+sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100
+sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100
+```
+
+Install development packages.
+
+```sh
+sudo apt install -y -o APT::Install-Suggests=0 -o APT::Install-Recommends=0 \
+  cmake make nasm ninja-build nodejs npm patch perl pkgconf
+```
+
+Configure system environment variables.
+
+```sh
+sudo tee /etc/profile.d/vcpkg.sh >/dev/null <<'EOF'
+export PATH="${PATH}:/opt/vcpkg"
+export VCPKG_DEFAULT_TRIPLET="x64-linux-ipo"
+export VCPKG_DOWNLOADS="/opt/downloads"
+export VCPKG_PORTS="/opt/ports"
+export VCPKG_ROOT="/opt/vcpkg"
+EOF
+sudo chmod 0755 /etc/profile.d/vcpkg.sh
+```
+
+Create symlinks.
+
+```sh
+sudo ln -s /mnt/c/Workspace/vcpkg /opt/vcpkg
+sudo ln -s /mnt/c/Workspace/ports /opt/ports
+sudo ln -s /mnt/c/Workspace/downloads /opt/downloads
+```
+
+Build vcpkg.
 
 ```sh
 /opt/vcpkg/bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries && rm -rf /opt/vcpkg/toolsrc/build.rel
 ```
 
-## Compiler
-Skip this step if you decide to use [release](https://github.com/qis/toolchains/releases) binaries.
-
-Build LLVM in `cmd.exe`.
-
-```cmd
-cd C:\Workspace\vcpkg\triplets\toolchains && make
-```
-
-Build LLVM in `wsl.exe`.
+Install triplets.
 
 ```sh
-cd /opt/vcpkg/triplets/toolchains && make
+cmake -P /opt/vcpkg/triplets/toolchains/triplets/install.cmake
 ```
 
 ## Ports
 Install ports.
 
 ```sh
-# Development
+# Debugging
 vcpkg install benchmark catch2
 
 # Encryption
@@ -101,14 +184,6 @@ vcpkg install freetype harfbuzz
 ```
 
 ## Overlay
-Create a ports overlay for [boost](https://www.boost.org/) and [tbb](https://software.intel.com/en-us/tbb).
-
-```cmd
-git clone git@github.com:qis/boost C:/Workspace/ports
-cmake -DVCPKG_ROOT=C:/Workspace/vcpkg -P C:/Workspace/ports/create.cmake
-git clone git@github.com:qis/tbb C:/Workspace/ports/tbb
-```
-
 Install ports in `cmd.exe`.
 
 ```cmd
@@ -133,8 +208,7 @@ Project templates that support this setup.
 CMake script that demonstrates how to use this setup.
 
 ```cmake
-cmake_minimum_required(VERSION 3.17 FATAL_ERROR)
-set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/triplets/toolchains/res/toolchain.cmake")
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(application VERSION 0.1.0 LANGUAGES CXX)
 
 file(GLOB sources CONFIGURE_DEPENDS src/application/*.[hc]pp)
@@ -337,29 +411,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE objects)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
-if(WIN32 AND NOT CMAKE_BUILD_TYPE MATCHES Debug AND VCPKG_LIBRARY_LINKAGE STREQUAL "dynamic")
-  install(FILES
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/libcrypto-1_1-x64.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/libssl-1_1-x64.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/bz2.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/lzma.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/zip.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/lz4.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/zlib1.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/zstd.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/tz.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/fmt.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/pugixml.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/utf8proc.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/jpeg62.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/turbojpeg.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/libpng16.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/tiff.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/freetype.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/harfbuzz.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/boost_filesystem.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/tbb.dll
-    DESTINATION bin)
+if(WIN32)
+  install(FILES $<TARGET_FILE_DIR:${PROJECT_NAME}>/pdf.dll DESTINATION bin)
 endif()
 ```
 
@@ -372,40 +425,38 @@ Some ports require macro definitions to disable exceptions.
 * `spdlog` requires `SPDLOG_NO_EXCEPTIONS`
 
 <details>
-<summary>Modify the <code>triplets/x64-windows-msvc-debug.cmake</code> triplet file.</summary>
+<summary>Modify the <code>triplets/x64-windows-debug.cmake</code> triplet file.</summary>
 &nbsp;
 
 ```cmake
 set(VCPKG_TARGET_ARCHITECTURE x64)
+set(VCPKG_LIBRARY_LINKAGE static)
 set(VCPKG_CRT_LINKAGE dynamic)
-set(VCPKG_LIBRARY_LINKAGE dynamic)
 
-set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
 set(VCPKG_LOAD_VCVARS_ENV ON)
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
 
-set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251 /wd4275")
+set(VCPKG_C_FLAGS "/arch:AVX2")
 set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} /EHs-c- /GR- -D_HAS_EXCEPTIONS=0")
-
 set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DFMT_EXCEPTIONS=0")
 ```
 
 </details>
 
 <details>
-<summary>Modify the <code>triplets/x64-windows-msvc-release.cmake</code> triplet file.</summary>
+<summary>Modify the <code>triplets/x64-windows-release.cmake</code> triplet file.</summary>
 &nbsp;
 
 ```cmake
 set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_CRT_LINKAGE static)
 set(VCPKG_LIBRARY_LINKAGE static)
+set(VCPKG_CRT_LINKAGE dynamic)
 
-set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
 set(VCPKG_LOAD_VCVARS_ENV ON)
+set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
 
-set(VCPKG_C_FLAGS "/arch:AVX2 /W3 /wd26812 /wd28251 /wd4275")
+set(VCPKG_C_FLAGS "/arch:AVX2")
 set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} /EHs-c- /GR- -D_HAS_EXCEPTIONS=0")
-
 set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DFMT_EXCEPTIONS=0")
 ```
 

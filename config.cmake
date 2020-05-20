@@ -12,35 +12,27 @@ set(CMAKE_CXX_EXTENSIONS OFF CACHE STRING "")
 
 # Determine vcpkg root directory.
 if(NOT DEFINED VCPKG_ROOT)
-  if(DEFINED ENV{VCPKG_ROOT})
-    set(VCPKG_ROOT "$ENV{VCPKG_ROOT}" CACHE STRING "")
-  else()
-    get_filename_component(VCPKG_ROOT "${CMAKE_CURRENT_LIST_DIR}/../.." ABSOLUTE CACHE)
-  endif()
+  get_filename_component(VCPKG_ROOT "${CMAKE_CURRENT_LIST_DIR}/../.." ABSOLUTE CACHE)
 endif()
 
 # Determine vcpkg target triplet.
-if(NOT VCPKG_TARGET_TRIPLET)
-  if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET})
-    set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING "")
+if(NOT DEFINED VCPKG_TARGET_TRIPLET)
+  if(WIN32)
+    set(VCPKG_TARGET_TRIPLET "x64-windows-ipo" CACHE STRING "")
   else()
-    if(WIN32)
-      set(VCPKG_TARGET_TRIPLET "x64-windows" CACHE STRING "")
-    else()
-      set(VCPKG_TARGET_TRIPLET "x64-linux" CACHE STRING "")
-    endif()
+    set(VCPKG_TARGET_TRIPLET "x64-linux-ipo" CACHE STRING "")
   endif()
 endif()
 
 # Include vcpkg triplet.
-if(NOT VCPKG_CRT_LINKAGE)
+if(NOT DEFINED VCPKG_CRT_LINKAGE)
   include("${VCPKG_ROOT}/triplets/${VCPKG_TARGET_TRIPLET}.cmake")
 endif()
 
-# Prefer LLVM executables.
-if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/llvm/bin)
-  list(INSERT CMAKE_PROGRAM_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/llvm/bin)
+# Include vcpkg toolchain.
+if(NOT DEFINED VCPKG_TOOLCHAIN)
+  include("${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 endif()
 
-# Modules
+# Set modules path.
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/cmake)
