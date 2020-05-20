@@ -461,4 +461,15 @@ set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DFMT_EXCEPTIONS=0")
 ```
 
 </details>
+
+Find required packages.
+
+```sh
+sudo apt install apt-file
+sudo apt-file update
+
+ldd <executable>
+apt-file search <shared-library>
+apt info <package> 2>/dev/null | grep Version
+```
 -->
