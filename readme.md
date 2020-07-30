@@ -115,6 +115,7 @@ sudo tee /etc/profile.d/cmake.sh >/dev/null <<'EOF'
 export PATH="${PATH}:/opt/cmake/bin"
 EOF
 sudo chmod 0755 /etc/profile.d/cmake.sh
+rm -f cmake-3.18.0-Linux-x86_64.tar.gz
 ```
 
 Install GCC.
