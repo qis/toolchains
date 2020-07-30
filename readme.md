@@ -77,6 +77,7 @@ Set system environment variables.
 
 ```cmd
 set VCPKG_ROOT=C:\Workspace\vcpkg
+set VCPKG_FEATURE_FLAGS=-binarycaching
 set VCPKG_DEFAULT_TRIPLET=x64-windows-ipo
 set VCPKG_DOWNLOADS=C:\Workspace\downloads
 set VCPKG_OVERLAY_PORTS=C:\Workspace\boost;C:\Workspace\ports
@@ -135,6 +136,7 @@ Set system environment variables.
 sudo tee /etc/profile.d/vcpkg.sh >/dev/null <<'EOF'
 export PATH="${PATH}:/opt/vcpkg"
 export VCPKG_ROOT="/opt/vcpkg"
+export VCPKG_FEATURE_FLAGS="-binarycaching"
 export VCPKG_DEFAULT_TRIPLET="x64-linux-ipo"
 export VCPKG_DOWNLOADS="/opt/downloads"
 export VCPKG_OVERLAY_PORTS="/opt/boost:/opt/ports"
@@ -198,11 +200,13 @@ Build and install vcpkg.
 ```
 
 ## Ports
+<!--
 Delete cached binaries on Windows.
 
 ```cmd
 rd /q /s "%LocalAppData%\vcpkg\archives"
 ```
+-->
 
 Create a ports overlay for [boost](https://www.boost.org/).
 
