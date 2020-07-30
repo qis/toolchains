@@ -65,7 +65,7 @@ set VSCMD_SKIP_SENDTELEMETRY=1
 set VCPKG_KEEP_ENV_VARS=VSCMD_SKIP_SENDTELEMETRY
 set VCPKG_DEFAULT_TRIPLET=x64-windows-ipo
 set VCPKG_DOWNLOADS=C:\Workspace\downloads
-set VCPKG_PORTS=C:\Workspace\ports
+set VCPKG_OVERLAY_PORTS=C:\Workspace\ports
 set VCPKG_ROOT=C:\Workspace\vcpkg
 ```
 
@@ -79,9 +79,19 @@ md C:\Workspace\downloads
 
 Download vcpkg.
 
+<!--
 ```cmd
 git clone git@github.com:microsoft/vcpkg C:/Workspace/vcpkg
 git clone git@github.com:qis/toolchains C:/Workspace/vcpkg/triplets/toolchains
+```
+-->
+
+```cmd
+git clone -b add_vcpkg_port_overlays_env git@github.com:Neumann-A/vcpkg C:/Workspace/vcpkg
+git clone git@github.com:qis/toolchains C:/Workspace/vcpkg/triplets/toolchains
+cd C:/Workspace/vcpkg
+git remote add upstream git@github.com:microsoft/vcpkg
+git pull upstream && git rebase upstream/master
 ```
 
 Build vcpkg.
@@ -134,7 +144,7 @@ sudo tee /etc/profile.d/vcpkg.sh >/dev/null <<'EOF'
 export PATH="${PATH}:/opt/vcpkg"
 export VCPKG_DEFAULT_TRIPLET="x64-linux-ipo"
 export VCPKG_DOWNLOADS="/opt/downloads"
-export VCPKG_PORTS="/opt/ports"
+export VCPKG_OVERLAY_PORTS="/opt/ports"
 export VCPKG_ROOT="/opt/vcpkg"
 EOF
 sudo chmod 0755 /etc/profile.d/vcpkg.sh
@@ -187,13 +197,13 @@ vcpkg install freetype harfbuzz
 Install ports in `cmd.exe`.
 
 ```cmd
-vcpkg install --overlay-ports=C:/Workspace/ports boost tbb
+vcpkg install boost tbb
 ```
 
 Install ports in `wsl.exe`.
 
 ```sh
-vcpkg install --overlay-ports=/opt/ports boost tbb
+vcpkg install boost tbb
 ```
 
 ## Templates
