@@ -1,7 +1,24 @@
 # Toolchains
 Custom [vcpkg](https://github.com/microsoft/vcpkg) toolchains.
 
-## Windows
+## Configuration
+Configure the system.
+
+### Windows
+Install [Visual Studio](https://visualstudio.microsoft.com/downloads/).
+
+```
+Workloads
++ ☑ Desktop development with C++
+```
+
+Install [CMake](https://github.com/Kitware/CMake/releases/download/v3.18.0/cmake-3.18.0-win64-x64.msi).
+
+```
+Install Options
+  ◉ Do not add CMake to the system PATH
+```
+
 Install [Git](https://git-scm.com/downloads) with specific settings.
 
 ```
@@ -40,150 +57,172 @@ Configuring file system caching
   ☑ Enable symbolic links
 ```
 
-Install [Visual Studio](https://visualstudio.microsoft.com/downloads/).
+Install [Ninja](https://github.com/ninja-build/ninja/releases).
 
 ```
-Workloads
-+ ☑ Desktop development with C++
+C:\Program Files\Ninja\ninja.exe
 ```
 
 Configure system environment variable `Path`.
 
 ```
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VisualStudio\NodeJs
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\Llvm\x64\bin
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\Llvm\x64\bin
+C:\Program Files\CMake\bin
 C:\Program Files\Git\cmd
+C:\Program Files\Ninja
 C:\Workspace\vcpkg
 ```
 
-Configure system environment variables.
+Set system environment variables.
 
 ```cmd
-set VSCMD_SKIP_SENDTELEMETRY=1
-set VCPKG_KEEP_ENV_VARS=VSCMD_SKIP_SENDTELEMETRY
+set VCPKG_ROOT=C:\Workspace\vcpkg
 set VCPKG_DEFAULT_TRIPLET=x64-windows-ipo
 set VCPKG_DOWNLOADS=C:\Workspace\downloads
 set VCPKG_OVERLAY_PORTS=C:\Workspace\boost;C:\Workspace\ports
-set VCPKG_ROOT=C:\Workspace\vcpkg
+set VCPKG_KEEP_ENV_VARS=VSCMD_SKIP_SENDTELEMETRY
+set VSCMD_SKIP_SENDTELEMETRY=1
 ```
 
 Create directories.
 
 ```cmd
 md C:\Workspace
+md C:\Workspace\boost
 md C:\Workspace\ports
+md C:\Workspace\vcpkg
 md C:\Workspace\downloads
 ```
 
-Download vcpkg.
+### WSL & Linux
+Install basic development packages.
+
+```sh
+sudo apt install -y binutils-dev linux-headers-generic libc6-dev manpages-dev
+sudo apt install -y -o APT::Install-Suggests=0 -o APT::Install-Recommends=0 \
+  autoconf automake bison flex libtool make nasm ninja-build patch \
+  perl pkgconf python3 python3-pip sqlite3 zip
+```
+
+Install CMake.
+
+```sh
+sudo rm -rf /opt/cmake; sudo mkdir -p /opt/cmake
+wget https://github.com/Kitware/CMake/releases/download/v3.18.0/cmake-3.18.0-Linux-x86_64.tar.gz
+sudo tar xf cmake-3.18.0-Linux-x86_64.tar.gz -C /opt/cmake --strip-components=1
+sudo tee /etc/profile.d/cmake.sh >/dev/null <<'EOF'
+export PATH="${PATH}:/opt/cmake/bin"
+EOF
+sudo chmod 0755 /etc/profile.d/cmake.sh
+```
+
+Install GCC.
+
+```sh
+sudo apt install -y gcc-10 g++-10 gdb
+```
+
+Install LLVM.
+
+```sh
+sudo apt install -y -o APT::Install-Suggests=0 -o APT::Install-Recommends=0 \
+  llvm-10-{runtime,tools} {lld,lldb,clang,clang-format,clang-tidy}-10 libc++{,abi}-10-dev
+```
+
+Set system environment variables.
+
+```sh
+sudo tee /etc/profile.d/vcpkg.sh >/dev/null <<'EOF'
+export PATH="${PATH}:/opt/vcpkg"
+export VCPKG_ROOT="/opt/vcpkg"
+export VCPKG_DEFAULT_TRIPLET="x64-linux-ipo"
+export VCPKG_DOWNLOADS="/opt/downloads"
+export VCPKG_OVERLAY_PORTS="/opt/boost:/opt/ports"
+EOF
+sudo chmod 0755 /etc/profile.d/vcpkg.sh
+```
+
+### WSL
+Create symlinks.
+
+```sh
+for i in boost ports vcpkg downloads; do
+  sudo ln -s /mnt/c/Workspace/$i /opt/$i
+done
+```
+
+### Linux
+Create directories.
+
+```sh
+for i in boost ports vcpkg downloads; do
+  sudo mkdir /opt/$i; sudo chown $(id -un):$(id -gn) /opt/$i
+done
+```
+
+## Install
+Download vcpkg and toolchains.
 
 <!--
-```cmd
-git clone git@github.com:microsoft/vcpkg C:/Workspace/vcpkg
-git clone git@github.com:qis/toolchains C:/Workspace/vcpkg/triplets/toolchains
+```sh
+cd C:/Workspace || cd /opt
+git clone git@github.com:microsoft/vcpkg vcpkg
+git clone git@github.com:qis/toolchains vcpkg/triplets/toolchains
 ```
 -->
 
-```cmd
-git clone -b add_vcpkg_port_overlays_env git@github.com:Neumann-A/vcpkg C:/Workspace/vcpkg
-git clone git@github.com:qis/toolchains C:/Workspace/vcpkg/triplets/toolchains
-cd C:/Workspace/vcpkg
+```
+cd C:/Workspace || cd /opt
+git clone -b add_vcpkg_port_overlays_env git@github.com:Neumann-A/vcpkg vcpkg
+git clone git@github.com:qis/toolchains vcpkg/triplets/toolchains
+cmake -P vcpkg/triplets/toolchains/triplets/install.cmake
+cd vcpkg
 git remote add upstream git@github.com:microsoft/vcpkg
 git pull upstream master
 git pull
 ```
 
-Build vcpkg.
+### Windows
+Build and install vcpkg.
 
 ```cmd
 C:\Workspace\vcpkg\bootstrap-vcpkg.bat -disableMetrics -win64
 ```
 
-Install triplets.
-
-```cmd
-cmake -P C:\Workspace\vcpkg\triplets\toolchains\triplets\install.cmake
-```
-
-Create a ports overlay for [boost](https://www.boost.org/).
-
-```cmd
-git clone git@github.com:qis/boost C:/Workspace/boost
-cmake -DVCPKG_ROOT=C:/Workspace/vcpkg -P C:/Workspace/boost/create.cmake
-```
-
-Create a ports overlay for [tbb](https://software.intel.com/en-us/tbb).
-
-```cmd
-md C:/Workspace/ports
-git clone git@github.com:qis/tbb C:/Workspace/ports/tbb
-```
-
-## Linux
-Install [LLVM](https://llvm.org/).
-
-```sh
-sudo apt install -y -o APT::Install-Suggests=0 -o APT::Install-Recommends=0 \
-  clang clang-format clang-tidy llvm-dev lld lldb libc++-dev libc++abi-dev \
-  binutils-dev linux-headers-generic
-```
-
-Switch the default C and C++ compiler to LLVM.
-
-```sh
-sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100
-sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100
-```
-
-Install development packages.
-
-```sh
-sudo apt install -y -o APT::Install-Suggests=0 -o APT::Install-Recommends=0 \
-  cmake make nasm ninja-build nodejs npm patch perl pkgconf
-```
-
-Configure system environment variables.
-
-```sh
-sudo tee /etc/profile.d/vcpkg.sh >/dev/null <<'EOF'
-export PATH="${PATH}:/opt/vcpkg"
-export VCPKG_DEFAULT_TRIPLET="x64-linux-ipo"
-export VCPKG_DOWNLOADS="/opt/downloads"
-export VCPKG_OVERLAY_PORTS="/opt/boost:/opt/ports"
-export VCPKG_ROOT="/opt/vcpkg"
-EOF
-sudo chmod 0755 /etc/profile.d/vcpkg.sh
-```
-
-Create symlinks.
-
-```sh
-sudo ln -s /mnt/c/Workspace/vcpkg /opt/vcpkg
-sudo ln -s /mnt/c/Workspace/downloads /opt/downloads
-sudo ln -s /mnt/c/Workspace/boost /opt/boost
-sudo ln -s /mnt/c/Workspace/ports /opt/ports
-```
-
-Build vcpkg.
+### WSL & Linux
+Build and install vcpkg.
 
 ```sh
 /opt/vcpkg/bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries && rm -rf /opt/vcpkg/toolsrc/build.rel
 ```
 
-Install triplets.
+## Ports
+Delete cached binaries on Windows.
 
-```sh
-cmake -P /opt/vcpkg/triplets/toolchains/triplets/install.cmake
+```cmd
+rd /q /s "%LocalAppData%\vcpkg\archives"
 ```
 
-## Ports
+Create a ports overlay for [boost](https://www.boost.org/).
+
+```cmd
+cd C:/Workspace || cd /opt
+git clone git@github.com:qis/boost boost
+cmake -P boost/create.cmake
+```
+
+Create a ports overlay for [tbb](https://software.intel.com/en-us/tbb).
+
+```cmd
+cd C:/Workspace || cd /opt
+git clone git@github.com:qis/tbb ports/tbb
+```
+
 Install ports.
 
 ```sh
 # Debugging
-vcpkg install benchmark catch2
+vcpkg install benchmark catch2 gtest
 
 # Encryption
 vcpkg install openssl
@@ -202,15 +241,9 @@ vcpkg install freetype harfbuzz
 ```
 
 ## Overlay
-Install ports in `cmd.exe`.
+Install ports from overlay.
 
 ```cmd
-vcpkg install boost tbb
-```
-
-Install ports in `wsl.exe`.
-
-```sh
 vcpkg install boost tbb
 ```
 
@@ -311,7 +344,7 @@ target_link_libraries(objects PUBLIC libzstd)
 # date
 # =============================================================================
 find_package(date CONFIG REQUIRED)
-target_link_libraries(objects PUBLIC date::date date::tz)
+target_link_libraries(objects PUBLIC date::date date::date-tz)
 
 # =============================================================================
 # fmt
