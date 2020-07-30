@@ -177,6 +177,7 @@ git clone -b add_vcpkg_port_overlays_env git@github.com:Neumann-A/vcpkg vcpkg
 git clone git@github.com:qis/toolchains vcpkg/triplets/toolchains
 cmake -P vcpkg/triplets/toolchains/triplets/install.cmake
 cd vcpkg
+git merge origin/patch-7
 git remote add upstream git@github.com:microsoft/vcpkg
 git pull upstream master
 git pull
