@@ -65,7 +65,7 @@ set VSCMD_SKIP_SENDTELEMETRY=1
 set VCPKG_KEEP_ENV_VARS=VSCMD_SKIP_SENDTELEMETRY
 set VCPKG_DEFAULT_TRIPLET=x64-windows-ipo
 set VCPKG_DOWNLOADS=C:\Workspace\downloads
-set VCPKG_OVERLAY_PORTS=C:\Workspace\ports
+set VCPKG_OVERLAY_PORTS=C:\Workspace\boost;C:\Workspace\ports
 set VCPKG_ROOT=C:\Workspace\vcpkg
 ```
 
@@ -91,7 +91,8 @@ git clone -b add_vcpkg_port_overlays_env git@github.com:Neumann-A/vcpkg C:/Works
 git clone git@github.com:qis/toolchains C:/Workspace/vcpkg/triplets/toolchains
 cd C:/Workspace/vcpkg
 git remote add upstream git@github.com:microsoft/vcpkg
-git pull upstream && git rebase upstream/master
+git pull upstream master
+git pull
 ```
 
 Build vcpkg.
@@ -106,11 +107,17 @@ Install triplets.
 cmake -P C:\Workspace\vcpkg\triplets\toolchains\triplets\install.cmake
 ```
 
-Create a ports overlay for [boost](https://www.boost.org/) and [tbb](https://software.intel.com/en-us/tbb).
+Create a ports overlay for [boost](https://www.boost.org/).
 
 ```cmd
-git clone git@github.com:qis/boost C:/Workspace/ports
-cmake -DVCPKG_ROOT=C:/Workspace/vcpkg -P C:/Workspace/ports/create.cmake
+git clone git@github.com:qis/boost C:/Workspace/boost
+cmake -DVCPKG_ROOT=C:/Workspace/vcpkg -P C:/Workspace/boost/create.cmake
+```
+
+Create a ports overlay for [tbb](https://software.intel.com/en-us/tbb).
+
+```cmd
+md C:/Workspace/ports
 git clone git@github.com:qis/tbb C:/Workspace/ports/tbb
 ```
 
@@ -144,7 +151,7 @@ sudo tee /etc/profile.d/vcpkg.sh >/dev/null <<'EOF'
 export PATH="${PATH}:/opt/vcpkg"
 export VCPKG_DEFAULT_TRIPLET="x64-linux-ipo"
 export VCPKG_DOWNLOADS="/opt/downloads"
-export VCPKG_OVERLAY_PORTS="/opt/ports"
+export VCPKG_OVERLAY_PORTS="/opt/boost:/opt/ports"
 export VCPKG_ROOT="/opt/vcpkg"
 EOF
 sudo chmod 0755 /etc/profile.d/vcpkg.sh
@@ -154,8 +161,9 @@ Create symlinks.
 
 ```sh
 sudo ln -s /mnt/c/Workspace/vcpkg /opt/vcpkg
-sudo ln -s /mnt/c/Workspace/ports /opt/ports
 sudo ln -s /mnt/c/Workspace/downloads /opt/downloads
+sudo ln -s /mnt/c/Workspace/boost /opt/boost
+sudo ln -s /mnt/c/Workspace/ports /opt/ports
 ```
 
 Build vcpkg.
