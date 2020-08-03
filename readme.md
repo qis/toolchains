@@ -124,11 +124,13 @@ Install GCC.
 sudo apt install -y gcc-10 g++-10 gdb
 ```
 
-Install LLVM.
+Set default compiler.
 
 ```sh
-sudo apt install -y -o APT::Install-Suggests=0 -o APT::Install-Recommends=0 \
-  llvm-10-{runtime,tools} {lld,lldb,clang,clang-format,clang-tidy}-10 libc++{,abi}-10-dev
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
+sudo update-alternatives --install /usr/bin/cc  cc  /usr/bin/gcc    100
+sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++    100
 ```
 
 Set system environment variables.
