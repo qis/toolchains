@@ -1,4 +1,4 @@
-find_program(clang_format NAMES clang-format-10 clang-format)
+find_program(clang_format NAMES clang-format)
 if(NOT clang_format)
   message(FATAL_ERROR "Could not find program: clang-format")
 endif()
