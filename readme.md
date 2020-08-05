@@ -127,8 +127,8 @@ sudo apt install -y gcc-10 g++-10 gdb
 Set default compiler.
 
 ```sh
-sudo update-alternatives --set cc  /usr/bin/gcc-10
-sudo update-alternatives --set c++ /usr/bin/g++-10
+sudo update-alternatives --install /usr/bin/cc  cc  /usr/bin/gcc-10 100
+sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++-10 100
 ```
 
 Install [LLVM](https://llvm.org/).
@@ -155,8 +155,8 @@ sudo apt install -y -o APT::Install-Suggests=0 -o APT::Install-Recommends=0 \
 Set default code formatting tools.
 
 ```sh
-sudo update-alternatives --set clang-format /usr/bin/clang-format-10
-sudo update-alternatives --set clang-tidy   /usr/bin/clang-tidy-10
+sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-10 100
+sudo update-alternatives --install /usr/bin/clang-tidy   clang-tidy   /usr/bin/clang-tidy-10   100
 ```
 
 Set system environment variables.
