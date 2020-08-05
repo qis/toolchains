@@ -251,20 +251,16 @@ vcpkg install openssl
 vcpkg install bzip2 liblzma libzip lz4 zlib zstd
 
 # Utility
-vcpkg install date fmt libssh2 pugixml spdlog utf8proc
+vcpkg install date fmt libssh2 pugixml spdlog tbb utf8proc
 
 # Images
 vcpkg install giflib libjpeg-turbo libpng tiff
 
 # Fonts
 vcpkg install freetype harfbuzz
-```
 
-## Overlay
-Install ports from overlay.
-
-```cmd
-vcpkg install boost tbb
+# Boost
+vcpkg install --editable boost
 ```
 
 ## Templates
