@@ -85,6 +85,12 @@ set VCPKG_KEEP_ENV_VARS=VSCMD_SKIP_SENDTELEMETRY
 set VSCMD_SKIP_SENDTELEMETRY=1
 ```
 
+Delete binary cache.
+
+```cmd
+rd /q /s "%LocalAppData%\vcpkg\archives"
+```
+
 Create directories.
 
 ```cmd
@@ -124,11 +130,11 @@ Install [GCC](https://gcc.gnu.org/).
 sudo apt install -y gcc-10 g++-10 gdb
 ```
 
-Set default compiler.
+Set default GCC compiler.
 
 ```sh
-sudo update-alternatives --install /usr/bin/cc  cc  /usr/bin/gcc-10 100
-sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++-10 100
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
 ```
 
 Install [LLVM](https://llvm.org/).
@@ -138,11 +144,20 @@ sudo apt install -y -o APT::Install-Suggests=0 -o APT::Install-Recommends=0 \
   llvm-10-{runtime,tools} {lld,lldb,clang,clang-format,clang-tidy}-10 libc++{,abi}-10-dev
 ```
 
-Set default compiler.
+Set default LLVM compiler.
 
 ```sh
-sudo update-alternatives --install /usr/bin/cc  cc  /usr/bin/clang-10   110
-sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-10 110
+sudo update-alternatives --install /usr/bin/clang   clang   /usr/bin/clang-10   100
+sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 100
+```
+
+Set default system compiler.
+
+```sh
+sudo update-alternatives --remove-all cc
+sudo update-alternatives --remove-all c++
+sudo update-alternatives --install /usr/bin/cc  cc  /usr/bin/clang   100
+sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100
 ```
 
 Install code formatting tools.
@@ -171,6 +186,12 @@ export VCPKG_DOWNLOADS="/opt/downloads"
 export VCPKG_OVERLAY_PORTS="/opt/boost/ports:/opt/ports"
 EOF
 sudo chmod 0755 /etc/profile.d/vcpkg.sh
+```
+
+Delete binary cache.
+
+```sh
+rm -rf ~/.cache/vcpkg ~/.vcpkg/archives; rmdir ~/.cache
 ```
 
 ### WSL
@@ -216,14 +237,6 @@ Build and install vcpkg.
 ```
 
 ## Ports
-<!--
-Delete cached binaries on Windows.
-
-```cmd
-rd /q /s "%LocalAppData%\vcpkg\archives"
-```
--->
-
 Create a ports overlay for [boost](https://www.boost.org/).
 
 ```cmd
@@ -242,9 +255,6 @@ git clone git@github.com:qis/tbb ports/tbb
 Install ports.
 
 ```sh
-# Debugging
-vcpkg install benchmark gtest
-
 # Encryption
 vcpkg install openssl
 
@@ -262,6 +272,12 @@ vcpkg install freetype harfbuzz
 
 # Boost
 vcpkg install boost
+
+# Benchmark
+vcpkg install benchmark
+
+# Test
+vcpkg install gtest
 ```
 
 ## Templates
@@ -279,58 +295,35 @@ CMake script that demonstrates how to use this setup.
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(application VERSION 0.1.0 LANGUAGES CXX)
 
-file(GLOB sources CONFIGURE_DEPENDS src/application/*.[hc]pp)
+file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/${PROJECT_NAME}/*.[hc]pp)
 
 add_library(objects OBJECT ${sources})
 target_compile_definitions(objects PUBLIC NOMINMAX WIN32_LEAN_AND_MEAN)
 target_compile_features(objects PUBLIC cxx_std_20)
 
 # =============================================================================
-# benchmark
-# =============================================================================
-find_package(benchmark CONFIG)
-if(benchmark_FOUND)
-  file(GLOB_RECURSE benchmarks_sources src/benchmarks/*.[hc]pp)
-  add_executable(benchmarks EXCLUDE_FROM_ALL ${benchmarks_sources} src/main.manifest)
-  target_link_libraries(benchmarks PRIVATE objects benchmark::benchmark_main)
-endif()
-
-# =============================================================================
-# tests
-# =============================================================================
-find_package(GTest CONFIG)
-if(GTest_FOUND)
-  file(GLOB_RECURSE tests_sources src/tests/*.[hc]pp)
-  add_executable(tests EXCLUDE_FROM_ALL ${tests_sources} src/main.manifest)
-  target_link_libraries(tests PRIVATE objects GTest::gtest GTest::gtest_main)
-
-  include(GoogleTest)
-  gtest_discover_tests(tests)
-endif()
-
-# =============================================================================
-# openssl
+# openssl (cmake/FindOpenSSL.cmake)
 # =============================================================================
 find_package(OpenSSL REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC OpenSSL::Crypto OpenSSL::SSL)
+target_link_libraries(objects PUBLIC OpenSSL::Crypto OpenSSL::SSL)
 
 # =============================================================================
-# bzip2
+# bzip2 (cmake/FindBZip2.cmake)
 # =============================================================================
 find_package(BZip2 REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC BZip2::BZip2)
+target_link_libraries(objects PUBLIC BZip2::BZip2)
 
 # =============================================================================
 # liblzma
 # =============================================================================
 find_package(LibLZMA CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC LibLZMA::LibLZMA)
+target_link_libraries(objects PUBLIC LibLZMA::LibLZMA)
 
 # =============================================================================
-# libzip
+# libzip (cmake/FindZIP.cmake)
 # =============================================================================
 find_package(ZIP REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC ZIP::ZIP)
+target_link_libraries(objects PUBLIC ZIP::ZIP)
 
 # =============================================================================
 # lz4
@@ -339,7 +332,7 @@ find_package(lz4 CONFIG REQUIRED)
 target_link_libraries(objects PUBLIC lz4::lz4)
 
 # =============================================================================
-# zlib
+# zlib (cmake/FindZLIB.cmake)
 # =============================================================================
 find_package(ZLIB REQUIRED)
 target_link_libraries(objects PUBLIC ZLIB::ZLIB)
@@ -393,40 +386,46 @@ target_link_libraries(objects PUBLIC spdlog::spdlog)
 #target_link_libraries(objects PUBLIC spdlog::spdlog_header_only)
 
 # =============================================================================
-# utf8proc
+# tbb
 # =============================================================================
-find_package(Utf8Proc REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC utf8proc::utf8proc)
+find_package(TBB CONFIG REQUIRED)
+target_link_libraries(objects PUBLIC TBB::tbb TBB::tbbmalloc)
 
 # =============================================================================
-# giflib
+# utf8proc (cmake/FindUtf8Proc.cmake)
+# =============================================================================
+find_package(Utf8Proc REQUIRED)
+target_link_libraries(objects PUBLIC utf8proc::utf8proc)
+
+# =============================================================================
+# giflib (cmake/FindGIF.cmake)
 # =============================================================================
 find_package(GIF REQUIRED)
 target_link_libraries(objects PUBLIC GIF::GIF)
 
 # =============================================================================
-# libjpeg
+# libjpeg (cmake/FindJPEG.cmake)
 # =============================================================================
 find_package(JPEG REQUIRED)
 target_link_libraries(objects PUBLIC JPEG::JPEG)
 
 # =============================================================================
-# libjpeg-turbo
+# libjpeg-turbo (cmake/FindJPEGTURBO.cmake)
 # =============================================================================
 find_package(JPEGTURBO REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC JPEGTURBO::JPEGTURBO)
+target_link_libraries(objects PUBLIC JPEGTURBO::JPEGTURBO)
 
 # =============================================================================
-# libpng
+# libpng (cmake/FindPNG.cmake)
 # =============================================================================
 find_package(PNG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC PNG::PNG)
+target_link_libraries(objects PUBLIC PNG::PNG)
 
 # =============================================================================
-# tiff
+# tiff (cmake/FindTIFF.cmake)
 # =============================================================================
 find_package(TIFF REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC TIFF::TIFF)
+target_link_libraries(objects PUBLIC TIFF::TIFF)
 
 # =============================================================================
 # freetype
@@ -454,26 +453,47 @@ target_compile_definitions(objects PUBLIC
   BOOST_JSON_STANDALONE)
 
 # =============================================================================
-# tbb
-# =============================================================================
-find_package(TBB CONFIG REQUIRED)
-target_link_libraries(objects PUBLIC TBB::tbb TBB::tbbmalloc)
-
-# =============================================================================
 # threads
 # =============================================================================
 find_package(Threads REQUIRED)
 target_link_libraries(objects PUBLIC Threads::Threads)
 
 # =============================================================================
-
-add_executable(${PROJECT_NAME} src/main.cpp src/main.manifest)
+# executable
+# =============================================================================
+add_executable(${PROJECT_NAME} src/main.cpp src/main.manifest src/main.rc)
 target_link_libraries(${PROJECT_NAME} PRIVATE objects)
+
+# =============================================================================
+# benchmark
+# =============================================================================
+find_package(benchmark CONFIG)
+if(benchmark_FOUND)
+  file(GLOB_RECURSE benchmarks_sources src/benchmarks/*.[hc]pp)
+  add_executable(benchmarks EXCLUDE_FROM_ALL ${benchmarks_sources} src/main.manifest)
+  target_link_libraries(benchmarks PRIVATE objects benchmark::benchmark_main)
+endif()
+
+# =============================================================================
+# test
+# =============================================================================
+find_package(GTest CONFIG)
+if(GTest_FOUND)
+  file(GLOB_RECURSE tests_sources src/tests/*.[hc]pp)
+  add_executable(tests EXCLUDE_FROM_ALL ${tests_sources} src/main.manifest)
+  target_link_libraries(tests PRIVATE objects GTest::gtest GTest::gtest_main)
+
+  include(GoogleTest)
+  gtest_discover_tests(tests)
+endif()
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
-if(WIN32)
-  install(FILES $<TARGET_FILE_DIR:${PROJECT_NAME}>/pdf.dll DESTINATION bin)
+if(WIN32 AND VCPKG_LIBRARY_LINKAGE STREQUAL "dynamic")
+  install(FILES
+    $<TARGET_FILE_DIR:${PROJECT_NAME}>/fmt.dll
+    $<TARGET_FILE_DIR:${PROJECT_NAME}>/tz.dll
+    DESTINATION bin)
 endif()
 ```
 
