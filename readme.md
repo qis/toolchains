@@ -242,7 +242,7 @@ Install ports.
 
 ```sh
 # Debugging
-vcpkg install benchmark catch2 gtest
+vcpkg install benchmark gtest
 
 # Encryption
 vcpkg install openssl
@@ -287,31 +287,24 @@ target_compile_features(objects PUBLIC cxx_std_20)
 # =============================================================================
 # benchmark
 # =============================================================================
-option(DISABLE_BENCHMARK "Disable benchmark" OFF)
-if(NOT DISABLE_BENCHMARK)
-  file(GLOB_RECURSE benchmark_sources src/benchmark/*.[hc]pp)
-  add_executable(benchmark EXCLUDE_FROM_ALL ${benchmark_sources} src/main.manifest)
-  target_link_libraries(benchmark PUBLIC objects)
-
-  find_package(benchmark CONFIG REQUIRED)
-  target_link_libraries(benchmark PUBLIC benchmark::benchmark_main)
+find_package(benchmark CONFIG)
+if(benchmark_FOUND)
+  file(GLOB_RECURSE benchmarks_sources src/benchmarks/*.[hc]pp)
+  add_executable(benchmarks EXCLUDE_FROM_ALL ${benchmarks_sources} src/main.manifest)
+  target_link_libraries(benchmarks PRIVATE objects benchmark::benchmark_main)
 endif()
 
 # =============================================================================
 # tests
 # =============================================================================
-option(DISABLE_TESTS "Disable tests" OFF)
-if(NOT DISABLE_TESTS)
+find_package(GTest CONFIG)
+if(GTest_FOUND)
   file(GLOB_RECURSE tests_sources src/tests/*.[hc]pp)
   add_executable(tests EXCLUDE_FROM_ALL ${tests_sources} src/main.manifest)
-  target_link_libraries(tests PUBLIC objects)
+  target_link_libraries(tests PRIVATE objects GTest::gtest GTest::gtest_main)
 
-  find_package(Catch2 CONFIG REQUIRED)
-  target_link_libraries(tests PUBLIC Catch2::Catch2)
-
-  include(CTest)
-  include(Catch)
-  catch_discover_tests(tests)
+  include(GoogleTest)
+  gtest_discover_tests(tests)
 endif()
 
 # =============================================================================
