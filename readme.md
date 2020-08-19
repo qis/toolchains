@@ -198,6 +198,7 @@ Download vcpkg and toolchains.
 cd C:/Workspace || cd /opt
 git clone git@github.com:microsoft/vcpkg vcpkg
 git clone git@github.com:qis/toolchains vcpkg/triplets/toolchains
+cmake -P vcpkg/triplets/toolchains/triplets/install.cmake
 ```
 
 ### Windows
