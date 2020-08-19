@@ -271,7 +271,7 @@ vcpkg install giflib libjpeg-turbo libpng tiff
 vcpkg install freetype harfbuzz
 
 # Boost
-vcpkg install boost
+vcpkg install --editable boost
 
 # Benchmark
 vcpkg install benchmark
