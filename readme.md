@@ -80,7 +80,7 @@ set VCPKG_ROOT=C:\Workspace\vcpkg
 set VCPKG_FEATURE_FLAGS=-binarycaching
 set VCPKG_DEFAULT_TRIPLET=x64-windows-ipo
 set VCPKG_DOWNLOADS=C:\Workspace\downloads
-set VCPKG_OVERLAY_PORTS=C:\Workspace\boost;C:\Workspace\ports
+set VCPKG_OVERLAY_PORTS=C:\Workspace\boost\ports;C:\Workspace\ports
 set VCPKG_KEEP_ENV_VARS=VSCMD_SKIP_SENDTELEMETRY
 set VSCMD_SKIP_SENDTELEMETRY=1
 ```
@@ -168,7 +168,7 @@ export VCPKG_ROOT="/opt/vcpkg"
 export VCPKG_FEATURE_FLAGS="-binarycaching"
 export VCPKG_DEFAULT_TRIPLET="x64-linux-ipo"
 export VCPKG_DOWNLOADS="/opt/downloads"
-export VCPKG_OVERLAY_PORTS="/opt/boost:/opt/ports"
+export VCPKG_OVERLAY_PORTS="/opt/boost/ports:/opt/ports"
 EOF
 sudo chmod 0755 /etc/profile.d/vcpkg.sh
 ```
@@ -260,7 +260,7 @@ vcpkg install giflib libjpeg-turbo libpng tiff
 vcpkg install freetype harfbuzz
 
 # Boost
-vcpkg install --editable boost
+vcpkg install boost
 ```
 
 ## Templates
