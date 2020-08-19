@@ -256,28 +256,28 @@ Install ports.
 
 ```sh
 # Encryption
-vcpkg install openssl
+vcpkg install --editable openssl
 
 # Compression
-vcpkg install bzip2 liblzma libzip lz4 zlib zstd
+vcpkg install --editable bzip2 liblzma libzip lz4 zlib zstd
 
 # Utility
-vcpkg install date fmt libssh2 pugixml spdlog tbb utf8proc
+vcpkg install --editable date fmt libssh2 pugixml spdlog tbb utf8proc
 
 # Images
-vcpkg install giflib libjpeg-turbo libpng tiff
+vcpkg install --editable giflib libjpeg-turbo libpng tiff
 
 # Fonts
-vcpkg install freetype harfbuzz
+vcpkg install --editable freetype harfbuzz
 
 # Boost
 vcpkg install --editable boost
 
 # Benchmark
-vcpkg install benchmark
+vcpkg install --editable benchmark
 
 # Test
-vcpkg install gtest
+vcpkg install --editable gtest
 ```
 
 ## Templates
