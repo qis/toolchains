@@ -88,6 +88,11 @@ function(clean directory)
         set(keep ON)
       endif()
 
+      # The libjpeg-turbo library does not create named PDB files.
+      if(ext STREQUAL ".pdb" AND directory MATCHES "libjpeg-turbo")
+        set(keep ON)
+      endif()
+
       # Delete files not marked to be kept.
       if(NOT keep)
         file(REMOVE ${path})
