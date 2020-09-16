@@ -16,6 +16,7 @@ set(CMAKE_NM "nm" CACHE STRING "" FORCE)
 # Set compiler flags.
 set(WARN_FLAGS "-Wall -Wextra -Wpedantic -Wrange-loop-analysis")
 set(WARN_FLAGS "${WARN_FLAGS} -Wno-unused-variable -Wno-unused-parameter")
+set(WARN_FLAGS "${WARN_FLAGS} -Wno-gnu-zero-variadic-macro-arguments")
 
 set(CMAKE_C_FLAGS_INIT "-fasm -fPIC -fdiagnostics-absolute-paths ${WARN_FLAGS} ${VCPKG_C_FLAGS}")
 set(CMAKE_C_FLAGS_DEBUG_INIT "${VCPKG_C_FLAGS_DEBUG}")
