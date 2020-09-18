@@ -322,8 +322,8 @@ target_link_libraries(objects PUBLIC LibLZMA::LibLZMA)
 # =============================================================================
 # libzip (cmake/FindZIP.cmake)
 # =============================================================================
-find_package(ZIP REQUIRED)
-target_link_libraries(objects PUBLIC ZIP::ZIP)
+find_package(libzip CONFIG REQUIRED)
+target_link_libraries(objects PRIVATE zip)
 
 # =============================================================================
 # lz4
@@ -442,7 +442,7 @@ target_link_libraries(objects PUBLIC harfbuzz::harfbuzz)
 # =============================================================================
 # boost
 # =============================================================================
-find_package(Boost 1.73.0 REQUIRED COMPONENTS headers filesystem)
+find_package(Boost REQUIRED COMPONENTS headers filesystem)
 target_link_libraries(objects PUBLIC Boost::headers Boost::filesystem)
 target_compile_definitions(objects PUBLIC
   BOOST_ASIO_HAS_CO_AWAIT
@@ -496,6 +496,9 @@ if(WIN32 AND VCPKG_LIBRARY_LINKAGE STREQUAL "dynamic")
     DESTINATION bin)
 endif()
 ```
+
+## Tests
+Select ports are tested with [qis/vcpkg-test](https://github.com/qis/vcpkg-test).
 
 <!--
 ## Exceptions
