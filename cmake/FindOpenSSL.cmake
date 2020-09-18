@@ -1,29 +1,122 @@
-find_path(OPENSSL_INCLUDE_DIR openssl/opensslv.h PATH_SUFFIXES include)
+# Distributed under the OSI-approved BSD 3-Clause License.
+# See https://cmake.org/licensing for details.
+
+if(OPENSSL_FOUND)
+  return()
+endif()
+
+if(NOT OPENSSL_INCLUDE_DIR)
+  find_path(OPENSSL_INCLUDE_DIR openssl/opensslv.h PATH_SUFFIXES include)
+
+  set(OPENSSL_INCLUDE_DIRS "${OPENSSL_INCLUDE_DIR}")
+
+  mark_as_advanced(
+    OPENSSL_INCLUDE_DIR
+    OPENSSL_INCLUDE_DIRS)
+endif()
 
 if(NOT OPENSSL_LIBRARIES)
+  include(SelectLibraryConfigurations)
   get_filename_component(OPENSSL_ROOT_DIR ${OPENSSL_INCLUDE_DIR} DIRECTORY)
 
   find_library(OPENSSL_CRYPTO_LIBRARY_RELEASE NAMES crypto libcrypto NAMES_PER_DIR
     NO_DEFAULT_PATH PATHS ${OPENSSL_ROOT_DIR}/lib PATH_SUFFIXES lib)
   find_library(OPENSSL_CRYPTO_LIBRARY_DEBUG NAMES crypto libcrypto NAMES_PER_DIR
     NO_DEFAULT_PATH PATHS ${OPENSSL_ROOT_DIR}/debug/lib PATH_SUFFIXES lib)
+  select_library_configurations(OPENSSL_CRYPTO)
+
+  mark_as_advanced(
+    OPENSSL_CRYPTO_LIBRARY_RELEASE
+    OPENSSL_CRYPTO_LIBRARY_DEBUG
+    OPENSSL_CRYPTO_LIBRARIES)
 
   find_library(OPENSSL_SSL_LIBRARY_RELEASE NAMES ssl libssl NAMES_PER_DIR
     NO_DEFAULT_PATH PATHS ${OPENSSL_ROOT_DIR}/lib PATH_SUFFIXES lib)
   find_library(OPENSSL_SSL_LIBRARY_DEBUG NAMES ssl libssl NAMES_PER_DIR
     NO_DEFAULT_PATH PATHS ${OPENSSL_ROOT_DIR}/debug/lib PATH_SUFFIXES lib)
-
-  include(SelectLibraryConfigurations)
-  select_library_configurations(OPENSSL_CRYPTO)
   select_library_configurations(OPENSSL_SSL)
+
+  mark_as_advanced(
+    OPENSSL_SSL_LIBRARY_RELEASE
+    OPENSSL_SSL_LIBRARY_DEBUG
+    OPENSSL_SSL_LIBRARIES)
+
   set(OPENSSL_LIBRARIES "${OPENSSL_CRYPTO_LIBRARIES};${OPENSSL_SSL_LIBRARIES}")
-else()
-  file(TO_CMAKE_PATH "${OPENSSL_LIBRARIES}" OPENSSL_LIBRARIES)
+
+  mark_as_advanced(
+    OPENSSL_LIBRARIES)
 endif()
 
-if(OPENSSL_INCLUDE_DIR AND EXISTS "${OPENSSL_INCLUDE_DIR}/openssl/opensslv.h")
-  set(OPENSSL_VERSION "vcpkg")
+function(from_hex HEX DEC)
+  string(TOUPPER "${HEX}" HEX)
+  set(_res 0)
+  string(LENGTH "${HEX}" _strlen)
+  while (_strlen GREATER 0)
+    math(EXPR _res "${_res} * 16")
+    string(SUBSTRING "${HEX}" 0 1 NIBBLE)
+    string(SUBSTRING "${HEX}" 1 -1 HEX)
+    if (NIBBLE STREQUAL "A")
+      math(EXPR _res "${_res} + 10")
+    elseif (NIBBLE STREQUAL "B")
+      math(EXPR _res "${_res} + 11")
+    elseif (NIBBLE STREQUAL "C")
+      math(EXPR _res "${_res} + 12")
+    elseif (NIBBLE STREQUAL "D")
+      math(EXPR _res "${_res} + 13")
+    elseif (NIBBLE STREQUAL "E")
+      math(EXPR _res "${_res} + 14")
+    elseif (NIBBLE STREQUAL "F")
+      math(EXPR _res "${_res} + 15")
+    else()
+      math(EXPR _res "${_res} + ${NIBBLE}")
+    endif()
+    string(LENGTH "${HEX}" _strlen)
+  endwhile()
+  set(${DEC} ${_res} PARENT_SCOPE)
+endfunction()
+
+if(NOT OPENSSL_VERSION_STRING AND EXISTS "${OPENSSL_INCLUDE_DIR}/openssl/opensslv.h")
+  file(STRINGS "${OPENSSL_INCLUDE_DIR}/openssl/opensslv.h" OPENSSL_VERSION_STRING
+    REGEX "^#[\t ]*define[\t ]+OPENSSL_VERSION_NUMBER[\t ]+0x([0-9a-fA-F])+.*")
+  if(OPENSSL_VERSION_STRING)
+    set(OPENSSL_VERSION_REGEX "^.*OPENSSL_VERSION_NUMBER[\t ]+0x")
+    set(OPENSSL_VERSION_REGEX "${OPENSSL_VERSION_REGEX}([0-9a-fA-F])")
+    set(OPENSSL_VERSION_REGEX "${OPENSSL_VERSION_REGEX}([0-9a-fA-F][0-9a-fA-F])")
+    set(OPENSSL_VERSION_REGEX "${OPENSSL_VERSION_REGEX}([0-9a-fA-F][0-9a-fA-F])")
+    set(OPENSSL_VERSION_REGEX "${OPENSSL_VERSION_REGEX}([0-9a-fA-F][0-9a-fA-F])")
+    set(OPENSSL_VERSION_REGEX "${OPENSSL_VERSION_REGEX}([0-9a-fA-F]).*$")
+    set(OPENSSL_VERSION_MATCH "\\1;\\2;\\3;\\4;\\5")
+    string(REGEX REPLACE "${OPENSSL_VERSION_REGEX}" "${OPENSSL_VERSION_MATCH}" OPENSSL_VERSION_LIST "${OPENSSL_VERSION_STRING}")
+    list(GET OPENSSL_VERSION_LIST 0 OPENSSL_VERSION_MAJOR)
+    list(GET OPENSSL_VERSION_LIST 1 OPENSSL_VERSION_MINOR)
+    from_hex("${OPENSSL_VERSION_MINOR}" OPENSSL_VERSION_MINOR)
+    list(GET OPENSSL_VERSION_LIST 2 OPENSSL_VERSION_FIX)
+    from_hex("${OPENSSL_VERSION_FIX}" OPENSSL_VERSION_FIX)
+    list(GET OPENSSL_VERSION_LIST 3 OPENSSL_VERSION_PATCH)
+    if (NOT OPENSSL_VERSION_PATCH STREQUAL "00")
+      from_hex("${OPENSSL_VERSION_PATCH}" OPENSSL_VERSION_PATCH)
+      math(EXPR OPENSSL_VERSION_PATCH "${OPENSSL_VERSION_PATCH} + 96")
+      string(ASCII "${OPENSSL_VERSION_PATCH}" OPENSSL_VERSION_PATCH)
+    endif()
+    set(OPENSSL_VERSION "${OPENSSL_VERSION_MAJOR}.${OPENSSL_VERSION_MINOR}.${OPENSSL_VERSION_FIX}${OPENSSL_VERSION_PATCH}")
+    unset(OPENSSL_VERSION_REGEX)
+    unset(OPENSSL_VERSION_MATCH)
+    unset(OPENSSL_VERSION_LIST)
+    unset(OPENSSL_VERSION_MAJOR)
+    unset(OPENSSL_VERSION_MINOR)
+    unset(OPENSSL_VERSION_FIX)
+    unset(OPENSSL_VERSION_PATCH)
+  else()
+    file(STRINGS "${OPENSSL_INCLUDE_DIR}/openssl/opensslv.h" OPENSSL_VERSION_STRING
+      REGEX "^#[\t ]*define[\t ]+OPENSSL_VERSION_STR[\t ]+\"([0-9])+\\.([0-9])+\\.([0-9])+\".*")
+    string(REGEX REPLACE "^.*OPENSSL_VERSION_STR[\t ]+\"([0-9]+\\.[0-9]+\\.[0-9]+)\".*$"
+      "\\1" OPENSSL_VERSION "${OPENSSL_VERSION_STRING}")
+  endif()
   set(OPENSSL_VERSION_STRING "${OPENSSL_VERSION}")
+
+  mark_as_advanced(
+    OPENSSL_VERSION
+    OPENSSL_VERSION_STRING)
 endif()
 
 include(FindPackageHandleStandardArgs)
@@ -37,11 +130,11 @@ find_package_handle_standard_args(OpenSSL
     OPENSSL_SSL_LIBRARIES
     OPENSSL_SSL_LIBRARY_RELEASE
     OPENSSL_SSL_LIBRARY_DEBUG
+  VERSION_VAR
+    OPENSSL_VERSION_STRING
   HANDLE_COMPONENTS)
 
 if(OPENSSL_FOUND)
-  set(OPENSSL_INCLUDE_DIRS ${OPENSSL_INCLUDE_DIR})
-
   if(NOT TARGET OpenSSL::Crypto)
     add_library(OpenSSL::Crypto UNKNOWN IMPORTED)
     set_target_properties(OpenSSL::Crypto PROPERTIES
@@ -53,18 +146,20 @@ if(OPENSSL_FOUND)
       MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
       MAP_IMPORTED_CONFIG_MINSIZEREL Release)
   endif()
+
   if(DEFINED CMAKE_BUILD_TYPE)
     if(CMAKE_BUILD_TYPE MATCHES "Debug")
       set(OPENSSL_CRYPTO_LIBRARY "${OPENSSL_CRYPTO_LIBRARY_DEBUG}")
     else()
       set(OPENSSL_CRYPTO_LIBRARY "${OPENSSL_CRYPTO_LIBRARY_RELEASE}")
     endif()
-    mark_as_advanced(OPENSSL_CRYPTO_LIBRARY)
     set_property(TARGET OpenSSL::Crypto APPEND PROPERTY
       IMPORTED_LOCATION "${OPENSSL_CRYPTO_LIBRARY}")
   else()
-    set(OPENSSL_LIBRARY "${OPENSSL_CRYPTO_LIBRARIES}")
+    set(OPENSSL_CRYPTO_LIBRARY "${OPENSSL_CRYPTO_LIBRARIES}")
   endif()
+  mark_as_advanced(OPENSSL_CRYPTO_LIBRARY)
+
   if(WIN32)
     target_link_libraries(OpenSSL::Crypto INTERFACE crypt32 ws2_32)
   endif()
@@ -80,18 +175,17 @@ if(OPENSSL_FOUND)
       MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
       MAP_IMPORTED_CONFIG_MINSIZEREL Release)
   endif()
+
   if(DEFINED CMAKE_BUILD_TYPE)
     if(CMAKE_BUILD_TYPE MATCHES "Debug")
       set(OPENSSL_SSL_LIBRARY "${OPENSSL_SSL_LIBRARY_DEBUG}")
     else()
       set(OPENSSL_SSL_LIBRARY "${OPENSSL_SSL_LIBRARY_RELEASE}")
     endif()
-    mark_as_advanced(OPENSSL_SSL_LIBRARY)
     set_property(TARGET OpenSSL::SSL APPEND PROPERTY
       IMPORTED_LOCATION "${OPENSSL_SSL_LIBRARY}")
   else()
-    set(OPENSSL_LIBRARY "${OPENSSL_SSL_LIBRARIES}")
+    set(OPENSSL_SSL_LIBRARY "${OPENSSL_SSL_LIBRARIES}")
   endif()
+  mark_as_advanced(OPENSSL_SSL_LIBRARY)
 endif()
-
-mark_as_advanced(OPENSSL_INCLUDE_DIR)

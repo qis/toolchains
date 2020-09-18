@@ -1,37 +1,59 @@
-find_path(TIFF_INCLUDE_DIR tiff.h PATH_SUFFIXES include)
+if(TIFF_FOUND)
+  return()
+endif()
 
-if(NOT TIFF_LIBRARIES OR NOT TIFF_LIBRARY_RELEASE OR NOT TIFF_LIBRARY_DEBUG)
+if(NOT TIFF_INCLUDE_DIR)
+  find_path(TIFF_INCLUDE_DIR tiff.h PATH_SUFFIXES include)
+
+  set(TIFF_INCLUDE_DIRS "${TIFF_INCLUDE_DIR}")
+
+  mark_as_advanced(
+    TIFF_INCLUDE_DIR
+    TIFF_INCLUDE_DIRS)
+endif()  
+
+if(NOT TIFF_LIBRARIES)
+  include(SelectLibraryConfigurations)
   get_filename_component(TIFF_ROOT_DIR ${TIFF_INCLUDE_DIR} DIRECTORY)
+
   find_library(TIFF_LIBRARY_RELEASE NAMES tiff NAMES_PER_DIR
     NO_DEFAULT_PATH PATHS ${TIFF_ROOT_DIR}/lib PATH_SUFFIXES lib)
   find_library(TIFF_LIBRARY_DEBUG NAMES tiff tiffd NAMES_PER_DIR
     NO_DEFAULT_PATH PATHS ${TIFF_ROOT_DIR}/debug/lib PATH_SUFFIXES lib)
-  include(SelectLibraryConfigurations)
+
   select_library_configurations(TIFF)
-else()
-  file(TO_CMAKE_PATH "${TIFF_LIBRARY_RELEASE}" TIFF_LIBRARY_RELEASE)
-  file(TO_CMAKE_PATH "${TIFF_LIBRARY_DEBUG}" TIFF_LIBRARY_DEBUG)
-  file(TO_CMAKE_PATH "${TIFF_LIBRARIES}" TIFF_LIBRARIES)
+
+  mark_as_advanced(
+    TIFF_LIBRARY_RELEASE
+    TIFF_LIBRARY_DEBUG
+    TIFF_LIBRARIES)
 endif()
 
-if(TIFF_INCLUDE_DIR AND EXISTS "${TIFF_INCLUDE_DIR}/tiffvers.h")
-  file(STRINGS "${TIFF_INCLUDE_DIR}/tiffvers.h" TIFF_VERSION_HEADER
+if(NOT TIFF_VERSION_STRING AND EXISTS "${TIFF_INCLUDE_DIR}/tiffvers.h")
+  file(STRINGS "${TIFF_INCLUDE_DIR}/tiffvers.h" TIFF_VERSION_STRING
     REGEX "^#define[\t ]+TIFFLIB_VERSION_STR[\t ]+\"LIBTIFF, Version .*")
 
   string(REGEX REPLACE "^#define[\t ]+TIFFLIB_VERSION_STR[\t ]+\"LIBTIFF, Version +([^ \\n]*).*"
-    "\\1" TIFF_VERSION "${TIFF_VERSION_HEADER}")
+    "\\1" TIFF_VERSION "${TIFF_VERSION_STRING}")
 
   set(TIFF_VERSION_STRING "${TIFF_VERSION}")
-  unset(TIFF_VERSION_HEADER)
+
+  mark_as_advanced(
+    TIFF_VERSION
+    TIFF_VERSION_STRING)
 endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(TIFF
-  REQUIRED_VARS TIFF_INCLUDE_DIR TIFF_LIBRARIES TIFF_LIBRARY_RELEASE TIFF_LIBRARY_DEBUG
-  VERSION_VAR TIFF_VERSION_STRING)
+  REQUIRED_VARS
+    TIFF_INCLUDE_DIR
+    TIFF_LIBRARIES
+    TIFF_LIBRARY_RELEASE
+    TIFF_LIBRARY_DEBUG
+  VERSION_VAR
+    TIFF_VERSION_STRING)
 
 if(TIFF_FOUND)
-  set(TIFF_INCLUDE_DIRS ${TIFF_INCLUDE_DIR})
   if(NOT TARGET TIFF::TIFF)
     add_library(TIFF::TIFF UNKNOWN IMPORTED)
     set_target_properties(TIFF::TIFF PROPERTIES
@@ -42,19 +64,18 @@ if(TIFF_FOUND)
       IMPORTED_LOCATION_DEBUG "${TIFF_LIBRARY_DEBUG}"
       MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
       MAP_IMPORTED_CONFIG_MINSIZEREL Release)
-    if(DEFINED CMAKE_BUILD_TYPE)
-      if(CMAKE_BUILD_TYPE MATCHES "Debug")
-        set(TIFF_LIBRARY "${TIFF_LIBRARY_DEBUG}")
-      else()
-        set(TIFF_LIBRARY "${TIFF_LIBRARY_RELEASE}")
-      endif()
-      mark_as_advanced(TIFF_LIBRARY)
-      set_property(TARGET TIFF::TIFF APPEND PROPERTY
-        IMPORTED_LOCATION "${TIFF_LIBRARY}")
-    else()
-      set(TIFF_LIBRARY "${TIFF_LIBRARIES}")
-    endif()
   endif()
-endif()
 
-mark_as_advanced(TIFF_INCLUDE_DIR)
+  if(DEFINED CMAKE_BUILD_TYPE)
+    if(CMAKE_BUILD_TYPE MATCHES "Debug")
+      set(TIFF_LIBRARY "${TIFF_LIBRARY_DEBUG}")
+    else()
+      set(TIFF_LIBRARY "${TIFF_LIBRARY_RELEASE}")
+    endif()
+    set_property(TARGET TIFF::TIFF APPEND PROPERTY
+      IMPORTED_LOCATION "${TIFF_LIBRARY}")
+  else()
+    set(TIFF_LIBRARY "${TIFF_LIBRARIES}")
+  endif()
+  mark_as_advanced(TIFF_LIBRARY)
+endif()
