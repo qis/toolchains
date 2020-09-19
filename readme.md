@@ -259,7 +259,7 @@ Install ports.
 vcpkg install --editable openssl
 
 # Compression
-vcpkg install --editable bzip2 liblzma libzip lz4 zlib zstd
+vcpkg install --editable brotli bzip2 liblzma libzip lz4 zlib zstd
 
 # Utility
 vcpkg install --editable date fmt libssh2 pugixml spdlog tbb utf8proc
@@ -306,6 +306,15 @@ target_compile_features(objects PUBLIC cxx_std_20)
 # =============================================================================
 find_package(OpenSSL REQUIRED)
 target_link_libraries(objects PUBLIC OpenSSL::Crypto OpenSSL::SSL)
+
+# =============================================================================
+# brotli
+# =============================================================================
+find_package(unofficial-brotli CONFIG REQUIRED)
+target_link_libraries(objects PUBLIC
+  unofficial::brotli::brotlicommon
+  unofficial::brotli::brotlidec
+  unofficial::brotli::brotlienc)
 
 # =============================================================================
 # bzip2 (cmake/FindBZip2.cmake)
