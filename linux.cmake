@@ -27,7 +27,7 @@ set(CMAKE_CXX_FLAGS_INIT "-stdlib=libc++ -fasm -fPIC -fdiagnostics-absolute-path
 set(CMAKE_CXX_FLAGS_DEBUG_INIT "${VCPKG_CXX_FLAGS_DEBUG}")
 set(CMAKE_CXX_FLAGS_RELEASE_INIT "${VCPKG_CXX_FLAGS_RELEASE} -flto=full -fvirtual-function-elimination -fwhole-program-vtables")
 set(CMAKE_CXX_FLAGS_MINSIZEREL_INIT "${VCPKG_CXX_FLAGS_RELEASE} -flto=full -fvirtual-function-elimination -fwhole-program-vtables")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT "${VCPKG_CXX_FLAGS_RELEASE} -flto=full -fvirtual-function-elimination -fwhole-program-vtables")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT "${VCPKG_CXX_FLAGS_RELEASE}")
 
 # Set linker flags.
 foreach(LINKER SHARED_LINKER MODULE_LINKER EXE_LINKER)
