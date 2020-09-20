@@ -3,6 +3,7 @@
 !/cmake/
 !/triplets/
 !/.gitignore
+!/clean.cmake
 !/config.cmake
 !/format.cmake
 !/linux.cmake
