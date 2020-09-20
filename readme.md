@@ -263,7 +263,7 @@ vcpkg install --editable brotli bzip2 liblzma libzip lz4 zlib zstd
 
 # Utility
 vcpkg install --editable --head fmt
-vcpkg install --editable date libssh2 pugixml spdlog tbb utf8proc
+vcpkg install --editable date libssh2 pugixml tbb utf8proc
 
 # Images
 vcpkg install --editable giflib libjpeg-turbo libpng tiff
@@ -382,18 +382,6 @@ target_link_libraries(objects PUBLIC Libssh2::libssh2)
 # =============================================================================
 find_package(pugixml CONFIG REQUIRED)
 target_link_libraries(objects PUBLIC pugixml)
-
-# =============================================================================
-# spdlog
-# =============================================================================
-find_package(spdlog CONFIG REQUIRED)
-target_link_libraries(objects PUBLIC spdlog::spdlog)
-
-# =============================================================================
-# spdlog (header-only)
-# =============================================================================
-#find_package(spdlog CONFIG REQUIRED)
-#target_link_libraries(objects PUBLIC spdlog::spdlog_header_only)
 
 # =============================================================================
 # tbb
