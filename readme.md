@@ -262,7 +262,8 @@ vcpkg install --editable openssl
 vcpkg install --editable brotli bzip2 liblzma libzip lz4 zlib zstd
 
 # Utility
-vcpkg install --editable date fmt libssh2 pugixml spdlog tbb utf8proc
+vcpkg install --editable --head fmt
+vcpkg install --editable date libssh2 pugixml spdlog tbb utf8proc
 
 # Images
 vcpkg install --editable giflib libjpeg-turbo libpng tiff
