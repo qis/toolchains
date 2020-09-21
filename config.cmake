@@ -24,6 +24,17 @@ if(NOT DEFINED VCPKG_TARGET_TRIPLET)
   endif()
 endif()
 
+# Fix build type case.
+if(CMAKE_BUILD_TYPE MATCHES "^[Dd]ebug$")
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE)
+elseif(CMAKE_BUILD_TYPE MATCHES "^[Rr]elease$")
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+elseif(CMAKE_BUILD_TYPE MATCHES "^[Mm]in[Ss]ize[Rr]el$")
+  set(CMAKE_BUILD_TYPE "MinSizeRel" CACHE STRING "" FORCE)
+elseif(CMAKE_BUILD_TYPE MATCHES "^[Rr]el[Ww]ith[Dd]eb[Ii]nfo$")
+  set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "" FORCE)
+endif()
+
 # Include vcpkg triplet.
 if(NOT DEFINED VCPKG_CRT_LINKAGE)
   include("${VCPKG_ROOT}/triplets/${VCPKG_TARGET_TRIPLET}.cmake")
