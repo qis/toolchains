@@ -1,3 +1,7 @@
+if(NOT DEFINED VCPKG_TARGET_TRIPLET)
+  set(VCPKG_TARGET_TRIPLET "x64-linux-ipo" CACHE STRING "")
+endif()
+
 include("${CMAKE_CURRENT_LIST_DIR}/config.cmake")
 
 # Set system.
