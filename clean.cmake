@@ -5,7 +5,7 @@ set(extensions
   "i" "ih" "i++" "ipp" "ixx")
 
 # Get vcpkg buildtrees directory.
-get_filename_component(VCPKG_BUILDTREES_DIR ${CMAKE_CURRENT_LIST_DIR}/../../../buildtrees ABSOLUTE)
+get_filename_component(VCPKG_BUILDTREES_DIR ${CMAKE_CURRENT_LIST_DIR}/../../buildtrees ABSOLUTE)
 
 # Delete unused boost subdirectories.
 file(GLOB VCPKG_BUILDTREES_BOOST_DIRS LIST_DIRECTORIES ON
@@ -113,5 +113,5 @@ endfunction()
 clean(${VCPKG_BUILDTREES_DIR})
 
 # Remove vcpkg packages directory.
-get_filename_component(VCPKG_PACKAGES_DIR ${CMAKE_CURRENT_LIST_DIR}/../../../packages ABSOLUTE)
+get_filename_component(VCPKG_PACKAGES_DIR ${CMAKE_CURRENT_LIST_DIR}/../../packages ABSOLUTE)
 file(REMOVE_RECURSE "${VCPKG_PACKAGES_DIR}")
