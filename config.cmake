@@ -25,13 +25,13 @@ if(NOT DEFINED VCPKG_TARGET_TRIPLET)
 endif()
 
 # Fix build type case.
-if(CMAKE_BUILD_TYPE MATCHES "^[Dd]ebug$")
+if(CMAKE_BUILD_TYPE MATCHES "^[Dd][Ee][Bb][Uu][Gg]$")
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE)
-elseif(CMAKE_BUILD_TYPE MATCHES "^[Rr]elease$")
+elseif(CMAKE_BUILD_TYPE MATCHES "^[Rr][Ee][Ll][Ee][Aa][Ss][Ee]$")
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
-elseif(CMAKE_BUILD_TYPE MATCHES "^[Mm]in[Ss]ize[Rr]el$")
+elseif(CMAKE_BUILD_TYPE MATCHES "^[Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll]$")
   set(CMAKE_BUILD_TYPE "MinSizeRel" CACHE STRING "" FORCE)
-elseif(CMAKE_BUILD_TYPE MATCHES "^[Rr]el[Ww]ith[Dd]eb[Ii]nfo$")
+elseif(CMAKE_BUILD_TYPE MATCHES "^[Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo]$")
   set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "" FORCE)
 endif()
 
