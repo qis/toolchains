@@ -50,3 +50,7 @@ if(NOT X64_LINUX_GCC_LINK_LIBRARIES)
   mark_as_advanced(X64_LINUX_GCC_LINK_LIBRARIES)
   link_libraries(dl)
 endif()
+
+# Silence CMake warnings.
+set(IGNORE_TOOLCHAIN_FILE_VARIABLE "${CMAKE_TOOLCHAIN_FILE}")
+unset(IGNORE_TOOLCHAIN_FILE_VARIABLE)
