@@ -2,11 +2,11 @@ if(NOT DEFINED VCPKG_TARGET_TRIPLET)
   set(VCPKG_TARGET_TRIPLET "x64-windows-ipo" CACHE STRING "")
 endif()
 
+include("${CMAKE_CURRENT_LIST_DIR}/config.cmake")
+
 if(DEFINED CMAKE_CXX_CLANG_TIDY)
   unset(CMAKE_CXX_CLANG_TIDY CACHE)
 endif()
-
-include("${CMAKE_CURRENT_LIST_DIR}/config.cmake")
 
 # Set runtime library.
 set(CMAKE_MSVC_RUNTIME_LIBRARY "" CACHE STRING "")
@@ -61,7 +61,3 @@ set(CMAKE_ASM_MASM_FLAGS_INIT "/nologo")
 # Set resource compiler flags.
 set(CMAKE_RC_FLAGS "/nologo -c65001 /DWIN32" CACHE STRING "" FORCE)
 set(CMAKE_RC_FLAGS_DEBUG_INIT "-D_DEBUG")
-
-# Silence CMake warnings.
-set(IGNORE_TOOLCHAIN_FILE_VARIABLE "${CMAKE_TOOLCHAIN_FILE}")
-unset(IGNORE_TOOLCHAIN_FILE_VARIABLE)

@@ -2,11 +2,11 @@ if(NOT DEFINED VCPKG_TARGET_TRIPLET)
   set(VCPKG_TARGET_TRIPLET "x64-linux-gcc" CACHE STRING "")
 endif()
 
+include("${CMAKE_CURRENT_LIST_DIR}/config.cmake")
+
 if(DEFINED CMAKE_CXX_CLANG_TIDY)
   unset(CMAKE_CXX_CLANG_TIDY CACHE)
 endif()
-
-include("${CMAKE_CURRENT_LIST_DIR}/config.cmake")
 
 # Set system.
 set(CMAKE_CROSSCOMPILING OFF CACHE BOOL "")
@@ -50,7 +50,3 @@ if(NOT X64_LINUX_GCC_LINK_LIBRARIES)
   mark_as_advanced(X64_LINUX_GCC_LINK_LIBRARIES)
   link_libraries(dl)
 endif()
-
-# Silence CMake warnings.
-set(IGNORE_TOOLCHAIN_FILE_VARIABLE "${CMAKE_TOOLCHAIN_FILE}")
-unset(IGNORE_TOOLCHAIN_FILE_VARIABLE)

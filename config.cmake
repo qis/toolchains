@@ -1,5 +1,3 @@
-include_guard(GLOBAL)
-
 # Set C standard.
 set(CMAKE_C_STANDARD 11 CACHE STRING "")
 set(CMAKE_C_STANDARD_REQUIRED ON CACHE STRING "")
@@ -44,10 +42,15 @@ if(NOT DEFINED VCPKG_CRT_LINKAGE)
   include("${VCPKG_ROOT}/triplets/${VCPKG_TARGET_TRIPLET}.cmake")
 endif()
 
+# Set modules path.
+list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/cmake)
+
+# Silence CMake warnings.
+set(IGNORE_TOOLCHAIN_FILE_VARIABLE "${CMAKE_TOOLCHAIN_FILE}")
+unset(IGNORE_TOOLCHAIN_FILE_VARIABLE)
+
 # Include vcpkg toolchain.
+include_guard(GLOBAL)
 if(NOT DEFINED VCPKG_TOOLCHAIN)
   include("${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 endif()
-
-# Set modules path.
-list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/cmake)
