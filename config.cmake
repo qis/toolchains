@@ -51,3 +51,6 @@ endif()
 
 # Set modules path.
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/cmake)
+
+# Silence CMake warnings.
+mark_as_advanced(CMAKE_TOOLCHAIN_FILE)
