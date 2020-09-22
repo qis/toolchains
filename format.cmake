@@ -3,7 +3,10 @@ if(NOT clang_format)
   message(FATAL_ERROR "Could not find program: clang-format")
 endif()
 
-file(GLOB_RECURSE sources include/*.hpp include/*.h src/*.hpp src/*.cpp src/*.h src/*.c)
+file(GLOB_RECURSE sources
+  include/*.hpp include/*.h
+  lib/*.hpp lib/*.cpp lib/*.h lib/*.c
+  src/*.hpp src/*.cpp src/*.h src/*.c)
 
 if(sources)
   foreach(file_absolute ${sources})
