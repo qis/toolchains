@@ -4,7 +4,7 @@ endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/config.cmake")
 
-if(DEFINED CMAKE_CXX_CLANG_TIDY AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(DEFINED CMAKE_CXX_CLANG_TIDY AND CMAKE_BUILD_TYPE STREQUAL "Debug")
   unset(CMAKE_CXX_CLANG_TIDY CACHE)
 endif()
 
@@ -39,10 +39,16 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT "${VCPKG_CXX_FLAGS_RELEASE}")
 
 # Set linker flags.
 foreach(LINKER SHARED_LINKER MODULE_LINKER EXE_LINKER)
-  set(CMAKE_${LINKER}_FLAGS_INIT "-pthread ${VCPKG_LINKER_FLAGS} -fuse-ld=lld -ldl")
+  set(CMAKE_${LINKER}_FLAGS_INIT "-pthread ${VCPKG_LINKER_FLAGS} -fuse-ld=lld")
   set(CMAKE_${LINKER}_FLAGS_RELEASE_INIT "-Wl,-s")
   set(CMAKE_${LINKER}_FLAGS_MINSIZEREL_INIT "-Xlinker -plugin-opt=O3 -Wl,-s")
   if(VCPKG_CRT_LINKAGE STREQUAL "static")
     set(CMAKE_${LINKER}_FLAGS_INIT "-static ${CMAKE_${LINKER}_FLAGS_INIT}")
   endif()
 endforeach()
+
+if(NOT TOOLCHAIN_LINK_LIBRARIES)
+  set(TOOLCHAIN_LINK_LIBRARIES ON)
+  mark_as_advanced(TOOLCHAIN_LINK_LIBRARIES)
+  link_libraries(dl)
+endif()
