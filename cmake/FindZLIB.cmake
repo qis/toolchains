@@ -45,7 +45,7 @@ if(NOT ZLIB_VERSION_STRING AND EXISTS "${ZLIB_INCLUDE_DIR}/zlib.h")
 
   mark_as_advanced(
     ZLIB_VERSION
-    ZLIB_VERSION_STRING)  
+    ZLIB_VERSION_STRING)
 endif()
 
 include(FindPackageHandleStandardArgs)

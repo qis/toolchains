@@ -40,7 +40,7 @@ if(NOT BZIP2_VERSION_STRING AND EXISTS "${BZIP2_INCLUDE_DIR}/bzlib.h")
 
   mark_as_advanced(
     BZIP2_VERSION
-    BZIP2_VERSION_STRING)  
+    BZIP2_VERSION_STRING)
 endif()
 
 include(FindPackageHandleStandardArgs)
@@ -49,7 +49,7 @@ find_package_handle_standard_args(BZip2
     BZIP2_INCLUDE_DIR
     BZIP2_LIBRARIES
     BZIP2_LIBRARY_RELEASE
-    BZIP2_LIBRARY_DEBUG 
+    BZIP2_LIBRARY_DEBUG
   VERSION_VAR
     BZIP2_VERSION_STRING)
 

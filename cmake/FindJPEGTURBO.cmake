@@ -10,7 +10,7 @@ if(NOT JPEGTURBO_INCLUDE_DIR)
   mark_as_advanced(
     JPEGTURBO_INCLUDE_DIR
     JPEGTURBO_INCLUDE_DIRS)
-endif()  
+endif()
 
 if(NOT JPEGTURBO_LIBRARIES)
   include(SelectLibraryConfigurations)
@@ -40,7 +40,7 @@ if(NOT JPEGTURBO_VERSION_STRING AND EXISTS "${JPEGTURBO_INCLUDE_DIR}/jconfig.h")
 
   mark_as_advanced(
     JPEGTURBO_VERSION
-    JPEGTURBO_VERSION_STRING)  
+    JPEGTURBO_VERSION_STRING)
 endif()
 
 include(FindPackageHandleStandardArgs)

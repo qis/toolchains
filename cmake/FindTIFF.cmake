@@ -10,7 +10,7 @@ if(NOT TIFF_INCLUDE_DIR)
   mark_as_advanced(
     TIFF_INCLUDE_DIR
     TIFF_INCLUDE_DIRS)
-endif()  
+endif()
 
 if(NOT TIFF_LIBRARIES)
   include(SelectLibraryConfigurations)

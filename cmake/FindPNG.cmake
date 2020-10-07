@@ -10,7 +10,7 @@ if(NOT PNG_INCLUDE_DIR)
   mark_as_advanced(
     PNG_INCLUDE_DIR
     PNG_INCLUDE_DIRS)
-endif()  
+endif()
 
 if(NOT PNG_LIBRARIES)
   include(SelectLibraryConfigurations)
@@ -26,7 +26,7 @@ if(NOT PNG_LIBRARIES)
   mark_as_advanced(
     PNG_LIBRARY_RELEASE
     PNG_LIBRARY_DEBUG
-    PNG_LIBRARIES)  
+    PNG_LIBRARIES)
 endif()
 
 if(NOT PNG_VERSION_STRING AND EXISTS "${PNG_INCLUDE_DIR}/png.h")
@@ -40,7 +40,7 @@ if(NOT PNG_VERSION_STRING AND EXISTS "${PNG_INCLUDE_DIR}/png.h")
 
   mark_as_advanced(
     PNG_VERSION
-    PNG_VERSION_STRING)  
+    PNG_VERSION_STRING)
 endif()
 
 include(FindPackageHandleStandardArgs)
