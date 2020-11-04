@@ -4,3 +4,7 @@ set(VCPKG_LIBRARY_LINKAGE static)
 set(VCPKG_CRT_LINKAGE static)
 
 set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
+
+if(PORT STREQUAL pdf)
+  set(VCPKG_LIBRARY_LINKAGE dynamic)
+endif()
