@@ -169,14 +169,28 @@ EOF
 sudo ldconfig
 ```
 
-Set system compiler.
+Set system GCC C and C++ compiler.
 
 ```sh
-for i in c++ cc g++ gcc clang{,++}; do sudo update-alternatives --remove-all $i; done
+for i in gcc; do sudo update-alternatives --remove-all $i; done
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
+```
+
+Set system LLVM C and C++ compiler.
+
+```sh
+for i in clang clang++; do sudo update-alternatives --remove-all $i; done
 sudo update-alternatives --install /usr/bin/clang   clang   /opt/llvm/bin/clang   100
 sudo update-alternatives --install /usr/bin/clang++ clang++ /opt/llvm/bin/clang++ 100
-sudo update-alternatives --install /usr/bin/cc      cc      /usr/bin/clang        100
-sudo update-alternatives --install /usr/bin/c++     c++     /usr/bin/clang++      100
+```
+
+Set system C and C++ compiler.
+
+```sh
+for i in c++ cc; do sudo update-alternatives --remove-all $i; done
+sudo update-alternatives --install /usr/bin/cc  cc  /usr/bin/clang   100
+sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100
 ```
 
 Set system `clang-format` tool.
