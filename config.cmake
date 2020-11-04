@@ -13,6 +13,14 @@ if(NOT DEFINED VCPKG_ROOT)
   get_filename_component(VCPKG_ROOT "${CMAKE_CURRENT_LIST_DIR}/../.." ABSOLUTE CACHE)
 endif()
 
+get_filename_component(VCPKG_BUILDING_PORT ${CMAKE_CURRENT_BINARY_DIR} ABSOLUTE)
+if(VCPKG_BUILDING_PORT MATCHES "^${VCPKG_ROOT}/buildtrees")
+  set(VCPKG_BUILDING_PORT ON)
+else()
+  set(VCPKG_BUILDING_PORT OFF)
+endif()
+mark_as_advanced(VCPKG_BUILDING_PORT)
+
 # Determine vcpkg target triplet.
 if(NOT DEFINED VCPKG_TARGET_TRIPLET)
   if(WIN32)

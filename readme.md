@@ -78,7 +78,7 @@ Set system environment variables.
 ```cmd
 set VCPKG_ROOT=C:\Workspace\vcpkg
 set VCPKG_FEATURE_FLAGS=-binarycaching
-set VCPKG_DEFAULT_TRIPLET=x64-windows-ipo
+set VCPKG_DEFAULT_TRIPLET=x64-windows-xnet
 set VCPKG_DOWNLOADS=C:\Workspace\downloads
 set VCPKG_OVERLAY_PORTS=C:\Workspace\boost\ports;C:\Workspace\ports
 set VCPKG_KEEP_ENV_VARS=VSCMD_SKIP_SENDTELEMETRY
@@ -181,7 +181,7 @@ sudo tee /etc/profile.d/vcpkg.sh >/dev/null <<'EOF'
 export PATH="/opt/vcpkg:${PATH}"
 export VCPKG_ROOT="/opt/vcpkg"
 export VCPKG_FEATURE_FLAGS="-binarycaching"
-export VCPKG_DEFAULT_TRIPLET="x64-linux-ipo"
+export VCPKG_DEFAULT_TRIPLET="x64-linux-xnet"
 export VCPKG_DOWNLOADS="/opt/downloads"
 export VCPKG_OVERLAY_PORTS="/opt/boost/ports:/opt/ports"
 EOF
