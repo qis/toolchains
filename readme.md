@@ -41,6 +41,14 @@ Install Options
 ◉ Add LLVM to the system PATN for all users
 ```
 
+Install [NASM](https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/win64/nasm-2.15.05-installer-x64.exe)
+
+```
+☐ RDOFF
+☐ Manual
+☐ VS8 integration
+```
+
 Install [Visual Studio Preview](https://visualstudio.microsoft.com/vs/preview/).
 
 ```
@@ -72,6 +80,7 @@ Add the following directories to the `Path` system environment variable.
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\Msbuild\Microsoft\VisualStudio\NodeJs
+C:\Program Files\NASM
 ```
 
 Set system environment variables.
@@ -112,7 +121,7 @@ md C:\Workspace\downloads
 Install basic development packages.
 
 ```sh
-sudo apt install -y binutils-dev gcc-10 g++-10 gdb make nasm ninja-build manpages-dev pkg-config
+sudo apt install -y binutils-dev gcc g++ gdb make nasm ninja-build manpages-dev pkg-config
 ```
 
 Install [CMake](https://cmake.org/).
@@ -167,14 +176,6 @@ sudo tee /etc/ld.so.conf.d/llvm.conf >/dev/null <<'EOF'
 EOF
 
 sudo ldconfig
-```
-
-Set system GCC C and C++ compiler.
-
-```sh
-for i in gcc; do sudo update-alternatives --remove-all $i; done
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100
-sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
 ```
 
 Set system LLVM C and C++ compiler.
@@ -256,26 +257,6 @@ Build vcpkg.
 C:\Workspace\vcpkg\bootstrap-vcpkg.bat -disableMetrics -win64
 ```
 
-Create the `x64-windows-xnet.cmake` triplet in `C:\Workspace\vcpkg\triplets`.
-
-```cmake
-set(VCPKG_LOAD_VCVARS_ENV ON)
-set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_LIBRARY_LINKAGE static)
-set(VCPKG_CRT_LINKAGE dynamic)
-
-set(VCPKG_C_FLAGS "/DWINVER=0x0A00 /D_WIN32_WINNT=0x0A00")
-set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS}")
-
-set(VCPKG_C_FLAGS_DEBUG "/sdl /RTC1")
-set(VCPKG_CXX_FLAGS_DEBUG "${VCPKG_C_FLAGS_DEBUG}")
-
-set(VCPKG_C_FLAGS_RELEASE "/GS- /analyze-")
-set(VCPKG_CXX_FLAGS_RELEASE "${VCPKG_C_FLAGS_RELEASE}")
-
-set(VCPKG_LINKER_FLAGS_DEBUG "/OPT:REF /OPT:ICF /DEBUG:FULL /INCREMENTAL:NO")
-```
-
 ### Ubuntu
 Build vcpkg.
 
@@ -283,318 +264,52 @@ Build vcpkg.
 /opt/vcpkg/bootstrap-vcpkg.sh -disableMetrics -useSystemBinaries && rm -rf /opt/vcpkg/toolsrc/build.rel
 ```
 
-Create the `x64-linux-xnet.cmake` triplet in `/opt/vcpkg/triplets`.
-
-```cmake
-set(VCPKG_CMAKE_SYSTEM_NAME Linux)
-set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_LIBRARY_LINKAGE static)
-set(VCPKG_CRT_LINKAGE dynamic)
-
-set(VCPKG_C_FLAGS "-fasm -pthread -D_DEFAULT_SOURCE=1")
-set(VCPKG_CXX_FLAGS "-fcoroutines ${VCPKG_C_FLAGS}")
-
-set(VCPKG_LINKER_FLAGS "-Wl,--as-needed")
-set(VCPKG_LINKER_FLAGS_RELEASE "-Wl,-s")
-```
-
 ## Ports
-Create a ports overlay for [boost](https://www.boost.org/).
+Create a ports overlays.
 
 ```cmd
 cd C:/Workspace || cd /opt
-git clone git@github.com:qis/boost boost
+
+git clone git@github.com:xnetsystems/boost boost
+git clone git@github.com:xnetsystems/bcrypt ports/bcrypt
+git clone git@github.com:xnetsystems/compat ports/compat
+git clone git@github.com:xnetsystems/dtz ports/dtz
+git clone git@github.com:xnetsystems/ice ports/ice
+git clone git@github.com:xnetsystems/sql ports/sql
+git clone git@github.com:xnetsystems/tbb ports/tbb
+git clone git@github.com:xnetsystems/http ports/http
+git clone git@github.com:xnetsystems/pdf ports/pdf
+
 cmake -P boost/create.cmake
 ```
 
-Create a ports overlay for [tbb](https://software.intel.com/en-us/tbb).
+Install ports in `cmd.exe`.
+
+```cmd
+vcpkg install --editable benchmark doctest gtest openssl ^
+  brotli bzip2 liblzma libzip zlib zstd libjpeg-turbo libpng ^
+  boost date fmt libssh2 nlohmann-json pugixml tbb utf8proc ^
+  bcrypt compat dtz http ice pdf sql
+```
+
+Install ports in `wsl.exe`.
+
+```sh
+vcpkg install --editable benchmark doctest gtest openssl \
+  brotli bzip2 liblzma libzip zlib zstd libjpeg-turbo libpng \
+  boost date fmt libssh2 nlohmann-json pugixml tbb utf8proc \
+  bcrypt compat dtz http ice pdf sql
+```
+
+Clean `buildtrees` directory and remove `packages` directories.
 
 ```cmd
 cd C:/Workspace || cd /opt
-git clone git@github.com:qis/tbb ports/tbb
+cmake -P vcpkg/triplets/toolchains/clean.cmake
 ```
-
-Install ports.
-
-```sh
-# Development
-vcpkg install --editable benchmark doctest gtest
-
-# Utility
-vcpkg install --editable date fmt libssh2 pugixml tbb utf8proc
-
-# Compression
-vcpkg install --editable brotli bzip2 liblzma libzip zlib zstd
-
-# Encryption
-vcpkg install --editable openssl
-
-# Boost
-vcpkg install --editable boost
-```
-
-## Templates
-Project templates that support this setup.
-
-* [qis/application](https://github.com/qis/application)
-* [qis/library](https://github.com/qis/library)
-
-## CMake
-CMake script that demonstrates how to use this setup.
-
-```cmake
-cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
-project(application VERSION 0.1.0 LANGUAGES CXX)
-
-file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/${PROJECT_NAME}/*.[hc]pp)
-
-add_library(objects OBJECT ${sources})
-target_compile_definitions(objects PUBLIC NOMINMAX WIN32_LEAN_AND_MEAN)
-target_compile_features(objects PUBLIC cxx_std_20)
-
-# =============================================================================
-# openssl (cmake/FindOpenSSL.cmake)
-# =============================================================================
-find_package(OpenSSL REQUIRED)
-target_link_libraries(objects PUBLIC OpenSSL::Crypto OpenSSL::SSL)
-
-# =============================================================================
-# brotli
-# =============================================================================
-find_package(unofficial-brotli CONFIG REQUIRED)
-target_link_libraries(objects PUBLIC
-  unofficial::brotli::brotlicommon
-  unofficial::brotli::brotlidec
-  unofficial::brotli::brotlienc)
-
-# =============================================================================
-# bzip2 (cmake/FindBZip2.cmake)
-# =============================================================================
-find_package(BZip2 REQUIRED)
-target_link_libraries(objects PUBLIC BZip2::BZip2)
-
-# =============================================================================
-# liblzma
-# =============================================================================
-find_package(LibLZMA CONFIG REQUIRED)
-target_link_libraries(objects PUBLIC LibLZMA::LibLZMA)
-
-# =============================================================================
-# libzip (cmake/FindZIP.cmake)
-# =============================================================================
-find_package(libzip CONFIG REQUIRED)
-target_link_libraries(objects PRIVATE zip)
-
-# =============================================================================
-# lz4
-# =============================================================================
-find_package(lz4 CONFIG REQUIRED)
-target_link_libraries(objects PUBLIC lz4::lz4)
-
-# =============================================================================
-# zlib (cmake/FindZLIB.cmake)
-# =============================================================================
-find_package(ZLIB REQUIRED)
-target_link_libraries(objects PUBLIC ZLIB::ZLIB)
-
-# =============================================================================
-# zstd
-# =============================================================================
-find_package(zstd CONFIG REQUIRED)
-target_link_libraries(objects PUBLIC libzstd)
-
-# =============================================================================
-# date
-# =============================================================================
-find_package(date CONFIG REQUIRED)
-target_link_libraries(objects PUBLIC date::date date::date-tz)
-
-# =============================================================================
-# fmt
-# =============================================================================
-find_package(fmt CONFIG REQUIRED)
-target_link_libraries(objects PUBLIC fmt::fmt)
-
-# =============================================================================
-# fmt (header-only)
-# =============================================================================
-#find_package(fmt CONFIG REQUIRED)
-#target_link_libraries(objects PUBLIC fmt::fmt-header-only)
-
-# =============================================================================
-# libssh2
-# =============================================================================
-find_package(Libssh2 CONFIG REQUIRED)
-target_link_libraries(objects PUBLIC Libssh2::libssh2)
-
-# =============================================================================
-# pugixml
-# =============================================================================
-find_package(pugixml CONFIG REQUIRED)
-target_link_libraries(objects PUBLIC pugixml)
-
-# =============================================================================
-# tbb
-# =============================================================================
-find_package(TBB CONFIG REQUIRED)
-target_link_libraries(objects PUBLIC TBB::tbb TBB::tbbmalloc)
-
-# =============================================================================
-# utf8proc (cmake/FindUtf8Proc.cmake)
-# =============================================================================
-find_package(Utf8Proc REQUIRED)
-target_link_libraries(objects PUBLIC utf8proc::utf8proc)
-
-# =============================================================================
-# giflib (cmake/FindGIF.cmake)
-# =============================================================================
-find_package(GIF REQUIRED)
-target_link_libraries(objects PUBLIC GIF::GIF)
-
-# =============================================================================
-# libjpeg (cmake/FindJPEG.cmake)
-# =============================================================================
-find_package(JPEG REQUIRED)
-target_link_libraries(objects PUBLIC JPEG::JPEG)
-
-# =============================================================================
-# libjpeg-turbo (cmake/FindJPEGTURBO.cmake)
-# =============================================================================
-find_package(JPEGTURBO REQUIRED)
-target_link_libraries(objects PUBLIC JPEGTURBO::JPEGTURBO)
-
-# =============================================================================
-# libpng (cmake/FindPNG.cmake)
-# =============================================================================
-find_package(PNG REQUIRED)
-target_link_libraries(objects PUBLIC PNG::PNG)
-
-# =============================================================================
-# tiff (cmake/FindTIFF.cmake)
-# =============================================================================
-find_package(TIFF REQUIRED)
-target_link_libraries(objects PUBLIC TIFF::TIFF)
-
-# =============================================================================
-# freetype
-# =============================================================================
-find_package(freetype CONFIG REQUIRED)
-target_link_libraries(objects PUBLIC freetype)
-
-# =============================================================================
-# harfbuzz
-# =============================================================================
-find_package(harfbuzz CONFIG REQUIRED)
-target_link_libraries(objects PUBLIC harfbuzz::harfbuzz)
-
-# =============================================================================
-# boost
-# =============================================================================
-find_package(Boost REQUIRED COMPONENTS headers filesystem)
-target_link_libraries(objects PUBLIC Boost::headers Boost::filesystem)
-target_compile_definitions(objects PUBLIC
-  BOOST_ASIO_HAS_CO_AWAIT
-  BOOST_ASIO_DISABLE_CONCEPTS
-  BOOST_ASIO_SEPARATE_COMPILATION
-  BOOST_BEAST_SEPARATE_COMPILATION
-  BOOST_BEAST_USE_STD_STRING_VIEW
-  BOOST_JSON_STANDALONE)
-
-# =============================================================================
-# threads
-# =============================================================================
-find_package(Threads REQUIRED)
-target_link_libraries(objects PUBLIC Threads::Threads)
-
-# =============================================================================
-# executable
-# =============================================================================
-add_executable(${PROJECT_NAME} src/main.cpp src/main.manifest src/main.rc)
-target_link_libraries(${PROJECT_NAME} PRIVATE objects)
-
-# =============================================================================
-# benchmark
-# =============================================================================
-find_package(benchmark CONFIG)
-if(benchmark_FOUND)
-  file(GLOB_RECURSE benchmarks_sources src/benchmarks/*.[hc]pp)
-  add_executable(benchmarks EXCLUDE_FROM_ALL ${benchmarks_sources} src/main.manifest)
-  target_link_libraries(benchmarks PRIVATE objects benchmark::benchmark_main)
-endif()
-
-# =============================================================================
-# test
-# =============================================================================
-find_package(GTest CONFIG)
-if(GTest_FOUND)
-  file(GLOB_RECURSE tests_sources src/tests/*.[hc]pp)
-  add_executable(tests EXCLUDE_FROM_ALL ${tests_sources} src/main.manifest)
-  target_link_libraries(tests PRIVATE objects GTest::gtest GTest::gtest_main)
-
-  include(GoogleTest)
-  gtest_discover_tests(tests)
-endif()
-
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
-
-if(WIN32 AND VCPKG_LIBRARY_LINKAGE STREQUAL "dynamic")
-  install(FILES
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/fmt.dll
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/tz.dll
-    DESTINATION bin)
-endif()
-```
-
-## Tests
-Select ports are tested with [qis/vcpkg-test](https://github.com/qis/vcpkg-test).
 
 <!--
-## Exceptions
-Some ports require macro definitions to disable exceptions.
-
-* `fmt` requires `FMT_EXCEPTIONS=0`
-* `pugixml` requires `PUGIXML_NO_EXCEPTIONS`
-* `spdlog` requires `SPDLOG_NO_EXCEPTIONS`
-
-<details>
-<summary>Modify the <code>triplets/x64-windows-debug.cmake</code> triplet file.</summary>
-&nbsp;
-
-```cmake
-set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_LIBRARY_LINKAGE static)
-set(VCPKG_CRT_LINKAGE dynamic)
-
-set(VCPKG_LOAD_VCVARS_ENV ON)
-set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
-
-set(VCPKG_C_FLAGS "/arch:AVX2")
-set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} /EHs-c- /GR- -D_HAS_EXCEPTIONS=0")
-set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DFMT_EXCEPTIONS=0")
-```
-
-</details>
-
-<details>
-<summary>Modify the <code>triplets/x64-windows-release.cmake</code> triplet file.</summary>
-&nbsp;
-
-```cmake
-set(VCPKG_TARGET_ARCHITECTURE x64)
-set(VCPKG_LIBRARY_LINKAGE static)
-set(VCPKG_CRT_LINKAGE dynamic)
-
-set(VCPKG_LOAD_VCVARS_ENV ON)
-set(VCPKG_CHAINLOAD_TOOLCHAIN_FILE "C:/Workspace/vcpkg/triplets/toolchains/windows.cmake")
-
-set(VCPKG_C_FLAGS "/arch:AVX2")
-set(VCPKG_CXX_FLAGS "${VCPKG_C_FLAGS} /EHs-c- /GR- -D_HAS_EXCEPTIONS=0")
-set(VCPKG_CXX_FLAGS "${VCPKG_CXX_FLAGS} -DFMT_EXCEPTIONS=0")
-```
-
-</details>
-
-Find required packages.
+Find required system packages for CPack.
 
 ```sh
 sudo apt install apt-file
